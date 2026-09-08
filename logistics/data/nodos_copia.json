@@ -1,0 +1,962 @@
+[
+  {
+    "ID": 1,
+    "nombre": "La Paz",
+    "departamento": "La Paz",
+    "latitud": -16.5,
+    "longitud": -68.1193,
+    "listado": true
+  },
+  {
+    "ID": 2,
+    "nombre": "El Alto",
+    "departamento": "La Paz",
+    "latitud": -16.5047,
+    "longitud": -68.1633,
+    "listado": true
+  },
+  {
+    "ID": 3,
+    "nombre": "Santa Cruz de la Sierra",
+    "departamento": "Santa Cruz",
+    "latitud": -17.7833,
+    "longitud": -63.1821,
+    "listado": true
+  },
+  {
+    "ID": 4,
+    "nombre": "Cochabamba",
+    "departamento": "Cochabamba",
+    "latitud": -17.3895,
+    "longitud": -66.1568,
+    "listado": true
+  },
+  {
+    "ID": 5,
+    "nombre": "Sucre",
+    "departamento": "Chuquisaca",
+    "latitud": -19.0333,
+    "longitud": -65.2627,
+    "listado": true
+  },
+  {
+    "ID": 6,
+    "nombre": "Oruro",
+    "departamento": "Oruro",
+    "latitud": -17.9833,
+    "longitud": -67.15,
+    "listado": true
+  },
+  {
+    "ID": 7,
+    "nombre": "Potosí",
+    "departamento": "Potosí",
+    "latitud": -19.5836,
+    "longitud": -65.7531,
+    "listado": true
+  },
+  {
+    "ID": 8,
+    "nombre": "Tarija",
+    "departamento": "Tarija",
+    "latitud": -21.5355,
+    "longitud": -64.7296,
+    "listado": true
+  },
+  {
+    "ID": 9,
+    "nombre": "Trinidad",
+    "departamento": "Beni",
+    "latitud": -14.8333,
+    "longitud": -64.9,
+    "listado": true
+  },
+  {
+    "ID": 10,
+    "nombre": "Cobija",
+    "departamento": "Pando",
+    "latitud": -11.0267,
+    "longitud": -68.7692,
+    "listado": true
+  },
+  {
+    "ID": 11,
+    "nombre": "Quillacollo",
+    "departamento": "Cochabamba",
+    "latitud": -17.3936,
+    "longitud": -66.2769,
+    "listado": true
+  },
+  {
+    "ID": 12,
+    "nombre": "Sacaba",
+    "departamento": "Cochabamba",
+    "latitud": -17.4058,
+    "longitud": -66.0397,
+    "listado": true
+  },
+  {
+    "ID": 13,
+    "nombre": "Punata",
+    "departamento": "Cochabamba",
+    "latitud": -17.5486,
+    "longitud": -65.8322,
+    "listado": true
+  },
+  {
+    "ID": 14,
+    "nombre": "Villa Tunari",
+    "departamento": "Cochabamba",
+    "latitud": -16.9667,
+    "longitud": -65.4167,
+    "listado": true
+  },
+  {
+    "ID": 15,
+    "nombre": "Montero",
+    "departamento": "Santa Cruz",
+    "latitud": -17.3333,
+    "longitud": -63.25,
+    "listado": true
+  },
+  {
+    "ID": 16,
+    "nombre": "Warnes",
+    "departamento": "Santa Cruz",
+    "latitud": -17.5142,
+    "longitud": -63.1667,
+    "listado": true
+  },
+  {
+    "ID": 17,
+    "nombre": "La Guardia",
+    "departamento": "Santa Cruz",
+    "latitud": -17.9167,
+    "longitud": -63.1833,
+    "listado": true
+  },
+  {
+    "ID": 18,
+    "nombre": "Camiri",
+    "departamento": "Santa Cruz",
+    "latitud": -20.05,
+    "longitud": -63.5167,
+    "listado": true
+  },
+  {
+    "ID": 19,
+    "nombre": "Puerto Suárez",
+    "departamento": "Santa Cruz",
+    "latitud": -18.95,
+    "longitud": -57.8,
+    "listado": true
+  },
+  {
+    "ID": 20,
+    "nombre": "Yacuiba",
+    "departamento": "Tarija",
+    "latitud": -22.0333,
+    "longitud": -63.6667,
+    "listado": true
+  },
+  {
+    "ID": 21,
+    "nombre": "Bermejo",
+    "departamento": "Tarija",
+    "latitud": -22.7333,
+    "longitud": -64.3333,
+    "listado": true
+  },
+  {
+    "ID": 22,
+    "nombre": "Villamontes",
+    "departamento": "Tarija",
+    "latitud": -21.25,
+    "longitud": -63.45,
+    "listado": true
+  },
+  {
+    "ID": 23,
+    "nombre": "Villazón",
+    "departamento": "Potosí",
+    "latitud": -22.0866,
+    "longitud": -65.5942,
+    "listado": true
+  },
+  {
+    "ID": 24,
+    "nombre": "Tupiza",
+    "departamento": "Potosí",
+    "latitud": -21.4444,
+    "longitud": -65.7167,
+    "listado": true
+  },
+  {
+    "ID": 25,
+    "nombre": "Uyuni",
+    "departamento": "Potosí",
+    "latitud": -20.46,
+    "longitud": -66.825,
+    "listado": true
+  },
+  {
+    "ID": 26,
+    "nombre": "Riberalta",
+    "departamento": "Beni",
+    "latitud": -10.9833,
+    "longitud": -66.1,
+    "listado": true
+  },
+  {
+    "ID": 28,
+    "nombre": "San Borja",
+    "departamento": "Beni",
+    "latitud": -14.8167,
+    "longitud": -66.8333,
+    "listado": true
+  },
+  {
+    "ID": 29,
+    "nombre": "Rurrenabaque",
+    "departamento": "Beni",
+    "latitud": -14.4333,
+    "longitud": -67.5333,
+    "listado": true
+  },
+  {
+    "ID": 30,
+    "nombre": "Caranavi",
+    "departamento": "La Paz",
+    "latitud": -15.8333,
+    "longitud": -67.5667,
+    "listado": true
+  },
+  {
+    "ID": 31,
+    "nombre": "Viacha",
+    "departamento": "La Paz",
+    "latitud": -16.65,
+    "longitud": -68.3,
+    "listado": true
+  },
+  {
+    "ID": 32,
+    "nombre": "Sica Sica",
+    "departamento": "La Paz",
+    "latitud": -17.3333,
+    "longitud": -67.7167,
+    "listado": false
+  },
+  {
+    "ID": 33,
+    "nombre": "Charazani",
+    "departamento": "La Paz",
+    "latitud": -15.1833,
+    "longitud": -68.9833,
+    "listado": false
+  },
+  {
+    "ID": 34,
+    "nombre": "Ixiamas",
+    "departamento": "La Paz",
+    "latitud": -13.75,
+    "longitud": -68.1167,
+    "listado": false
+  },
+  {
+    "ID": 35,
+    "nombre": "Puerto Acosta",
+    "departamento": "La Paz",
+    "latitud": -15.5,
+    "longitud": -69.05,
+    "listado": false
+  },
+  {
+    "ID": 36,
+    "nombre": "Apolo",
+    "departamento": "La Paz",
+    "latitud": -14.7167,
+    "longitud": -68.4667,
+    "listado": false
+  },
+  {
+    "ID": 37,
+    "nombre": "Curahuara de Carangas",
+    "departamento": "La Paz",
+    "latitud": -18.0833,
+    "longitud": -68.4667,
+    "listado": false
+  },
+  {
+    "ID": 38,
+    "nombre": "Inquisivi",
+    "departamento": "La Paz",
+    "latitud": -17.0333,
+    "longitud": -67.25,
+    "listado": false
+  },
+  {
+    "ID": 39,
+    "nombre": "Santiago de Machaca",
+    "departamento": "La Paz",
+    "latitud": -17.0833,
+    "longitud": -69.2667,
+    "listado": false
+  },
+  {
+    "ID": 40,
+    "nombre": "Sorata",
+    "departamento": "La Paz",
+    "latitud": -15.7667,
+    "longitud": -68.65,
+    "listado": false
+  },
+  {
+    "ID": 41,
+    "nombre": "Luribay",
+    "departamento": "La Paz",
+    "latitud": -17.05,
+    "longitud": -67.6167,
+    "listado": false
+  },
+  {
+    "ID": 42,
+    "nombre": "Pucarani",
+    "departamento": "La Paz",
+    "latitud": -16.3833,
+    "longitud": -68.4833,
+    "listado": false
+  },
+  {
+    "ID": 43,
+    "nombre": "Copacabana",
+    "departamento": "La Paz",
+    "latitud": -16.1667,
+    "longitud": -69.0833,
+    "listado": false
+  },
+  {
+    "ID": 44,
+    "nombre": "Chuma",
+    "departamento": "La Paz",
+    "latitud": -15.4667,
+    "longitud": -68.9167,
+    "listado": false
+  },
+  {
+    "ID": 45,
+    "nombre": "Coroico",
+    "departamento": "La Paz",
+    "latitud": -16.1833,
+    "longitud": -67.7333,
+    "listado": false
+  },
+  {
+    "ID": 46,
+    "nombre": "Achacachi",
+    "departamento": "La Paz",
+    "latitud": -16.05,
+    "longitud": -68.6833,
+    "listado": false
+  },
+  {
+    "ID": 47,
+    "nombre": "Coro Coro",
+    "departamento": "La Paz",
+    "latitud": -17.1833,
+    "longitud": -68.45,
+    "listado": false
+  },
+  {
+    "ID": 48,
+    "nombre": "Palca",
+    "departamento": "La Paz",
+    "latitud": -16.5833,
+    "longitud": -67.95,
+    "listado": false
+  },
+  {
+    "ID": 49,
+    "nombre": "Chulumani",
+    "departamento": "La Paz",
+    "latitud": -16.4,
+    "longitud": -67.5167,
+    "listado": false
+  },
+  {
+    "ID": 50,
+    "nombre": "Sabaya",
+    "departamento": "Oruro",
+    "latitud": -19.0333,
+    "longitud": -68.3833,
+    "listado": false
+  },
+  {
+    "ID": 51,
+    "nombre": "Corque",
+    "departamento": "Oruro",
+    "latitud": -18.3333,
+    "longitud": -67.7,
+    "listado": false
+  },
+  {
+    "ID": 52,
+    "nombre": "Challapata",
+    "departamento": "Oruro",
+    "latitud": -18.9,
+    "longitud": -66.7667,
+    "listado": false
+  },
+  {
+    "ID": 53,
+    "nombre": "Huanuni",
+    "departamento": "Oruro",
+    "latitud": -18.2833,
+    "longitud": -66.8333,
+    "listado": false
+  },
+  {
+    "ID": 54,
+    "nombre": "Poopó",
+    "departamento": "Oruro",
+    "latitud": -18.3833,
+    "longitud": -66.9667,
+    "listado": false
+  },
+  {
+    "ID": 55,
+    "nombre": "Machacamarca",
+    "departamento": "Oruro",
+    "latitud": -18.1667,
+    "longitud": -67.05,
+    "listado": false
+  },
+  {
+    "ID": 56,
+    "nombre": "Villa de Sacaca",
+    "departamento": "Potosí",
+    "latitud": -18.1167,
+    "longitud": -66,
+    "listado": false
+  },
+  {
+    "ID": 57,
+    "nombre": "Arampampa",
+    "departamento": "Potosí",
+    "latitud": -18.2167,
+    "longitud": -66.2333,
+    "listado": false
+  },
+  {
+    "ID": 58,
+    "nombre": "San Pedro de Buena Vista",
+    "departamento": "Potosí",
+    "latitud": -18.2333,
+    "longitud": -65.95,
+    "listado": false
+  },
+  {
+    "ID": 59,
+    "nombre": "Colquechaca",
+    "departamento": "Potosí",
+    "latitud": -18.6833,
+    "longitud": -65.9333,
+    "listado": false
+  },
+  {
+    "ID": 60,
+    "nombre": "Betanzos",
+    "departamento": "Potosí",
+    "latitud": -19.55,
+    "longitud": -65.4667,
+    "listado": false
+  },
+  {
+    "ID": 61,
+    "nombre": "Llica",
+    "departamento": "Potosí",
+    "latitud": -19.85,
+    "longitud": -68.25,
+    "listado": false
+  },
+  {
+    "ID": 62,
+    "nombre": "San Agustín",
+    "departamento": "Potosí",
+    "latitud": -20.95,
+    "longitud": -66.8667,
+    "listado": false
+  },
+  {
+    "ID": 63,
+    "nombre": "Puna",
+    "departamento": "Potosí",
+    "latitud": -19.7667,
+    "longitud": -65.5,
+    "listado": false
+  },
+  {
+    "ID": 64,
+    "nombre": "Cotagaita",
+    "departamento": "Potosí",
+    "latitud": -20.8167,
+    "longitud": -65.6833,
+    "listado": false
+  },
+  {
+    "ID": 65,
+    "nombre": "Colcha K",
+    "departamento": "Potosí",
+    "latitud": -20.6667,
+    "longitud": -67.6833,
+    "listado": false
+  },
+  {
+    "ID": 66,
+    "nombre": "Uncía",
+    "departamento": "Potosí",
+    "latitud": -18.4667,
+    "longitud": -66.5333,
+    "listado": false
+  },
+  {
+    "ID": 67,
+    "nombre": "San Pablo de Lípez",
+    "departamento": "Potosí",
+    "latitud": -21.6667,
+    "longitud": -66.6167,
+    "listado": false
+  },
+  {
+    "ID": 68,
+    "nombre": "Tinguipaya",
+    "departamento": "Potosí",
+    "latitud": -19.2,
+    "longitud": -65.9833,
+    "listado": false
+  },
+  {
+    "ID": 69,
+    "nombre": "Azurduy",
+    "departamento": "Chuquisaca",
+    "latitud": -19.9667,
+    "longitud": -64.5333,
+    "listado": false
+  },
+  {
+    "ID": 70,
+    "nombre": "Villa Zudáñez",
+    "departamento": "Chuquisaca",
+    "latitud": -19.1167,
+    "longitud": -64.9333,
+    "listado": false
+  },
+  {
+    "ID": 71,
+    "nombre": "Padilla",
+    "departamento": "Chuquisaca",
+    "latitud": -19.3,
+    "longitud": -64.3167,
+    "listado": false
+  },
+  {
+    "ID": 72,
+    "nombre": "Monteagudo",
+    "departamento": "Chuquisaca",
+    "latitud": -19.8167,
+    "longitud": -63.9667,
+    "listado": false
+  },
+  {
+    "ID": 73,
+    "nombre": "Tarabuco",
+    "departamento": "Chuquisaca",
+    "latitud": -19.1833,
+    "longitud": -64.9167,
+    "listado": false
+  },
+  {
+    "ID": 74,
+    "nombre": "Camargo",
+    "departamento": "Chuquisaca",
+    "latitud": -20.6333,
+    "longitud": -65.2,
+    "listado": false
+  },
+  {
+    "ID": 75,
+    "nombre": "Villa Abecia",
+    "departamento": "Chuquisaca",
+    "latitud": -21,
+    "longitud": -65.35,
+    "listado": false
+  },
+  {
+    "ID": 76,
+    "nombre": "Villa Serrano",
+    "departamento": "Chuquisaca",
+    "latitud": -19.1167,
+    "longitud": -64.4333,
+    "listado": false
+  },
+  {
+    "ID": 77,
+    "nombre": "Muyupampa",
+    "departamento": "Chuquisaca",
+    "latitud": -20.0667,
+    "longitud": -63.7333,
+    "listado": false
+  },
+  {
+    "ID": 78,
+    "nombre": "Cliza",
+    "departamento": "Cochabamba",
+    "latitud": -17.5975,
+    "longitud": -65.9328,
+    "listado": false
+  },
+  {
+    "ID": 79,
+    "nombre": "Tarata",
+    "departamento": "Cochabamba",
+    "latitud": -17.6167,
+    "longitud": -66.0167,
+    "listado": false
+  },
+  {
+    "ID": 80,
+    "nombre": "Aiquile",
+    "departamento": "Cochabamba",
+    "latitud": -18.2003,
+    "longitud": -65.1747,
+    "listado": false
+  },
+  {
+    "ID": 81,
+    "nombre": "Mizque",
+    "departamento": "Cochabamba",
+    "latitud": -17.9439,
+    "longitud": -65.3181,
+    "listado": false
+  },
+  {
+    "ID": 82,
+    "nombre": "Totora",
+    "departamento": "Cochabamba",
+    "latitud": -17.7167,
+    "longitud": -65.1667,
+    "listado": false
+  },
+  {
+    "ID": 83,
+    "nombre": "Ivirgarzama",
+    "departamento": "Cochabamba",
+    "latitud": -17.0333,
+    "longitud": -64.9667,
+    "listado": false
+  },
+  {
+    "ID": 84,
+    "nombre": "Colomi",
+    "departamento": "Cochabamba",
+    "latitud": -17.3419,
+    "longitud": -65.8747,
+    "listado": false
+  },
+  {
+    "ID": 85,
+    "nombre": "Vinto",
+    "departamento": "Cochabamba",
+    "latitud": -17.3833,
+    "longitud": -66.2833,
+    "listado": false
+  },
+  {
+    "ID": 86,
+    "nombre": "Sipe Sipe",
+    "departamento": "Cochabamba",
+    "latitud": -17.4333,
+    "longitud": -66.3833,
+    "listado": false
+  },
+  {
+    "ID": 87,
+    "nombre": "Anzaldo",
+    "departamento": "Cochabamba",
+    "latitud": -17.7333,
+    "longitud": -65.95,
+    "listado": false
+  },
+  {
+    "ID": 88,
+    "nombre": "Arani",
+    "departamento": "Cochabamba",
+    "latitud": -17.5667,
+    "longitud": -65.7667,
+    "listado": false
+  },
+  {
+    "ID": 89,
+    "nombre": "Capinota",
+    "departamento": "Cochabamba",
+    "latitud": -17.7167,
+    "longitud": -66.25,
+    "listado": false
+  },
+  {
+    "ID": 90,
+    "nombre": "Independencia",
+    "departamento": "Cochabamba",
+    "latitud": -17.1,
+    "longitud": -66.4,
+    "listado": false
+  },
+  {
+    "ID": 91,
+    "nombre": "San Ignacio de Velasco",
+    "departamento": "Santa Cruz",
+    "latitud": -16.3733,
+    "longitud": -60.9542,
+    "listado": false
+  },
+  {
+    "ID": 92,
+    "nombre": "Buena Vista",
+    "departamento": "Santa Cruz",
+    "latitud": -17.4581,
+    "longitud": -63.6608,
+    "listado": false
+  },
+  {
+    "ID": 93,
+    "nombre": "San José de Chiquitos",
+    "departamento": "Santa Cruz",
+    "latitud": -17.85,
+    "longitud": -60.7667,
+    "listado": false
+  },
+  {
+    "ID": 94,
+    "nombre": "Portachuelo",
+    "departamento": "Santa Cruz",
+    "latitud": -17.3556,
+    "longitud": -63.3931,
+    "listado": false
+  },
+  {
+    "ID": 95,
+    "nombre": "Lagunillas",
+    "departamento": "Santa Cruz",
+    "latitud": -18.9333,
+    "longitud": -63.6833,
+    "listado": false
+  },
+  {
+    "ID": 96,
+    "nombre": "Vallegrande",
+    "departamento": "Santa Cruz",
+    "latitud": -18.4833,
+    "longitud": -64.1,
+    "listado": false
+  },
+  {
+    "ID": 97,
+    "nombre": "Samaipata",
+    "departamento": "Santa Cruz",
+    "latitud": -18.1783,
+    "longitud": -63.8767,
+    "listado": false
+  },
+  {
+    "ID": 98,
+    "nombre": "Concepción",
+    "departamento": "Santa Cruz",
+    "latitud": -16.1333,
+    "longitud": -62.0333,
+    "listado": false
+  },
+  {
+    "ID": 99,
+    "nombre": "San Matías",
+    "departamento": "Santa Cruz",
+    "latitud": -16.3667,
+    "longitud": -58.4,
+    "listado": false
+  },
+  {
+    "ID": 100,
+    "nombre": "Comarapa",
+    "departamento": "Santa Cruz",
+    "latitud": -17.9167,
+    "longitud": -64.5333,
+    "listado": false
+  },
+  {
+    "ID": 101,
+    "nombre": "Ascensión de Guarayos",
+    "departamento": "Santa Cruz",
+    "latitud": -15.9,
+    "longitud": -63.1167,
+    "listado": false
+  },
+  {
+    "ID": 102,
+    "nombre": "Yapacaní",
+    "departamento": "Santa Cruz",
+    "latitud": -17.4,
+    "longitud": -63.8333,
+    "listado": false
+  },
+  {
+    "ID": 103,
+    "nombre": "Cotoca",
+    "departamento": "Santa Cruz",
+    "latitud": -17.8167,
+    "longitud": -63.05,
+    "listado": false
+  },
+  {
+    "ID": 104,
+    "nombre": "Pailón",
+    "departamento": "Santa Cruz",
+    "latitud": -17.6667,
+    "longitud": -62.75,
+    "listado": false
+  },
+  {
+    "ID": 105,
+    "nombre": "Padcaya",
+    "departamento": "Tarija",
+    "latitud": -21.9333,
+    "longitud": -64.9667,
+    "listado": false
+  },
+  {
+    "ID": 106,
+    "nombre": "Entre Ríos",
+    "departamento": "Tarija",
+    "latitud": -21.5333,
+    "longitud": -64.2333,
+    "listado": false
+  },
+  {
+    "ID": 107,
+    "nombre": "San Lorenzo",
+    "departamento": "Tarija",
+    "latitud": -21.4333,
+    "longitud": -64.8,
+    "listado": false
+  },
+  {
+    "ID": 108,
+    "nombre": "Uriondo",
+    "departamento": "Tarija",
+    "latitud": -21.7167,
+    "longitud": -64.7333,
+    "listado": false
+  },
+  {
+    "ID": 109,
+    "nombre": "Reyes",
+    "departamento": "Beni",
+    "latitud": -14.3167,
+    "longitud": -67.3667,
+    "listado": false
+  },
+  {
+    "ID": 110,
+    "nombre": "Santa Ana de Yacuma",
+    "departamento": "Beni",
+    "latitud": -13.75,
+    "longitud": -65.4167,
+    "listado": false
+  },
+  {
+    "ID": 111,
+    "nombre": "San Ignacio de Moxos",
+    "departamento": "Beni",
+    "latitud": -14.9833,
+    "longitud": -65.6333,
+    "listado": false
+  },
+  {
+    "ID": 112,
+    "nombre": "Loreto",
+    "departamento": "Beni",
+    "latitud": -15.2,
+    "longitud": -64.6833,
+    "listado": false
+  },
+  {
+    "ID": 113,
+    "nombre": "San Joaquín",
+    "departamento": "Beni",
+    "latitud": -13.05,
+    "longitud": -64.15,
+    "listado": false
+  },
+  {
+    "ID": 114,
+    "nombre": "Magdalena",
+    "departamento": "Beni",
+    "latitud": -13.3333,
+    "longitud": -64.1167,
+    "listado": false
+  },
+  {
+    "ID": 115,
+    "nombre": "San Javier",
+    "departamento": "Beni",
+    "latitud": -15.9333,
+    "longitud": -64.7167,
+    "listado": false
+  },
+  {
+    "ID": 116,
+    "nombre": "Santa Rosa de Abuná",
+    "departamento": "Pando",
+    "latitud": -10.4667,
+    "longitud": -66.6667,
+    "listado": false
+  },
+  {
+    "ID": 117,
+    "nombre": "Puerto Rico",
+    "departamento": "Pando",
+    "latitud": -11.1167,
+    "longitud": -67.55,
+    "listado": false
+  },
+  {
+    "ID": 118,
+    "nombre": "Porvenir",
+    "departamento": "Pando",
+    "latitud": -11.05,
+    "longitud": -68.7,
+    "listado": false
+  },
+  {
+    "ID": 119,
+    "nombre": "Filadelfia",
+    "departamento": "Pando",
+    "latitud": -11.4667,
+    "longitud": -68.9333,
+    "listado": false
+  },
+  {
+    "ID": 120,
+    "nombre": "Bella Flor",
+    "departamento": "Pando",
+    "latitud": -10.8667,
+    "longitud": -65.3833,
+    "listado": false
+  },
+  {
+    "ID": 121,
+    "nombre": "Chayanta",
+    "departamento": "Cochabamba",
+    "latitud": -17.7575,
+    "longitud": -65.8328,
+    "listado": true
+  }
+]

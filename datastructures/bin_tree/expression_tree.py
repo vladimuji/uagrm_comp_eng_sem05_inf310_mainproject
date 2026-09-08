@@ -10,7 +10,7 @@ Description: Expression Tree built from postfix tokens (mirrors the
 Author: Vladimir
 """
 
-from bin_tree.binary_tree import BinaryNode, BinaryTree
+from datastructures.bin_tree.binary_tree import BinaryNode, BinaryTree
 
 
 class ExpressionNode(BinaryNode):
@@ -78,6 +78,7 @@ class ExpressionTree(BinaryTree):
     def from_infix(cls, infix_expression):
         """Build an ExpressionTree straight from an infix string,
         e.g. "(((3 + 6) * (2 - 4)) + 7)".
+        e.g. "(((3 + 6) * (2 - 4)^3) + 7)".
         """
         tokens = cls.tokenize_infix(infix_expression)
         postfix_tokens = cls.infix_to_postfix(tokens)

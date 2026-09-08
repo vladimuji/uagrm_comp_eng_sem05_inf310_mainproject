@@ -1,0 +1,1997 @@
+[
+  {
+    "nodo_origen": 1,
+    "nodo_destino": 2,
+    "distancia": 14.38,
+    "bloqueado": false,
+    "costo_gasolina": 21.39,
+    "costo_monetario": 60.38,
+    "tiempo": "0:27:04",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "C. Francisco de Miranda 1748, La Paz, Bolivia"
+      ],
+      "destination_addresses": [
+        "FRVP+XQM Pasarela Del Arquitecto, Av 6 de Marzo, El Alto, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "14.4 km",
+                "value": 14375
+              },
+              "duration": {
+                "text": "27 mins",
+                "value": 1624
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 2,
+    "nodo_destino": 1,
+    "distancia": 14.79,
+    "bloqueado": false,
+    "costo_gasolina": 22.01,
+    "costo_monetario": 62.12,
+    "tiempo": "0:26:41",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "FRVP+XQM Pasarela Del Arquitecto, Av 6 de Marzo, El Alto, Bolivia"
+      ],
+      "destination_addresses": [
+        "C. Francisco de Miranda 1748, La Paz, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "14.8 km",
+                "value": 14790
+              },
+              "duration": {
+                "text": "27 mins",
+                "value": 1601
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 2,
+    "nodo_destino": 31,
+    "distancia": 23.15,
+    "bloqueado": false,
+    "costo_gasolina": 34.45,
+    "costo_monetario": 97.24,
+    "tiempo": "0:54:36",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "FRVP+XQM Pasarela Del Arquitecto, Av 6 de Marzo, El Alto, Bolivia"
+      ],
+      "destination_addresses": [
+        "Pedro Domingo Murillo 397, Viacha, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "23.2 km",
+                "value": 23153
+              },
+              "duration": {
+                "text": "55 mins",
+                "value": 3276
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 31,
+    "nodo_destino": 2,
+    "distancia": 24.09,
+    "bloqueado": false,
+    "costo_gasolina": 35.85,
+    "costo_monetario": 101.19,
+    "tiempo": "1:02:17",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "Pedro Domingo Murillo 397, Viacha, Bolivia"
+      ],
+      "destination_addresses": [
+        "FRVP+XQM Pasarela Del Arquitecto, Av 6 de Marzo, El Alto, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "24.1 km",
+                "value": 24093
+              },
+              "duration": {
+                "text": "1 hour 2 mins",
+                "value": 3737
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 1,
+    "nodo_destino": 6,
+    "distancia": 367.68,
+    "bloqueado": false,
+    "costo_gasolina": 547.11,
+    "costo_monetario": 1544.26,
+    "tiempo": "6:08:29",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "C. Francisco de Miranda 1748, La Paz, Bolivia"
+      ],
+      "destination_addresses": [
+        "2V82+M2 Oruro, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "368 km",
+                "value": 367680
+              },
+              "duration": {
+                "text": "6 hours 8 mins",
+                "value": 22109
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 6,
+    "nodo_destino": 1,
+    "distancia": 227.28,
+    "bloqueado": false,
+    "costo_gasolina": 338.2,
+    "costo_monetario": 954.59,
+    "tiempo": "3:53:59",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "2V82+M2 Oruro, Bolivia"
+      ],
+      "destination_addresses": [
+        "C. Francisco de Miranda 1748, La Paz, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "227 km",
+                "value": 227283
+              },
+              "duration": {
+                "text": "3 hours 54 mins",
+                "value": 14039
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 1,
+    "nodo_destino": 30,
+    "distancia": 163.22,
+    "bloqueado": false,
+    "costo_gasolina": 255.02,
+    "costo_monetario": 750.82,
+    "tiempo": "3:52:07",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "C. Francisco de Miranda 1748, La Paz, Bolivia"
+      ],
+      "destination_addresses": [
+        "5C8M+Q96, Cochabamba, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "163 km",
+                "value": 163221
+              },
+              "duration": {
+                "text": "3 hours 52 mins",
+                "value": 13927
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 30,
+    "nodo_destino": 1,
+    "distancia": 162.97,
+    "bloqueado": false,
+    "costo_gasolina": 254.63,
+    "costo_monetario": 749.67,
+    "tiempo": "3:52:35",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "5C8M+Q96, Cochabamba, Bolivia"
+      ],
+      "destination_addresses": [
+        "C. Francisco de Miranda 1748, La Paz, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "163 km",
+                "value": 162971
+              },
+              "duration": {
+                "text": "3 hours 53 mins",
+                "value": 13955
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 30,
+    "nodo_destino": 29,
+    "distancia": 263.73,
+    "bloqueado": false,
+    "costo_gasolina": 412.05,
+    "costo_monetario": 1213.14,
+    "tiempo": "6:28:22",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "5C8M+Q96, Cochabamba, Bolivia"
+      ],
+      "destination_addresses": [
+        "HF88+MM Rurrenabaque, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "264 km",
+                "value": 263726
+              },
+              "duration": {
+                "text": "6 hours 28 mins",
+                "value": 23302
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 29,
+    "nodo_destino": 26,
+    "distancia": 516.93,
+    "bloqueado": false,
+    "costo_gasolina": 807.65,
+    "costo_monetario": 2377.87,
+    "tiempo": "7:26:24",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "HF88+MM Rurrenabaque, Bolivia"
+      ],
+      "destination_addresses": [
+        "2W82+M2 Las Piedros, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "517 km",
+                "value": 516929
+              },
+              "duration": {
+                "text": "7 hours 26 mins",
+                "value": 26784
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 26,
+    "nodo_destino": 27,
+    "distancia": 90.43,
+    "bloqueado": false,
+    "costo_gasolina": 94.19,
+    "costo_monetario": 235.12,
+    "tiempo": "1:22:43",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "2W82+M2 Las Piedros, Bolivia"
+      ],
+      "destination_addresses": [
+        "5J8M+M8 Guayaramerín, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "90.4 km",
+                "value": 90429
+              },
+              "duration": {
+                "text": "1 hour 23 mins",
+                "value": 4963
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 27,
+    "nodo_destino": 26,
+    "distancia": 90.49,
+    "bloqueado": false,
+    "costo_gasolina": 94.25,
+    "costo_monetario": 235.27,
+    "tiempo": "1:23:41",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "5J8M+M8 Guayaramerín, Bolivia"
+      ],
+      "destination_addresses": [
+        "2W82+M2 Las Piedros, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "90.5 km",
+                "value": 90489
+              },
+              "duration": {
+                "text": "1 hour 24 mins",
+                "value": 5021
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 26,
+    "nodo_destino": 10,
+    "distancia": 426.67,
+    "bloqueado": true,
+    "costo_gasolina": 666.63,
+    "costo_monetario": 1962.7,
+    "tiempo": "9:36:39",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "2W82+M2 Las Piedros, Bolivia"
+      ],
+      "destination_addresses": [
+        "X6FJ+85M, Cobija, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "427 km",
+                "value": 426673
+              },
+              "duration": {
+                "text": "9 hours 37 mins",
+                "value": 34599
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 10,
+    "nodo_destino": 26,
+    "distancia": 426.9,
+    "bloqueado": false,
+    "costo_gasolina": 666.98,
+    "costo_monetario": 1963.72,
+    "tiempo": "9:28:42",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "X6FJ+85M, Cobija, Bolivia"
+      ],
+      "destination_addresses": [
+        "2W82+M2 Las Piedros, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "427 km",
+                "value": 426895
+              },
+              "duration": {
+                "text": "9 hours 29 mins",
+                "value": 34122
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 6,
+    "nodo_destino": 7,
+    "distancia": 318.55,
+    "bloqueado": false,
+    "costo_gasolina": 474,
+    "costo_monetario": 1337.91,
+    "tiempo": "5:46:29",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "2V82+M2 Oruro, Bolivia"
+      ],
+      "destination_addresses": [
+        "C. Bustillos 682, Villa Imperial de Potosí, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "319 km",
+                "value": 318549
+              },
+              "duration": {
+                "text": "5 hours 46 mins",
+                "value": 20789
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 7,
+    "nodo_destino": 6,
+    "distancia": 318.98,
+    "bloqueado": false,
+    "costo_gasolina": 474.64,
+    "costo_monetario": 1339.7,
+    "tiempo": "5:40:52",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "C. Bustillos 682, Villa Imperial de Potosí, Bolivia"
+      ],
+      "destination_addresses": [
+        "2V82+M2 Oruro, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "319 km",
+                "value": 318977
+              },
+              "duration": {
+                "text": "5 hours 41 mins",
+                "value": 20452
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 6,
+    "nodo_destino": 4,
+    "distancia": 230.66,
+    "bloqueado": false,
+    "costo_gasolina": 343.23,
+    "costo_monetario": 968.78,
+    "tiempo": "4:36:20",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "2V82+M2 Oruro, Bolivia"
+      ],
+      "destination_addresses": [
+        "JR6V+43Q, España 342, Cochabamba, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "231 km",
+                "value": 230663
+              },
+              "duration": {
+                "text": "4 hours 36 mins",
+                "value": 16580
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 4,
+    "nodo_destino": 6,
+    "distancia": 231.07,
+    "bloqueado": false,
+    "costo_gasolina": 343.83,
+    "costo_monetario": 970.49,
+    "tiempo": "4:43:09",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "JR6V+43Q, España 342, Cochabamba, Bolivia"
+      ],
+      "destination_addresses": [
+        "2V82+M2 Oruro, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "231 km",
+                "value": 231069
+              },
+              "duration": {
+                "text": "4 hours 43 mins",
+                "value": 16989
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 7,
+    "nodo_destino": 5,
+    "distancia": 154.99,
+    "bloqueado": false,
+    "costo_gasolina": 230.63,
+    "costo_monetario": 650.96,
+    "tiempo": "2:56:40",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "C. Bustillos 682, Villa Imperial de Potosí, Bolivia"
+      ],
+      "destination_addresses": [
+        "Av. Juana Azurduy de Padilla 279, Sucre, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "155 km",
+                "value": 154991
+              },
+              "duration": {
+                "text": "2 hours 57 mins",
+                "value": 10600
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 5,
+    "nodo_destino": 7,
+    "distancia": 155,
+    "bloqueado": false,
+    "costo_gasolina": 230.63,
+    "costo_monetario": 650.98,
+    "tiempo": "3:01:57",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "Av. Juana Azurduy de Padilla 279, Sucre, Bolivia"
+      ],
+      "destination_addresses": [
+        "C. Bustillos 682, Villa Imperial de Potosí, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "155 km",
+                "value": 154995
+              },
+              "duration": {
+                "text": "3 hours 2 mins",
+                "value": 10917
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 7,
+    "nodo_destino": 25,
+    "distancia": 204.29,
+    "bloqueado": false,
+    "costo_gasolina": 303.98,
+    "costo_monetario": 858.01,
+    "tiempo": "3:22:04",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "C. Bustillos 682, Villa Imperial de Potosí, Bolivia"
+      ],
+      "destination_addresses": [
+        "G5QG+X39, Av. Cabrera, Uyuni, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "204 km",
+                "value": 204287
+              },
+              "duration": {
+                "text": "3 hours 22 mins",
+                "value": 12124
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 25,
+    "nodo_destino": 7,
+    "distancia": 204.18,
+    "bloqueado": false,
+    "costo_gasolina": 303.81,
+    "costo_monetario": 857.54,
+    "tiempo": "3:23:48",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "G5QG+X39, Av. Cabrera, Uyuni, Bolivia"
+      ],
+      "destination_addresses": [
+        "C. Bustillos 682, Villa Imperial de Potosí, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "204 km",
+                "value": 204176
+              },
+              "duration": {
+                "text": "3 hours 24 mins",
+                "value": 12228
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 7,
+    "nodo_destino": 24,
+    "distancia": 253.18,
+    "bloqueado": false,
+    "costo_gasolina": 376.73,
+    "costo_monetario": 1063.34,
+    "tiempo": "4:04:26",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "C. Bustillos 682, Villa Imperial de Potosí, Bolivia"
+      ],
+      "destination_addresses": [
+        "calle final, Tupiza, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "253 km",
+                "value": 253176
+              },
+              "duration": {
+                "text": "4 hours 4 mins",
+                "value": 14666
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 24,
+    "nodo_destino": 7,
+    "distancia": 253.26,
+    "bloqueado": false,
+    "costo_gasolina": 376.85,
+    "costo_monetario": 1063.69,
+    "tiempo": "4:13:14",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "calle final, Tupiza, Bolivia"
+      ],
+      "destination_addresses": [
+        "C. Bustillos 682, Villa Imperial de Potosí, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "253 km",
+                "value": 253260
+              },
+              "duration": {
+                "text": "4 hours 13 mins",
+                "value": 15194
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 24,
+    "nodo_destino": 23,
+    "distancia": 89.67,
+    "bloqueado": false,
+    "costo_gasolina": 133.42,
+    "costo_monetario": 376.6,
+    "tiempo": "1:25:39",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "calle final, Tupiza, Bolivia"
+      ],
+      "destination_addresses": [
+        "WC74+79R, Villazon, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "89.7 km",
+                "value": 89667
+              },
+              "duration": {
+                "text": "1 hour 26 mins",
+                "value": 5139
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 5,
+    "nodo_destino": 4,
+    "distancia": 331.95,
+    "bloqueado": false,
+    "costo_gasolina": 493.94,
+    "costo_monetario": 1394.19,
+    "tiempo": "6:16:41",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "Av. Juana Azurduy de Padilla 279, Sucre, Bolivia"
+      ],
+      "destination_addresses": [
+        "JR6V+43Q, España 342, Cochabamba, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "332 km",
+                "value": 331949
+              },
+              "duration": {
+                "text": "6 hours 17 mins",
+                "value": 22601
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 4,
+    "nodo_destino": 5,
+    "distancia": 332.67,
+    "bloqueado": false,
+    "costo_gasolina": 495.02,
+    "costo_monetario": 1397.23,
+    "tiempo": "6:21:40",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "JR6V+43Q, España 342, Cochabamba, Bolivia"
+      ],
+      "destination_addresses": [
+        "Av. Juana Azurduy de Padilla 279, Sucre, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "333 km",
+                "value": 332674
+              },
+              "duration": {
+                "text": "6 hours 22 mins",
+                "value": 22900
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 4,
+    "nodo_destino": 11,
+    "distancia": 13.6,
+    "bloqueado": false,
+    "costo_gasolina": 16.69,
+    "costo_monetario": 43.51,
+    "tiempo": "0:25:52",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "JR6V+43Q, España 342, Cochabamba, Bolivia"
+      ],
+      "destination_addresses": [
+        "JP4F+H68, Tocopilla, Quillacollo, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "13.6 km",
+                "value": 13598
+              },
+              "duration": {
+                "text": "26 mins",
+                "value": 1552
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 11,
+    "nodo_destino": 4,
+    "distancia": 13.42,
+    "bloqueado": false,
+    "costo_gasolina": 16.48,
+    "costo_monetario": 42.95,
+    "tiempo": "0:25:54",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "JP4F+H68, Tocopilla, Quillacollo, Bolivia"
+      ],
+      "destination_addresses": [
+        "JR6V+43Q, España 342, Cochabamba, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "13.4 km",
+                "value": 13422
+              },
+              "duration": {
+                "text": "26 mins",
+                "value": 1554
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 4,
+    "nodo_destino": 12,
+    "distancia": 14.43,
+    "bloqueado": false,
+    "costo_gasolina": 17.71,
+    "costo_monetario": 46.16,
+    "tiempo": "0:27:54",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "JR6V+43Q, España 342, Cochabamba, Bolivia"
+      ],
+      "destination_addresses": [
+        "HXV6+H4P, Bolivar, Sacaba, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "14.4 km",
+                "value": 14425
+              },
+              "duration": {
+                "text": "28 mins",
+                "value": 1674
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 12,
+    "nodo_destino": 4,
+    "distancia": 14.81,
+    "bloqueado": false,
+    "costo_gasolina": 18.18,
+    "costo_monetario": 47.39,
+    "tiempo": "0:27:19",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "HXV6+H4P, Bolivar, Sacaba, Bolivia"
+      ],
+      "destination_addresses": [
+        "JR6V+43Q, España 342, Cochabamba, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "14.8 km",
+                "value": 14809
+              },
+              "duration": {
+                "text": "27 mins",
+                "value": 1639
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 12,
+    "nodo_destino": 13,
+    "distancia": 56.12,
+    "bloqueado": false,
+    "costo_gasolina": 68.9,
+    "costo_monetario": 179.59,
+    "tiempo": "1:08:28",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "HXV6+H4P, Bolivar, Sacaba, Bolivia"
+      ],
+      "destination_addresses": [
+        "F529+P54, Punata, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "56.1 km",
+                "value": 56122
+              },
+              "duration": {
+                "text": "1 hour 8 mins",
+                "value": 4108
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 13,
+    "nodo_destino": 12,
+    "distancia": 56.41,
+    "bloqueado": false,
+    "costo_gasolina": 69.25,
+    "costo_monetario": 180.52,
+    "tiempo": "1:09:26",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "F529+P54, Punata, Bolivia"
+      ],
+      "destination_addresses": [
+        "HXV6+H4P, Bolivar, Sacaba, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "56.4 km",
+                "value": 56414
+              },
+              "duration": {
+                "text": "1 hour 9 mins",
+                "value": 4166
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 4,
+    "nodo_destino": 14,
+    "distancia": 160.23,
+    "bloqueado": true,
+    "costo_gasolina": 250.34,
+    "costo_monetario": 737.04,
+    "tiempo": "3:45:59",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "JR6V+43Q, España 342, Cochabamba, Bolivia"
+      ],
+      "destination_addresses": [
+        "2HMM+88 Villa Tunari, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "160 km",
+                "value": 160227
+              },
+              "duration": {
+                "text": "3 hours 46 mins",
+                "value": 13559
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 4,
+    "nodo_destino": 3,
+    "distancia": 471.56,
+    "bloqueado": false,
+    "costo_gasolina": 491.17,
+    "costo_monetario": 1226.05,
+    "tiempo": "9:08:25",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "JR6V+43Q, España 342, Cochabamba, Bolivia"
+      ],
+      "destination_addresses": [
+        "6R89+M4H, Santa Cruz de la Sierra, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "472 km",
+                "value": 471556
+              },
+              "duration": {
+                "text": "9 hours 8 mins",
+                "value": 32905
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 3,
+    "nodo_destino": 4,
+    "distancia": 471.21,
+    "bloqueado": false,
+    "costo_gasolina": 490.82,
+    "costo_monetario": 1225.15,
+    "tiempo": "9:22:04",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "6R89+M4H, Santa Cruz de la Sierra, Bolivia"
+      ],
+      "destination_addresses": [
+        "JR6V+43Q, España 342, Cochabamba, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "471 km",
+                "value": 471213
+              },
+              "duration": {
+                "text": "9 hours 22 mins",
+                "value": 33724
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 3,
+    "nodo_destino": 16,
+    "distancia": 30.73,
+    "bloqueado": false,
+    "costo_gasolina": 32.01,
+    "costo_monetario": 79.9,
+    "tiempo": "0:41:31",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "6R89+M4H, Santa Cruz de la Sierra, Bolivia"
+      ],
+      "destination_addresses": [
+        "Tte. Dionisio Manjon 300, Warnes, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "30.7 km",
+                "value": 30731
+              },
+              "duration": {
+                "text": "42 mins",
+                "value": 2491
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 16,
+    "nodo_destino": 3,
+    "distancia": 31.35,
+    "bloqueado": false,
+    "costo_gasolina": 32.66,
+    "costo_monetario": 81.51,
+    "tiempo": "0:43:02",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "Tte. Dionisio Manjon 300, Warnes, Bolivia"
+      ],
+      "destination_addresses": [
+        "6R89+M4H, Santa Cruz de la Sierra, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "31.4 km",
+                "value": 31351
+              },
+              "duration": {
+                "text": "43 mins",
+                "value": 2582
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 16,
+    "nodo_destino": 15,
+    "distancia": 23.86,
+    "bloqueado": false,
+    "costo_gasolina": 24.85,
+    "costo_monetario": 62.04,
+    "tiempo": "0:29:25",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "Tte. Dionisio Manjon 300, Warnes, Bolivia"
+      ],
+      "destination_addresses": [
+        "MQ82+M25, Montero, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "23.9 km",
+                "value": 23861
+              },
+              "duration": {
+                "text": "29 mins",
+                "value": 1765
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 15,
+    "nodo_destino": 16,
+    "distancia": 23.54,
+    "bloqueado": false,
+    "costo_gasolina": 24.52,
+    "costo_monetario": 61.2,
+    "tiempo": "0:28:16",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "MQ82+M25, Montero, Bolivia"
+      ],
+      "destination_addresses": [
+        "Tte. Dionisio Manjon 300, Warnes, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "23.5 km",
+                "value": 23539
+              },
+              "duration": {
+                "text": "28 mins",
+                "value": 1696
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 3,
+    "nodo_destino": 17,
+    "distancia": 21.72,
+    "bloqueado": false,
+    "costo_gasolina": 22.63,
+    "costo_monetario": 56.48,
+    "tiempo": "0:57:50",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "6R89+M4H, Santa Cruz de la Sierra, Bolivia"
+      ],
+      "destination_addresses": [
+        "3RM8+8M Santa Cruz de la Sierra, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "21.7 km",
+                "value": 21724
+              },
+              "duration": {
+                "text": "58 mins",
+                "value": 3470
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 17,
+    "nodo_destino": 3,
+    "distancia": 20.64,
+    "bloqueado": false,
+    "costo_gasolina": 21.5,
+    "costo_monetario": 53.67,
+    "tiempo": "0:53:43",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "3RM8+8M Santa Cruz de la Sierra, Bolivia"
+      ],
+      "destination_addresses": [
+        "6R89+M4H, Santa Cruz de la Sierra, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "20.6 km",
+                "value": 20644
+              },
+              "duration": {
+                "text": "54 mins",
+                "value": 3223
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 3,
+    "nodo_destino": 18,
+    "distancia": 294.4,
+    "bloqueado": false,
+    "costo_gasolina": 306.65,
+    "costo_monetario": 765.44,
+    "tiempo": "4:46:07",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "6R89+M4H, Santa Cruz de la Sierra, Bolivia"
+      ],
+      "destination_addresses": [
+        "WFXM+X88, Camiri, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "294 km",
+                "value": 294401
+              },
+              "duration": {
+                "text": "4 hours 46 mins",
+                "value": 17167
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 18,
+    "nodo_destino": 3,
+    "distancia": 293.44,
+    "bloqueado": false,
+    "costo_gasolina": 305.65,
+    "costo_monetario": 762.94,
+    "tiempo": "4:42:45",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "WFXM+X88, Camiri, Bolivia"
+      ],
+      "destination_addresses": [
+        "6R89+M4H, Santa Cruz de la Sierra, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "293 km",
+                "value": 293438
+              },
+              "duration": {
+                "text": "4 hours 43 mins",
+                "value": 16965
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 18,
+    "nodo_destino": 22,
+    "distancia": 158.97,
+    "bloqueado": false,
+    "costo_gasolina": 165.58,
+    "costo_monetario": 413.32,
+    "tiempo": "2:17:27",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "WFXM+X88, Camiri, Bolivia"
+      ],
+      "destination_addresses": [
+        "B/Cnel manuel marzana calle ancoche entre 14 de junio, El Ancoche, Villa Montes, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "159 km",
+                "value": 158969
+              },
+              "duration": {
+                "text": "2 hours 17 mins",
+                "value": 8247
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 22,
+    "nodo_destino": 18,
+    "distancia": 158.97,
+    "bloqueado": false,
+    "costo_gasolina": 165.58,
+    "costo_monetario": 413.32,
+    "tiempo": "2:22:20",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "B/Cnel manuel marzana calle ancoche entre 14 de junio, El Ancoche, Villa Montes, Bolivia"
+      ],
+      "destination_addresses": [
+        "WFXM+X88, Camiri, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "159 km",
+                "value": 158969
+              },
+              "duration": {
+                "text": "2 hours 22 mins",
+                "value": 8540
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 22,
+    "nodo_destino": 20,
+    "distancia": 97.1,
+    "bloqueado": false,
+    "costo_gasolina": 101.14,
+    "costo_monetario": 252.47,
+    "tiempo": "1:38:21",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "B/Cnel manuel marzana calle ancoche entre 14 de junio, El Ancoche, Villa Montes, Bolivia"
+      ],
+      "destination_addresses": [
+        "X88M+M8 Salvador Mazza, Salta Province, Argentina"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "97.1 km",
+                "value": 97104
+              },
+              "duration": {
+                "text": "1 hour 38 mins",
+                "value": 5901
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 20,
+    "nodo_destino": 22,
+    "distancia": 96.95,
+    "bloqueado": false,
+    "costo_gasolina": 100.98,
+    "costo_monetario": 252.06,
+    "tiempo": "1:36:17",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "X88M+M8 Salvador Mazza, Salta Province, Argentina"
+      ],
+      "destination_addresses": [
+        "B/Cnel manuel marzana calle ancoche entre 14 de junio, El Ancoche, Villa Montes, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "96.9 km",
+                "value": 96946
+              },
+              "duration": {
+                "text": "1 hour 36 mins",
+                "value": 5777
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 22,
+    "nodo_destino": 8,
+    "distancia": 213.31,
+    "bloqueado": false,
+    "costo_gasolina": 317.4,
+    "costo_monetario": 895.88,
+    "tiempo": "4:37:13",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "B/Cnel manuel marzana calle ancoche entre 14 de junio, El Ancoche, Villa Montes, Bolivia"
+      ],
+      "destination_addresses": [
+        "Ingavi 156, Tarija, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "213 km",
+                "value": 213305
+              },
+              "duration": {
+                "text": "4 hours 37 mins",
+                "value": 16633
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 8,
+    "nodo_destino": 22,
+    "distancia": 213.31,
+    "bloqueado": true,
+    "costo_gasolina": 317.41,
+    "costo_monetario": 895.92,
+    "tiempo": "4:33:27",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "Ingavi 156, Tarija, Bolivia"
+      ],
+      "destination_addresses": [
+        "B/Cnel manuel marzana calle ancoche entre 14 de junio, El Ancoche, Villa Montes, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "213 km",
+                "value": 213314
+              },
+              "duration": {
+                "text": "4 hours 33 mins",
+                "value": 16407
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 8,
+    "nodo_destino": 21,
+    "distancia": 193.68,
+    "bloqueado": true,
+    "costo_gasolina": 288.19,
+    "costo_monetario": 813.44,
+    "tiempo": "3:10:55",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "Ingavi 156, Tarija, Bolivia"
+      ],
+      "destination_addresses": [
+        "7M88+JR9, Nils Klemen, Bermejo, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "194 km",
+                "value": 193677
+              },
+              "duration": {
+                "text": "3 hours 11 mins",
+                "value": 11455
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 21,
+    "nodo_destino": 8,
+    "distancia": 193.85,
+    "bloqueado": true,
+    "costo_gasolina": 288.45,
+    "costo_monetario": 814.17,
+    "tiempo": "3:14:23",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "7M88+JR9, Nils Klemen, Bermejo, Bolivia"
+      ],
+      "destination_addresses": [
+        "Ingavi 156, Tarija, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "194 km",
+                "value": 193851
+              },
+              "duration": {
+                "text": "3 hours 14 mins",
+                "value": 11663
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 8,
+    "nodo_destino": 23,
+    "distancia": 193.71,
+    "bloqueado": false,
+    "costo_gasolina": 288.24,
+    "costo_monetario": 813.57,
+    "tiempo": "4:29:34",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "Ingavi 156, Tarija, Bolivia"
+      ],
+      "destination_addresses": [
+        "WC74+79R, Villazon, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "194 km",
+                "value": 193707
+              },
+              "duration": {
+                "text": "4 hours 30 mins",
+                "value": 16174
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 23,
+    "nodo_destino": 8,
+    "distancia": 193.83,
+    "bloqueado": false,
+    "costo_gasolina": 288.41,
+    "costo_monetario": 814.07,
+    "tiempo": "4:18:01",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "WC74+79R, Villazon, Bolivia"
+      ],
+      "destination_addresses": [
+        "Ingavi 156, Tarija, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "194 km",
+                "value": 193825
+              },
+              "duration": {
+                "text": "4 hours 18 mins",
+                "value": 15481
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 3,
+    "nodo_destino": 19,
+    "distancia": 640.9,
+    "bloqueado": false,
+    "costo_gasolina": 667.56,
+    "costo_monetario": 1666.35,
+    "tiempo": "8:50:25",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "6R89+M4H, Santa Cruz de la Sierra, Bolivia"
+      ],
+      "destination_addresses": [
+        "26X2+X2 Puerto Suárez, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "641 km",
+                "value": 640903
+              },
+              "duration": {
+                "text": "8 hours 50 mins",
+                "value": 31825
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 19,
+    "nodo_destino": 3,
+    "distancia": 637.68,
+    "bloqueado": true,
+    "costo_gasolina": 664.21,
+    "costo_monetario": 1657.98,
+    "tiempo": "9:05:48",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "26X2+X2 Puerto Suárez, Bolivia"
+      ],
+      "destination_addresses": [
+        "6R89+M4H, Santa Cruz de la Sierra, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "638 km",
+                "value": 637683
+              },
+              "duration": {
+                "text": "9 hours 6 mins",
+                "value": 32748
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "nodo_origen": 3,
+    "nodo_destino": 9,
+    "distancia": 553.39,
+    "bloqueado": false,
+    "costo_gasolina": 576.41,
+    "costo_monetario": 1438.82,
+    "tiempo": "9:15:43",
+    "google_json": {
+      "status": "OK",
+      "origin_addresses": [
+        "6R89+M4H, Santa Cruz de la Sierra, Bolivia"
+      ],
+      "destination_addresses": [
+        "C. Sucre 866, Trinidad, Bolivia"
+      ],
+      "rows": [
+        {
+          "elements": [
+            {
+              "distance": {
+                "text": "553 km",
+                "value": 553392
+              },
+              "duration": {
+                "text": "9 hours 16 mins",
+                "value": 33343
+              },
+              "status": "OK"
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

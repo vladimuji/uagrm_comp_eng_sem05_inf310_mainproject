@@ -1,7 +1,7 @@
-from bin_tree.binary_tree import BinaryTree
-from bin_tree.search_binary_tree import SearchBinaryTree
-from bin_tree.expression_tree import ExpressionTree
-from bin_tree.avl_tree import AVLTree
+from datastructures.bin_tree.binary_tree import BinaryTree
+from datastructures.bin_tree.search_binary_tree import SearchBinaryTree
+from datastructures.bin_tree.expression_tree import ExpressionTree
+from datastructures.bin_tree.avl_tree import AVLTree
 from exercices.tic_tac_toe import Tree
 
 #tree = BinaryTree()

@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Data Structures II | INF310{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'logistics/css/styles.css' %}">
+</head>
+<body>
+    <header>
+        {% include "logistics/partials/menu.html" %}
+        {% block hero %}{% endblock %}
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>Educational project for academic purposes.</footer>
+    <script src="{% static 'logistics/js/menu.js' %}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

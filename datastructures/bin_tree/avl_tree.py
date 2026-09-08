@@ -8,7 +8,7 @@ Description: AVL Tree (self-balancing Binary Search Tree), extending
 Author: Vladimir
 """
 
-from bin_tree.binary_tree import BinaryNode, BinaryTree
+from datastructures.bin_tree.binary_tree import BinaryNode, BinaryTree
 
 
 class AVLNode(BinaryNode):

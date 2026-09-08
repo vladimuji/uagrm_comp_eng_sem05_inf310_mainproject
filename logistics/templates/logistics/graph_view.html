@@ -1,0 +1,109 @@
+{% extends "logistics/base.html" %}
+
+{% block title %}City Graph | Data Structures II{% endblock %}
+
+{% block hero %}
+	<div id="graph-page-hero">
+		<p class="eyebrow">INF310 | Graph</p>
+		<h1>City service network</h1>
+		<p>A first view of the cities and routes that can be covered by the logistics service.</p>
+	</div>
+{% endblock %}
+
+{% block content %}
+	<section class="graph-intro">
+		<div>
+			<h2>Integer graph</h2>
+			<p>Each circle represents a value from a simple array, and each line represents a connection between two nodes.</p>
+		</div>
+		<div class="graph-legend" aria-label="Graph legend">
+			<span><i class="legend-dot legend-dot--covered"></i>Node</span>
+			<span><i class="legend-line"></i>Edge</span>
+		</div>
+	</section>
+
+	<section class="graph-panel" aria-labelledby="graph-heading">
+		<div class="graph-panel-heading">
+			<div>
+				<p class="eyebrow">Current data</p>
+				<h2 id="graph-heading">Connected cities</h2>
+			</div>
+			<p id="graph-summary" class="graph-summary"></p>
+		</div>
+		<div id="graph-canvas" class="graph-canvas">
+			<svg id="graph-lines" class="graph-lines" aria-hidden="true"></svg>
+			<div id="graph-nodes" class="graph-nodes"></div>
+		</div>
+	</section>
+{% endblock %}
+
+{% block extra_scripts %}
+	<script>
+		const graphData = [10, 20, 30, 40, 50, 60, 70];
+		const graphNodes = graphData.map((value, index) => ({
+			id: index,
+			value,
+		}));
+		const graphEdges = graphNodes.slice(1).map((node, index) => ({
+			origin: graphNodes[index].id,
+			destination: node.id,
+		}));
+		const graphNodeLayer = document.querySelector("#graph-nodes");
+		const graphLines = document.querySelector("#graph-lines");
+
+		function getNodePosition(index) {
+			const columns = Math.ceil(Math.sqrt(graphNodes.length));
+			const row = Math.floor(index / columns);
+			const column = index % columns;
+			const rows = Math.ceil(graphNodes.length / columns);
+
+			return {
+				x: ((column + 0.5) / columns) * 100,
+				y: ((row + 0.5) / rows) * 100,
+			};
+		}
+
+		function renderGraph() {
+			const positions = new Map();
+			graphNodeLayer.innerHTML = "";
+
+			graphNodes.forEach((node, index) => {
+				const position = getNodePosition(index);
+				positions.set(node.id, position);
+				const marker = document.createElement("div");
+				marker.className = "graph-node";
+				marker.style.left = `${position.x}%`;
+				marker.style.top = `${position.y}%`;
+				marker.textContent = node.value;
+				marker.setAttribute("aria-label", `Node ${node.value}`);
+				graphNodeLayer.appendChild(marker);
+			});
+
+			drawRoutes(positions);
+			document.querySelector("#graph-summary").textContent =
+				`${graphNodes.length} cities | ${graphEdges.length} routes`;
+		}
+
+		function drawRoutes(positions) {
+			graphLines.setAttribute("viewBox", "0 0 100 100");
+			graphLines.innerHTML = "";
+
+			graphEdges.forEach((edge) => {
+				const origin = positions.get(edge.origin);
+				const destination = positions.get(edge.destination);
+				if (!origin || !destination) return;
+
+				const route = document.createElementNS("http://www.w3.org/2000/svg", "line");
+				route.classList.toggle("graph-route--blocked", edge.bloqueado);
+				route.setAttribute("x1", origin.x);
+				route.setAttribute("y1", origin.y);
+				route.setAttribute("x2", destination.x);
+				route.setAttribute("y2", destination.y);
+				graphLines.appendChild(route);
+			});
+		}
+
+		renderGraph();
+		window.addEventListener("resize", renderGraph);
+	</script>
+{% endblock %}

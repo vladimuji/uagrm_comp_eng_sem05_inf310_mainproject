@@ -30,7 +30,7 @@ if str(project_root) not in sys.path:
     sys.path.append(str(project_root))
 
 # 3. Now you can safely import using standard dot notation
-from bin_tree.binary_tree import BinaryNode
+from datastructures.bin_tree.binary_tree import BinaryNode
 
 
 class TicTacToeStrategyTree:

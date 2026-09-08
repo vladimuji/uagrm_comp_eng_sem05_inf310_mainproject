@@ -1,0 +1,132 @@
+{% extends "logistics/base.html" %}
+
+{% block title %}Binary Tree | Data Structures II{% endblock %}
+
+{% block hero %}
+	<div id="tree-page-hero">
+		<p class="eyebrow">INF310 | Binary tree</p>
+		<h1>Binary tree visualizer</h1>
+		<p>A first visual model for the tree that will later be populated with city data from the database.</p>
+	</div>
+{% endblock %}
+
+{% block content %}
+	<section class="tree-intro">
+		<div>
+			<h2>Array to tree</h2>
+			<p>The example values are read in level order. Each level keeps its full set of positions, so an absent child leaves an empty space instead of moving the nodes around.</p>
+		</div>
+		<div class="tree-data" aria-label="Example tree data">
+			<span>Example data</span>
+			<code>[100, 50, 150, 25, 75, 125, 175, 10, 30, 60, 90]</code>
+		</div>
+	</section>
+
+	<section class="tree-panel" aria-labelledby="tree-heading">
+		<div class="tree-panel-heading">
+			<div>
+				<p class="eyebrow">Current example</p>
+				<h2 id="tree-heading">Binary search tree shape</h2>
+			</div>
+			<p id="tree-summary" class="tree-summary"></p>
+		</div>
+		<div id="tree-canvas" class="tree-canvas">
+			<svg id="tree-lines" class="tree-lines" aria-hidden="true"></svg>
+			<div id="tree-levels" class="tree-levels"></div>
+		</div>
+	</section>
+{% endblock %}
+
+{% block extra_scripts %}
+	<script>
+		const treeData = [100, 50, 150, 25, 75, 125, 175, 10, 30, 60, 90];
+		const treeCanvas = document.querySelector("#tree-canvas");
+		const treeLevels = document.querySelector("#tree-levels");
+		const treeLines = document.querySelector("#tree-lines");
+
+		function getLevels(data) {
+			const levels = [];
+			let levelStart = 0;
+			let slotCount = 1;
+
+			while (levelStart < data.length) {
+				levels.push(data.slice(levelStart, levelStart + slotCount));
+				levelStart += slotCount;
+				slotCount *= 2;
+			}
+
+			return levels;
+		}
+
+		function renderTree() {
+			const levels = getLevels(treeData);
+			const leafSlots = 2 ** (levels.length - 1);
+			treeLevels.innerHTML = "";
+			treeLevels.style.setProperty("--leaf-slots", leafSlots);
+
+			levels.forEach((level, levelIndex) => {
+				const row = document.createElement("div");
+				row.className = "tree-level";
+				row.style.setProperty("--level-slots", 2 ** levelIndex);
+
+				level.forEach((value, slotIndex) => {
+					const slot = document.createElement("div");
+					slot.className = "tree-slot";
+					slot.dataset.index = levelIndex === 0
+						? "0"
+						: String((2 ** levelIndex) - 1 + slotIndex);
+
+					if (value !== null && value !== undefined) {
+						const node = document.createElement("div");
+						node.className = "tree-node";
+						node.textContent = value;
+						node.setAttribute("aria-label", `Node ${value}`);
+						slot.appendChild(node);
+					}
+
+					row.appendChild(slot);
+				});
+
+				while (row.children.length < 2 ** levelIndex) {
+					const emptySlot = document.createElement("div");
+					emptySlot.className = "tree-slot";
+					row.appendChild(emptySlot);
+				}
+
+				treeLevels.appendChild(row);
+			});
+
+			document.querySelector("#tree-summary").textContent =
+				`${treeData.length} nodes | ${levels.length} levels`;
+			drawConnections();
+		}
+
+		function drawConnections() {
+			const canvasBounds = treeCanvas.getBoundingClientRect();
+			treeLines.setAttribute("width", treeCanvas.clientWidth);
+			treeLines.setAttribute("height", treeCanvas.clientHeight);
+			treeLines.setAttribute("viewBox", `0 0 ${treeCanvas.clientWidth} ${treeCanvas.clientHeight}`);
+			treeLines.innerHTML = "";
+
+			treeCanvas.querySelectorAll(".tree-node").forEach((node) => {
+				const nodeIndex = Number(node.parentElement.dataset.index);
+				[2 * nodeIndex + 1, 2 * nodeIndex + 2].forEach((childIndex) => {
+					const child = treeCanvas.querySelector(`[data-index="${childIndex}"] .tree-node`);
+					if (!child) return;
+
+					const parentBounds = node.getBoundingClientRect();
+					const childBounds = child.getBoundingClientRect();
+					const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+					line.setAttribute("x1", parentBounds.left + parentBounds.width / 2 - canvasBounds.left);
+					line.setAttribute("y1", parentBounds.bottom - canvasBounds.top);
+					line.setAttribute("x2", childBounds.left + childBounds.width / 2 - canvasBounds.left);
+					line.setAttribute("y2", childBounds.top - canvasBounds.top);
+					treeLines.appendChild(line);
+				});
+			});
+		}
+
+		renderTree();
+		window.addEventListener("resize", drawConnections);
+	</script>
+{% endblock %}

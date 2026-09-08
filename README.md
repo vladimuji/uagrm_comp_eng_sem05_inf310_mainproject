@@ -25,18 +25,54 @@ This project provides clean, educational implementations of common data structur
 
 ```
 00-code/
-├── bin_tree/                   # Binary Tree Implementation
-│   ├── binary_tree.py          # BinaryTree and BinaryNode classes
-│   ├── search_binary_tree.py   # SearchBinaryTree class extends BinaryTree
-│   └── data/                   # Test data files
-├── graph/                      # Graph Data Structure
-│   └── data/                   # Graph datasets
-├── heap/                       # Heap Data Structure
-├── exercices/
-│   └── pep8.py                 # PEP8 coding standards examples
-│   └── tic_tac_toe.py          # The Tic Tac Toe popular game, using bin tree as AI
-│   └── tic_tac_toe_strategy.py # The Tic Tac Toe popular game, using bin tree as AI
-└── main.py                     # Main entry point
+    ├── config/                     # Django project configuration
+    │   ├── asgi.py                 # ASGI entry point for asynchronous servers
+    │   ├── settings.py             # Application, database, and template settings
+    │   ├── urls.py                 # Main URL routes, including the home page
+    │   └── wsgi.py                 # WSGI entry point for deployment servers
+    ├── datastructures/             # Data structure implementations
+    │   ├── bin_tree/               # Binary tree implementations
+    │   │   ├── avl_tree.py         # Self-balancing AVL tree
+    │   │   ├── binary_tree.py      # BinaryNode and BinaryTree classes
+    │   │   ├── expression_tree.py  # Tree for evaluating expressions
+    │   │   ├── search_binary_tree.py # Binary search tree implementation
+    │   │   └── data/               # Binary tree test data
+    │   ├── graph/                  # Graph data structure and datasets
+    │   │   └── data/               # Graph test data
+    │   └── heap/                   # Heap data structure
+    ├── exercices/                 # Course exercises and practice projects
+    │   ├── pep8.py                # PEP8 coding standards examples
+    │   ├── tic_tac_toe.py         # Tic-Tac-Toe game
+    │   └── tic_tac_toe_strategy.py # Tic-Tac-Toe strategy using a binary tree
+    ├── logistics/                 # Django application for the web interface
+    │   ├── migrations/            # Database migration files
+    │   ├── static/logistics/
+    │   ├   └── css/
+    │   │       └── styles.css
+    │   ├   └── js/
+    │   │       └── menu.js
+    │   ├   └── images/
+    │   ├── services/              # MODELS (ORM)
+    │   │   └── graph_service.py
+    │   │   └── heap_service.py
+    │   │   └── tree_service.py
+    │   ├── models/                # MODELS (ORM)
+    │   │   └── node.py
+    │   │   └── route.py
+    │   ├── views/                 # VIEWS (Controllers)
+    │   │   └── views.py           # Views that render the web pages
+    │   ├── templates/logistics/   # TEMPLATES (Views)
+    │   │   ├── base.html          # Main project home page
+    │   │   ├── graph_view.html    # Graph visualization template
+    │   │   └── tree_view.html     # Tree visualization template
+    │   ├── admin.py               # Django administration configuration
+    │   ├── apps.py                # Application configuration
+    │   └── tests.py               # Application tests
+    ├── db.sqlite3                 # Local SQLite database
+    ├── main.py                    # Main Python entry point
+    ├── manage.py                  # Django command-line utility
+    ├── README.md                  # Project documentation
+    └── requirements.txt           # Python project dependencies
 ```
 
 ## 🌳 Binary Tree Implementation

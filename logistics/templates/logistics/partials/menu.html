@@ -1,0 +1,15 @@
+<nav class="site-nav" aria-label="Main navigation">
+    <a class="site-brand" href="#home">INF310</a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-menu" aria-label="Open navigation menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <div class="menu-links" id="main-menu">
+        <a class="menu-link" href="/">Home</a>
+        <a class="menu-link" href="{% url 'trees' %}">Trees</a>
+        <a class="menu-link" href="{% url 'graphs' %}">Graphs</a>
+        <a class="menu-link" href="{% url 'heaps' %}">Heaps</a>
+        <a class="menu-link" href="https://github.com/vladimuji/uagrm_comp_eng_sem05_inf310_mainproject" target="_blank" rel="noopener">Final project</a>
+    </div>
+</nav>

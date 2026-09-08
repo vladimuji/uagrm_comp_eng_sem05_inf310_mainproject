@@ -10,7 +10,7 @@ Author: Vladimir
 
 from collections import deque
 
-from bin_tree.binary_tree import BinaryTree
+from datastructures.bin_tree.binary_tree import BinaryTree
 
 
 class SearchBinaryTree(BinaryTree):

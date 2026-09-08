@@ -1,0 +1,139 @@
+{% extends "logistics/base.html" %}
+
+{% block title %}Home | Data Structures II{% endblock %}
+
+{% block hero %}
+    <div id="home">
+        <p class="eyebrow">UAGRM | INF310 | Data Structures II</p>
+        <h1>Data Structures II</h1>
+        <p>An educational Python implementation of fundamental data structures, algorithms, and problem-solving exercises.</p>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="intro">
+        <div>
+            <h2>About this project</h2>
+            <p>This project provides clean implementations of common data structures following PEP8 Python coding standards. It is designed as a learning resource for understanding the internal mechanics and properties of each structure.</p>
+            <p>The repository includes binary trees, search trees, expression trees, AVL trees, graphs, heaps, and a Tic-Tac-Toe exercise that uses a tree-based strategy.</p>
+        </div>
+        <aside class="link-panel">
+            <h3>INF310 - DATASTRUCTURES II</h3>
+            <p><strong>Try the exercises - Colab</strong></p>
+            <a href="https://colab.research.google.com/drive/1U2pN--lMrr6kjuH7DZrutDfrbOXlNpAg?usp=sharing" target="_blank" rel="noopener">Open the Google Colab notebook</a>
+            <p><strong>Repository</strong></p>
+            <a href="https://github.com/vladimuji/uagrm_comp_eng_sem05_inf310_mainproject" target="_blank" rel="noopener">Check on Github</a>
+            <h3>INF312 - DATA BASES I</h3>
+            <p><strong>Try the exercises - Colab</strong></p>
+            <a href="https://colab.research.google.com/drive/1ARAIzmY_CVT8On6VRrI9u3qDAfbIgoGK?usp=sharing" target="_blank" rel="noopener">Open the Google Colab notebook</a>
+            <p><strong>Repository</strong></p>
+            <a href="https://github.com/vladimuji/uagrm_comp_science_sem05_inf312" target="_blank" rel="noopener">Check on Github</a>
+        </aside>
+    </div>
+    <section id="trees">
+        <h2>Exercises and homework</h2>
+        <ul>
+            <li>PEP8 standards and good practices</li>
+            <li>Binary tree implementation and methods</li>
+            <li>Binary search trees</li>
+            <li>Expression trees for evaluating infix expressions</li>
+            <li>AVL tree methods and balancing</li>
+            <li>Tic-Tac-Toe using a binary-tree strategy</li>
+        </ul>
+    </section>
+    <section id="graphs">
+        <h2>Project structure</h2>
+        <pre><code>
+            00-code/
+                |-- config/
+                |   |-- __init__.py
+                |   |-- asgi.py
+                |   |-- settings.py
+                |   |-- urls.py
+                |   |-- wsgi.py
+                |
+                |-- datastructures/
+                |   |-- bin_tree/
+                |   |   |-- data/
+                |   |   |-- avl_tree.py
+                |   |   |-- binary_tree.py
+                |   |   |-- expression_tree.py
+                |   |   |-- search_binary_tree.py
+                |   |
+                |   |-- graph/
+                |   |   |-- data/
+                |   |
+                |   |-- heap/
+                |
+                |-- exercices/
+                |   |-- pep8.py
+                |   |-- tic_tac_toe.py
+                |   |-- tic_tac_toe_strategy.py
+                |
+                |-- logistics/
+                |   |-- migrations/
+                |   |   |-- __init__.py
+                |   |-- static/
+                |   |   |-- logistics/
+                |   |       |-- css/
+                |   |           |-- styles.css
+                |   |       |-- js/
+                |   |           |-- menu.js
+                |   |       |-- images/
+                │   ├── models/ 
+                │   │   └── node.py
+                │   │   └── route.py
+                │   ├── views/
+                │   │   └── views.py
+                |   |-- templates/
+                |   |   |-- logistics/
+                |   |       |-- partials/
+                |   |           └── menu.html
+                |   |       |-- base.html
+                |   |       |-- index.html
+                |   |       |-- graph_view.html
+                |   |       |-- tree_view.html
+                |   |       └── heap_view.html
+                |   |-- __init__.py
+                |   |-- admin.py
+                |   |-- apps.py
+                |   |-- tests.py
+                |
+                |-- main.py
+                |-- manage.py
+                |-- README.md
+                └── requirements.txt
+        </code></pre>
+    </section>
+    <section id="heaps">
+        <h2>Binary tree implementation</h2>
+        <h3>Features</h3>
+        <ul>
+            <li><strong>BinaryNode:</strong> represents a node with data and child references.</li>
+            <li><strong>BinaryTree:</strong> provides the base binary tree structure.</li>
+            <li><strong>Property-based access:</strong> keeps getter and setter behavior clear.</li>
+            <li><strong>PEP8 compliant:</strong> follows Python style guidelines.</li>
+        </ul>
+        <pre><code>node = BinaryNode(data=10)
+node.left_child = BinaryNode(5)
+node.right_child = BinaryNode(15)
+
+tree = BinaryTree()
+tree.root = node</code></pre>
+    </section>
+    <section>
+        <h2>Technologies and learning goals</h2>
+        <p><strong>Language:</strong> Python 3.x</p>
+        <p><strong>Focus:</strong> object-oriented design, algorithms, PEP8 standards, properties, context managers, and type hints.</p>
+        <p>This is an educational project for understanding core data structures, writing maintainable code, and building strong algorithm fundamentals.</p>
+    </section>
+    <section>
+        <h2>Course information</h2>
+        <ul>
+            <li><strong>Course:</strong> INF310 - Data Structures II</li>
+            <li><strong>Institution:</strong> UAGRM (Universidad Autonoma Gabriel Rene Moreno)</li>
+            <li><strong>Semester:</strong> 5th Semester</li>
+            <li><strong>Author:</strong> Vladimir</li>
+        </ul>
+    </section>
+{% endblock %}
