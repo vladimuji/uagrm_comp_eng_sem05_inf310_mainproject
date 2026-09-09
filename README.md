@@ -36,16 +36,29 @@ This project provides clean, educational implementations of common data structur
     │   │   ├── binary_tree.py      # BinaryNode and BinaryTree classes
     │   │   ├── expression_tree.py  # Tree for evaluating expressions
     │   │   ├── search_binary_tree.py # Binary search tree implementation
+    │   │   ├── bmway_tree.py       # 
+    │   │   ├── mway_search_tree.py # 
     │   │   └── data/               # Binary tree test data
     │   ├── graph/                  # Graph data structure and datasets
+    │   │   ├── graph.py            # 
+    │   │   ├── digraph.py          # 
+    │   │   ├── wgraph.py           # 
+    │   │   ├── graph_algorithms.py # 
     │   │   └── data/               # Graph test data
+    │   │       ├── adjacent_with_weight.py
+    │   │       ├── edge.py
+    │   │       └── union_find.py
     │   └── heap/                   # Heap data structure
-    ├── exercices/                 # Course exercises and practice projects
-    │   ├── pep8.py                # PEP8 coding standards examples
-    │   ├── tic_tac_toe.py         # Tic-Tac-Toe game
+    │   │   ├── i_heap.py           # 
+    │   │   ├── abstract_heap.py    # 
+    │   │   ├── max_heap.py         # 
+    │   │   ├── min_heap.py         # 
+    ├── exercices/                  # Course exercises and practice projects
+    │   ├── pep8.py                 # PEP8 coding standards examples
+    │   ├── tic_tac_toe.py          # Tic-Tac-Toe game
     │   └── tic_tac_toe_strategy.py # Tic-Tac-Toe strategy using a binary tree
-    ├── logistics/                 # Django application for the web interface
-    │   ├── migrations/            # Database migration files
+    ├── logistics/                  # Django application for the web interface
+    │   ├── migrations/             # Database migration files
     │   ├── static/logistics/
     │   ├   └── css/
     │   │       └── styles.css
