@@ -9,6 +9,7 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 </head>
 <body>
+    {% csrf_token %}
     <header>
         {% include "logistics/partials/menu.html" %}
         {% block hero %}{% endblock %}

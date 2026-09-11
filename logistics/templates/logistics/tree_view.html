@@ -1,151 +1,545 @@
 {% extends "logistics/base.html" %}
 
-{% block title %}Binary Tree | Data Structures II{% endblock %}
+{% block title %}Trees | Data Structures II{% endblock %}
 
 {% block hero %}
 	<div id="tree-page-hero">
-		<p class="eyebrow">INF310 | Binary tree</p>
-		<h1>Binary tree visualizer</h1>
-		<p>A first visual model for the tree that will later be populated with city data from the database.</p>
+		<p class="eyebrow">INF310 | Trees</p>
+		<h1>Tree visualizer</h1>
+		<p>AVL and BST work straight off the city rows in the database. B-way and M-way work off the same rows but only ever look at the ID. Every insert and delete you run here actually writes to the table.</p>
 	</div>
 {% endblock %}
 
 {% block content %}
-	<section class="tree-intro">
-		<div>
-			<h2>Array to tree</h2>
-			<p>The example values are read in level order. Each level keeps its full set of positions, so an absent child leaves an empty space instead of moving the nodes around.</p>
-		</div>
-		<div class="tree-data" aria-label="Example tree data">
-			<span>Example data</span>
-			<code>[100, 50, 150, 25, 75, 125, 175, 10, 30, 60, 90]</code>
-		</div>
+{% verbatim %}
+<div id="tree-app">
+
+	<!-- Top-level tab group: Binary vs M-way -->
+	<nav class="group-tabs" role="tablist" aria-label="Tree family">
+		<button v-for="group in groups"
+				:key="group.key"
+				type="button"
+				role="tab"
+				:aria-selected="activeGroup === group.key"
+				:class="['group-tab', { 'is-active': activeGroup === group.key }]"
+				@click="selectGroup(group.key)">
+			{{ group.label }}
+		</button>
+	</nav>
+
+	<!-- Second row: the kinds that belong to the active group -->
+	<div class="kind-tabs" role="tablist" aria-label="Tree kind">
+		<button v-for="kind in currentKinds"
+				:key="kind.key"
+				type="button"
+				role="tab"
+				:aria-selected="activeKind === kind.key"
+				:class="['kind-tab', { 'is-active': activeKind === kind.key }]"
+				@click="selectKind(kind.key)">
+			{{ kind.label }}
+		</button>
+	</div>
+
+	<!-- ============ EXPRESSION TREE : own little form, no DB ============ -->
+	<section v-if="activeKind === 'expression'" class="op-panel">
+		<h3>Build from an infix expression</h3>
+		<p class="op-hint">No database involved &mdash; this tree is rebuilt from scratch on every evaluation.</p>
+		<form class="op-form" @submit.prevent="evaluateExpression">
+			<label class="op-field op-field--grow">
+				<span>Infix expression</span>
+				<input type="text" v-model="infixInput" placeholder="(((3 + 6) * (2 - 4)) + 7)">
+			</label>
+			<button type="submit" class="op-submit" :disabled="loading">Evaluate</button>
+		</form>
+		<p v-if="expressionSummary" class="op-result">{{ expressionSummary }}</p>
 	</section>
 
+	<!-- ============ AVL / BST / B-way / M-way : DB-backed controls ============ -->
+	<section v-else class="op-panel">
+		<div class="op-settings" v-if="isBinaryKind">
+			<label class="op-field">
+				<span>Sort key</span>
+				<select v-model="sortKey" @change="loadTree">
+					<option value="id">id</option>
+					<option value="city_name">city_name</option>
+				</select>
+			</label>
+		</div>
+		<div class="op-settings" v-if="isMwayKind">
+			<label class="op-field">
+				<span>Order</span>
+				<input type="number" min="3" max="10" v-model.number="order" @change="loadTree">
+			</label>
+		</div>
+
+		<form class="op-form" @submit.prevent="submitInsert">
+			<label class="op-field">
+				<span>ID *</span>
+				<input type="number" v-model.number="insertForm.id" required>
+			</label>
+			<label class="op-field">
+				<span>City name</span>
+				<input type="text" v-model="insertForm.city_name" placeholder="optional">
+			</label>
+			<label class="op-field">
+				<span>State</span>
+				<input type="text" v-model="insertForm.state" placeholder="optional">
+			</label>
+			<label class="op-field">
+				<span>Latitude</span>
+				<input type="number" step="any" v-model.number="insertForm.latitude" placeholder="optional">
+			</label>
+			<label class="op-field">
+				<span>Longitude</span>
+				<input type="number" step="any" v-model.number="insertForm.longitude" placeholder="optional">
+			</label>
+			<label class="op-field op-field--checkbox">
+				<input type="checkbox" v-model="insertForm.listed">
+				<span>Listed</span>
+			</label>
+			<button type="submit" class="op-submit" :disabled="loading">Insert</button>
+		</form>
+
+		<form class="op-form" @submit.prevent="submitDelete">
+			<label class="op-field">
+				<span>ID to delete</span>
+				<input type="number" v-model.number="deleteId" required>
+			</label>
+			<button type="submit" class="op-submit op-submit--danger" :disabled="loading">Delete</button>
+		</form>
+
+		<p class="op-hint">Unfilled fields default to <code>city_[id]</code>, <code>state_[id]</code>, <code>0.0</code> and <code>listed = false</code> on the server.</p>
+	</section>
+
+	<!-- ============ Result panel ============ -->
 	<section class="tree-panel" aria-labelledby="tree-heading">
 		<div class="tree-panel-heading">
 			<div>
-				<p class="eyebrow">Current example</p>
-				<h2 id="tree-heading">Binary search tree shape</h2>
+				<p class="eyebrow">{{ activeGroupLabel }}</p>
+				<h2 id="tree-heading">{{ activeKindLabel }}</h2>
 			</div>
-			<p id="tree-summary" class="tree-summary"></p>
+			<p class="tree-summary">{{ summaryText }}</p>
 		</div>
-		<div id="tree-canvas" class="tree-canvas">
-			<svg id="tree-lines" class="tree-lines" aria-hidden="true"></svg>
-			<div id="tree-levels" class="tree-levels"></div>
+
+		<p v-if="error" class="op-error">{{ error }}</p>
+		<p v-if="loading" class="op-hint">Loading&hellip;</p>
+
+		<!-- binary-heap-shaped trees: avl, bst, expression -->
+		<div v-if="!loading && isHeapShaped && levels.length" class="tree-canvas" ref="heapCanvas">
+			<svg class="tree-lines" ref="heapLines" aria-hidden="true"></svg>
+			<div class="tree-levels" ref="heapLevels">
+				<div v-for="(level, levelIndex) in levels" :key="levelIndex"
+					 class="tree-level" :style="{ '--level-slots': 2 ** levelIndex }">
+					<div v-for="(value, slotIndex) in level" :key="slotIndex"
+						 class="tree-slot" :data-index="levelIndex === 0 ? 0 : (2 ** levelIndex) - 1 + slotIndex">
+						<div v-if="value !== null && value !== undefined"
+							 class="tree-node"
+							 :title="nodeTooltip(value)">
+							{{ nodeLabel(value) }}
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
+
+		<!-- nested m-way trees: bway, mway -->
+		<div v-else-if="!loading && isMwayKind && treeData" class="mway-canvas">
+			<mway-node :node="treeData.structure" :info="treeData.node_info"></mway-node>
+		</div>
+
+		<p v-else-if="!loading && !error" class="op-hint">Nothing to show yet.</p>
 	</section>
+</div>
+{% endverbatim %}
 {% endblock %}
 
 {% block extra_scripts %}
-	<script>
-		//const treeData = [100, 50, 150, 25, 75, 125, 175, 10, 30, 60, 90];
-		/*const treeData = [40, 88, 98, 15, 5, 4, 3, 2, 1, 99, 55, 33, 11, 14, 200, 73, -12,
-            120, -45, 67, 250, -89, 310, 27, -150, 180, 92, -33, 61, 144, -77,
-            500, 321, -210, 76, 135, -64, 412, 222, -101, 305, 170, -250, 66,
-            47, -5, 82, 390, -300, 215, 141, -187, 268];*/
-		const treeCanvas = document.querySelector("#tree-canvas");
-		const treeLevels = document.querySelector("#tree-levels");
-		const treeLines = document.querySelector("#tree-lines");
+<style>
+	.group-tabs, .kind-tabs {
+		display: flex;
+		flex-wrap: wrap;
+		gap: .5rem;
+		margin: 0 0 1rem;
+	}
+	.group-tabs { border-bottom: 2px solid var(--line); padding-bottom: 0; }
+	.group-tab {
+		padding: .65rem 1.25rem;
+		color: var(--muted);
+		background: transparent;
+		border: none;
+		border-bottom: 3px solid transparent;
+		font: 700 .95rem/1.2 Arial, sans-serif;
+		cursor: pointer;
+	}
+	.group-tab.is-active { color: var(--accent-dark); border-bottom-color: var(--accent); }
+	.group-tab:hover { color: var(--accent-dark); }
 
-		let treeData = [];
+	.kind-tab {
+		padding: .5rem 1rem;
+		color: var(--ink);
+		background: var(--surface);
+		border: 1px solid var(--line);
+		font: 700 .85rem/1.2 Arial, sans-serif;
+		cursor: pointer;
+	}
+	.kind-tab.is-active { color: #fffaf2; background: var(--accent-dark); border-color: var(--accent-dark); }
+	.kind-tab:hover:not(.is-active) { border-color: var(--accent); }
 
-		function getLevels(data) {
+	.op-panel {
+		padding: 1.25rem;
+		margin-bottom: 1.5rem;
+		background: var(--surface);
+		border: 1px solid var(--line);
+		border-top: 4px solid var(--accent);
+	}
+	.op-panel h3 { margin-top: 0; color: var(--accent-dark); }
+	.op-form { display: flex; flex-wrap: wrap; align-items: end; gap: 1rem; margin-bottom: .75rem; }
+	.op-settings { margin-bottom: .75rem; }
+	.op-field { display: flex; flex-direction: column; gap: .3rem; font: 700 .75rem/1.2 Arial, sans-serif; color: var(--muted); }
+	.op-field input, .op-field select {
+		padding: .5rem .6rem;
+		font: 1rem/1.2 Georgia, serif;
+		border: 1px solid var(--line);
+		background: var(--paper);
+		color: var(--ink);
+	}
+	.op-field--grow { flex: 1 1 320px; }
+	.op-field--checkbox { flex-direction: row; align-items: center; gap: .5rem; }
+	.op-submit {
+		padding: .6rem 1.25rem;
+		color: #fffaf2;
+		background: var(--accent-dark);
+		border: none;
+		font: 700 .85rem/1.2 Arial, sans-serif;
+		cursor: pointer;
+	}
+	.op-submit:hover { background: var(--accent); }
+	.op-submit--danger { background: #84311f; }
+	.op-hint { margin: .25rem 0 0; color: var(--muted); font-size: .85rem; }
+	.op-error { color: #b3261e; font-weight: 700; }
+
+	.mway-canvas { padding: 1.5rem 0; overflow-x: auto; }
+	.mway-node { display: inline-flex; flex-direction: column; align-items: center; vertical-align: top; }
+	.mway-keys {
+		display: flex;
+		gap: 2px;
+		padding: .4rem .5rem;
+		color: #fffaf2;
+		background: var(--accent-dark);
+		border: 2px solid #f3bf8a;
+		font: 700 .85rem/1.2 Arial, sans-serif;
+		cursor: default;
+	}
+	.mway-key { padding: 0 .35rem; border-right: 1px solid rgba(255, 250, 242, .4); }
+	.mway-key:last-child { border-right: none; }
+	.mway-children { display: flex; gap: 1.5rem; margin-top: 1.25rem; position: relative; }
+	.mway-children::before {
+		content: "";
+		position: absolute;
+		top: -0.75rem;
+		left: 0;
+		right: 0;
+		border-top: 2px solid var(--accent);
+	}
+	.mway-children > .mway-node { position: relative; }
+	.mway-children > .mway-node::before {
+		content: "";
+		position: absolute;
+		top: -0.75rem;
+		left: 50%;
+		height: .75rem;
+		border-left: 2px solid var(--accent);
+	}
+</style>
+
+{% verbatim %}
+<script>
+const { createApp } = Vue;
+
+function getCookie(name) {
+	const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+	return match ? decodeURIComponent(match[2]) : null;
+}
+
+const MwayNode = {
+	name: 'mway-node',
+	props: { node: Object, info: Object },
+	template: `
+		<div class="mway-node" v-if="node">
+			<div class="mway-keys">
+				<span class="mway-key" v-for="k in node.keys" :key="k" :title="tooltipFor(k)">{{ k }}</span>
+			</div>
+			<div class="mway-children" v-if="node.children && node.children.length">
+				<mway-node v-for="(child, i) in node.children" :key="i" :node="child" :info="info"></mway-node>
+			</div>
+		</div>
+	`,
+	methods: {
+		tooltipFor(id) {
+			const row = this.info ? this.info[id] : null;
+			if (!row) return 'id ' + id;
+			return [
+				'id: ' + row.id,
+				'city: ' + row.city_name,
+				'state: ' + row.state,
+				'lat/lon: ' + row.latitude + ', ' + row.longitude,
+				'listed: ' + row.listed,
+			].join('\n');
+		},
+	},
+};
+
+createApp({
+	components: { MwayNode },
+	data() {
+		return {
+			groups: [
+				{
+					key: 'binary',
+					label: 'Binary Trees',
+					kinds: [
+						{ key: 'avl', label: 'AVL' },
+						{ key: 'bst', label: 'BST' },
+						{ key: 'expression', label: 'Expression Tree' },
+					],
+				},
+				{
+					key: 'mway',
+					label: 'M-way Trees',
+					kinds: [
+						{ key: 'bway', label: 'B-way' },
+						{ key: 'mway', label: 'M-way' },
+					],
+				},
+			],
+			activeGroup: 'binary',
+			activeKind: 'avl',
+			sortKey: 'id',
+			order: 4,
+			loading: false,
+			error: null,
+			treeData: null,
+			insertForm: { id: null, city_name: '', state: '', latitude: null, longitude: null, listed: false },
+			deleteId: null,
+			infixInput: '(((3 + 6) * (2 - 4)) + 7)',
+			expressionSummary: '',
+		};
+	},
+	computed: {
+		currentGroup() {
+			return this.groups.find(g => g.key === this.activeGroup);
+		},
+		currentKinds() {
+			return this.currentGroup ? this.currentGroup.kinds : [];
+		},
+		activeGroupLabel() {
+			return this.currentGroup ? this.currentGroup.label : '';
+		},
+		activeKindLabel() {
+			const kind = this.currentKinds.find(k => k.key === this.activeKind);
+			return kind ? kind.label : '';
+		},
+		isBinaryKind() {
+			return this.activeKind === 'avl' || this.activeKind === 'bst';
+		},
+		isMwayKind() {
+			return this.activeKind === 'bway' || this.activeKind === 'mway';
+		},
+		isHeapShaped() {
+			return this.activeKind === 'avl' || this.activeKind === 'bst' || this.activeKind === 'expression';
+		},
+		levels() {
+			if (!this.treeData || !this.treeData.structure) return [];
+			return this.getLevels(this.treeData.structure);
+		},
+		summaryText() {
+			if (!this.treeData) return '';
+			if (this.activeKind === 'expression') {
+				return 'height ' + this.treeData.height + ' | size ' + this.treeData.size;
+			}
+			return this.treeData.size + ' nodes | height ' + this.treeData.height +
+				(this.treeData.order ? ' | order ' + this.treeData.order : '');
+		},
+	},
+	methods: {
+		selectGroup(groupKey) {
+			if (this.activeGroup === groupKey) return;
+			this.activeGroup = groupKey;
+			const firstKind = this.groups.find(g => g.key === groupKey).kinds[0];
+			this.selectKind(firstKind.key);
+		},
+		selectKind(kindKey) {
+			this.activeKind = kindKey;
+			this.error = null;
+			this.treeData = null;
+			this.expressionSummary = '';
+			if (kindKey !== 'expression') {
+				this.loadTree();
+			}
+		},
+		apiUrl(kind) {
+			const params = new URLSearchParams();
+			if (this.isBinaryKind) params.set('sort_by', this.sortKey);
+			if (this.isMwayKind) params.set('order', this.order);
+			const query = params.toString();
+			return `/api/trees/${kind}/` + (query ? `?${query}` : '');
+		},
+		async loadTree() {
+			if (this.activeKind === 'expression') return;
+			this.loading = true;
+			this.error = null;
+			try {
+				const response = await fetch(this.apiUrl(this.activeKind));
+				const payload = await response.json();
+				if (!response.ok) throw new Error(payload.error || 'Failed to load tree');
+				this.treeData = payload;
+				this.$nextTick(this.drawHeapLines);
+			} catch (err) {
+				this.error = err.message;
+			} finally {
+				this.loading = false;
+			}
+		},
+		buildInsertBody() {
+			const extra = {};
+			if (this.insertForm.city_name) extra.city_name = this.insertForm.city_name;
+			if (this.insertForm.state) extra.state = this.insertForm.state;
+			if (this.insertForm.latitude !== null && this.insertForm.latitude !== '') extra.latitude = this.insertForm.latitude;
+			if (this.insertForm.longitude !== null && this.insertForm.longitude !== '') extra.longitude = this.insertForm.longitude;
+			if (this.insertForm.listed) extra.listed = true;
+			return {
+				id: this.insertForm.id,
+				sort_by: this.sortKey,
+				order: this.order,
+				extra_fields: extra,
+			};
+		},
+		async submitInsert() {
+			if (this.insertForm.id === null || this.insertForm.id === '') return;
+			this.loading = true;
+			this.error = null;
+			try {
+				const response = await fetch(`/api/trees/${this.activeKind}/`, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+					body: JSON.stringify(this.buildInsertBody()),
+				});
+				const payload = await response.json();
+				if (!response.ok) throw new Error(payload.error || 'Insert failed');
+				this.treeData = payload;
+				this.insertForm = { id: null, city_name: '', state: '', latitude: null, longitude: null, listed: false };
+				this.$nextTick(this.drawHeapLines);
+			} catch (err) {
+				this.error = err.message;
+			} finally {
+				this.loading = false;
+			}
+		},
+		async submitDelete() {
+			if (this.deleteId === null || this.deleteId === '') return;
+			this.loading = true;
+			this.error = null;
+			try {
+				const response = await fetch(`/api/trees/${this.activeKind}/`, {
+					method: 'DELETE',
+					headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+					body: JSON.stringify({ id: this.deleteId, sort_by: this.sortKey, order: this.order }),
+				});
+				const payload = await response.json();
+				if (!response.ok) throw new Error(payload.error || 'Delete failed');
+				this.treeData = payload;
+				this.deleteId = null;
+				this.$nextTick(this.drawHeapLines);
+			} catch (err) {
+				this.error = err.message;
+			} finally {
+				this.loading = false;
+			}
+		},
+		async evaluateExpression() {
+			if (!this.infixInput.trim()) return;
+			this.loading = true;
+			this.error = null;
+			try {
+				const response = await fetch('/api/trees/expression/', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+					body: JSON.stringify({ infix: this.infixInput }),
+				});
+				const payload = await response.json();
+				if (!response.ok) throw new Error(payload.error || 'Evaluation failed');
+				this.treeData = payload;
+				this.expressionSummary = `infix: ${payload.infix} | prefix: ${payload.prefix} | postfix: ${payload.postfix} | result: ${payload.result}`;
+				this.$nextTick(this.drawHeapLines);
+			} catch (err) {
+				this.error = err.message;
+			} finally {
+				this.loading = false;
+			}
+		},
+		getLevels(data) {
 			const levels = [];
 			let levelStart = 0;
 			let slotCount = 1;
-
 			while (levelStart < data.length) {
 				levels.push(data.slice(levelStart, levelStart + slotCount));
 				levelStart += slotCount;
 				slotCount *= 2;
 			}
-
 			return levels;
-		}
+		},
+		nodeLabel(value) {
+			if (value === null || value === undefined) return '';
+			if (typeof value === 'object') {
+				return value.city_name !== undefined ? value.city_name : value.id;
+			}
+			return value;
+		},
+		nodeTooltip(value) {
+			if (value === null || value === undefined) return '';
+			if (typeof value === 'object') {
+				return [
+					'id: ' + value.id,
+					'city: ' + value.city_name,
+					'state: ' + value.state,
+					'lat/lon: ' + value.latitude + ', ' + value.longitude,
+					'listed: ' + value.listed,
+				].join('\n');
+			}
+			return String(value);
+		},
+		drawHeapLines() {
+			const canvas = this.$refs.heapCanvas;
+			const svg = this.$refs.heapLines;
+			if (!canvas || !svg) return;
+			const canvasBounds = canvas.getBoundingClientRect();
+			svg.setAttribute('width', canvas.clientWidth);
+			svg.setAttribute('height', canvas.clientHeight);
+			svg.setAttribute('viewBox', `0 0 ${canvas.clientWidth} ${canvas.clientHeight}`);
+			svg.innerHTML = '';
 
-		function renderTree() {
-			const levels = getLevels(treeData);
-			const leafSlots = 2 ** (levels.length - 1);
-			treeLevels.innerHTML = "";
-			treeLevels.style.setProperty("--leaf-slots", leafSlots);
-
-			levels.forEach((level, levelIndex) => {
-				const row = document.createElement("div");
-				row.className = "tree-level";
-				row.style.setProperty("--level-slots", 2 ** levelIndex);
-
-				level.forEach((value, slotIndex) => {
-					const slot = document.createElement("div");
-					slot.className = "tree-slot";
-					slot.dataset.index = levelIndex === 0
-						? "0"
-						: String((2 ** levelIndex) - 1 + slotIndex);
-
-					if (value !== null && value !== undefined) {
-						const node = document.createElement("div");
-						node.className = "tree-node";
-						node.textContent = value;
-						node.setAttribute("aria-label", `Node ${value}`);
-						slot.appendChild(node);
-					}
-
-					row.appendChild(slot);
-				});
-
-				while (row.children.length < 2 ** levelIndex) {
-					const emptySlot = document.createElement("div");
-					emptySlot.className = "tree-slot";
-					row.appendChild(emptySlot);
-				}
-
-				treeLevels.appendChild(row);
-			});
-
-			document.querySelector("#tree-summary").textContent =
-				`${treeData.length} nodes | ${levels.length} levels`;
-			drawConnections();
-		}
-
-		function drawConnections() {
-			const canvasBounds = treeCanvas.getBoundingClientRect();
-			treeLines.setAttribute("width", treeCanvas.clientWidth);
-			treeLines.setAttribute("height", treeCanvas.clientHeight);
-			treeLines.setAttribute("viewBox", `0 0 ${treeCanvas.clientWidth} ${treeCanvas.clientHeight}`);
-			treeLines.innerHTML = "";
-
-			treeCanvas.querySelectorAll(".tree-node").forEach((node) => {
+			canvas.querySelectorAll('.tree-node').forEach((node) => {
 				const nodeIndex = Number(node.parentElement.dataset.index);
 				[2 * nodeIndex + 1, 2 * nodeIndex + 2].forEach((childIndex) => {
-					const child = treeCanvas.querySelector(`[data-index="${childIndex}"] .tree-node`);
+					const child = canvas.querySelector(`[data-index="${childIndex}"] .tree-node`);
 					if (!child) return;
-
 					const parentBounds = node.getBoundingClientRect();
 					const childBounds = child.getBoundingClientRect();
-					const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-					line.setAttribute("x1", parentBounds.left + parentBounds.width / 2 - canvasBounds.left);
-					line.setAttribute("y1", parentBounds.bottom - canvasBounds.top);
-					line.setAttribute("x2", childBounds.left + childBounds.width / 2 - canvasBounds.left);
-					line.setAttribute("y2", childBounds.top - canvasBounds.top);
-					treeLines.appendChild(line);
+					const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+					line.setAttribute('x1', parentBounds.left + parentBounds.width / 2 - canvasBounds.left);
+					line.setAttribute('y1', parentBounds.bottom - canvasBounds.top);
+					line.setAttribute('x2', childBounds.left + childBounds.width / 2 - canvasBounds.left);
+					line.setAttribute('y2', childBounds.top - canvasBounds.top);
+					svg.appendChild(line);
 				});
 			});
-		}
-
-		async function loadTree() {
-			const response = await fetch("/api/trees/avl/");
-			
-			const payload = await response.json();
-			console.log('loadTree response:', response);
-			console.log('loadTree payload:', payload);
-			return;
-			treeData = payload.structure;
-			renderTree();
-		}
-
-		loadTree();
-
-		//renderTree();
-		window.addEventListener("resize", drawConnections);
-	</script>
+		},
+	},
+	mounted() {
+		this.loadTree();
+		window.addEventListener('resize', this.drawHeapLines);
+	},
+}).mount('#tree-app');
+</script>
+{% endverbatim %}
 {% endblock %}
