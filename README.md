@@ -26,6 +26,7 @@ This project provides clean, educational implementations of common data structur
 ```
 00-code/
     ├── config/                     # Django project configuration
+    │   ├── __init__.py
     │   ├── asgi.py                 # ASGI entry point for asynchronous servers
     │   ├── settings.py             # Application, database, and template settings
     │   ├── urls.py                 # Main URL routes, including the home page
@@ -36,56 +37,76 @@ This project provides clean, educational implementations of common data structur
     │   │   ├── binary_tree.py      # BinaryNode and BinaryTree classes
     │   │   ├── expression_tree.py  # Tree for evaluating expressions
     │   │   ├── search_binary_tree.py # Binary search tree implementation
-    │   │   ├── bmway_tree.py       # 
-    │   │   ├── mway_search_tree.py # 
+    │   │   ├── bmway_tree.py       # B-way tree implementation
+    │   │   ├── mway_search_tree.py # M-way search tree implementation
     │   │   └── data/               # Binary tree test data
+    │   ├── data/                   # Common data structures for graphs and logistics
+    │   │   ├── __init__.py
+    │   │   ├── city_node.py        # City node representation
+    │   │   └── route_edge.py       # Route edge representation
     │   ├── graph/                  # Graph data structure and datasets
-    │   │   ├── graph.py            # 
-    │   │   ├── digraph.py          # 
-    │   │   ├── wgraph.py           # 
-    │   │   ├── graph_algorithms.py # 
+    │   │   ├── graph.py            # Undirected graph implementation
+    │   │   ├── digraph.py          # Directed graph implementation
+    │   │   ├── wgraph.py           # Weighted graph implementation
+    │   │   ├── graph_algorithms.py # Graph algorithms (DFS, BFS, etc.)
     │   │   └── data/               # Graph test data
     │   │       ├── adjacent_with_weight.py
     │   │       ├── edge.py
     │   │       └── union_find.py
     │   └── heap/                   # Heap data structure
-    │   │   ├── i_heap.py           # 
-    │   │   ├── abstract_heap.py    # 
-    │   │   ├── max_heap.py         # 
-    │   │   ├── min_heap.py         # 
+    │       ├── i_heap.py           # Heap interface
+    │       ├── abstract_heap.py    # Abstract heap base class
+    │       ├── max_heap.py         # Max heap implementation
+    │       └── min_heap.py         # Min heap implementation
     ├── exercices/                  # Course exercises and practice projects
     │   ├── pep8.py                 # PEP8 coding standards examples
     │   ├── tic_tac_toe.py          # Tic-Tac-Toe game
     │   └── tic_tac_toe_strategy.py # Tic-Tac-Toe strategy using a binary tree
     ├── logistics/                  # Django application for the web interface
+    │   ├── data/                   # Database files and test data
+    │   │   ├── edges.json
+    │   │   ├── edges_copy.json
+    │   │   ├── nodes.json
+    │   │   ├── nodes_copy.json
+    │   │   ├── logistics_mysql.sql
+    │   │   └── logistics_mssql.sql
     │   ├── migrations/             # Database migration files
-    │   ├── static/logistics/
-    │   ├   └── css/
-    │   │       └── styles.css
-    │   ├   └── js/
-    │   │       └── menu.js
-    │   ├   └── images/
-    │   ├── services/              # MODELS (ORM)
-    │   │   └── graph_service.py
-    │   │   └── heap_service.py
-    │   │   └── tree_service.py
-    │   ├── models/                # MODELS (ORM)
-    │   │   └── node.py
-    │   │   └── route.py
-    │   ├── views/                 # VIEWS (Controllers)
-    │   │   └── views.py           # Views that render the web pages
-    │   ├── templates/logistics/   # TEMPLATES (Views)
-    │   │   ├── base.html          # Main project home page
-    │   │   ├── graph_view.html    # Graph visualization template
-    │   │   └── tree_view.html     # Tree visualization template
-    │   ├── admin.py               # Django administration configuration
-    │   ├── apps.py                # Application configuration
-    │   └── tests.py               # Application tests
-    ├── db.sqlite3                 # Local SQLite database
-    ├── main.py                    # Main Python entry point
-    ├── manage.py                  # Django command-line utility
-    ├── README.md                  # Project documentation
-    └── requirements.txt           # Python project dependencies
+    │   │   └── __init__.py
+    │   ├── models/                 # Django ORM models
+    │   │   ├── __init__.py
+    │   │   ├── node.py             # Node model
+    │   │   └── route.py            # Route model
+    │   ├── services/               # Business logic services
+    │   │   ├── graph_service.py    # Graph service methods
+    │   │   ├── heap_service.py     # Heap service methods
+    │   │   └── tree_service.py     # Tree service methods
+    │   ├── static/logistics/       # Static files (CSS, JS, images)
+    │   │   ├── css/
+    │   │   │   └── styles.css
+    │   │   ├── js/
+    │   │   │   └── menu.js
+    │   │   └── images/
+    │   ├── views/                  # VIEWS (Controllers)
+    │   │   ├── __init__.py
+    │   │   ├── views.py            # Views that render the web pages
+    │   │   └── api_views.py        # API views
+    │   ├── templates/logistics/    # TEMPLATES (Views)
+    │   │   ├── base.html           # Base template
+    │   │   ├── index.html          # Main project home page
+    │   │   ├── graph_view.html     # Graph visualization template
+    │   │   ├── tree_view.html      # Tree visualization template
+    │   │   ├── heap_view.html      # Heap visualization template
+    │   │   └── partials/
+    │   │       └── menu.html       # Navigation menu partial
+    │   ├── __init__.py
+    │   ├── admin.py                # Django administration configuration
+    │   ├── apps.py                 # Application configuration
+    │   └── tests.py                # Application tests
+    ├── db.sqlite3                  # Local SQLite database
+    ├── main.py                     # Main Python entry point
+    ├── manage.py                   # Django command-line utility
+    ├── README.md                   # Project documentation
+    └── requirements.txt            # Python project dependencies
 ```
 
 ## 🌳 Binary Tree Implementation
