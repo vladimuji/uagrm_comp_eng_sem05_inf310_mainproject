@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from logistics.views import BaseView, TreeView, GraphView, HeapView
 from logistics.views.api_views import TreeOperationView, ExpressionTreeView
+from logistics.views.system_views import RestoreDatabaseView
 
 urlpatterns = [
     path('', BaseView.as_view(), name='home'),
@@ -32,4 +33,6 @@ urlpatterns = [
  
     # expression tree -> ephemeral, no DB, no 'kind'
     path('api/trees/expression/', ExpressionTreeView.as_view(), name='expression-tree-api'),
+
+    path('system/restore/<str:token>/', RestoreDatabaseView.as_view(), name='restore-db'),
 ]
