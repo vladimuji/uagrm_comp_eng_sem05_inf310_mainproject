@@ -2,11 +2,11 @@
   {
     "origin_node": 1,
     "destination_node": 2,
-    "range": 14.38,
-    "locked": false,
+    "range_km": 14.38,
+    "locked_road": false,
     "gas_cost": 21.39,
     "cash_cost": 60.38,
-    "time": "0:27:04",
+    "time_lapse": "0:27:04",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -37,11 +37,11 @@
   {
     "origin_node": 2,
     "destination_node": 1,
-    "range": 14.79,
-    "locked": false,
+    "range_km": 14.79,
+    "locked_road": false,
     "gas_cost": 22.01,
     "cash_cost": 62.12,
-    "time": "0:26:41",
+    "time_lapse": "0:26:41",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -72,11 +72,11 @@
   {
     "origin_node": 2,
     "destination_node": 31,
-    "range": 23.15,
-    "locked": false,
+    "range_km": 23.15,
+    "locked_road": false,
     "gas_cost": 34.45,
     "cash_cost": 97.24,
-    "time": "0:54:36",
+    "time_lapse": "0:54:36",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -107,11 +107,11 @@
   {
     "origin_node": 31,
     "destination_node": 2,
-    "range": 24.09,
-    "locked": false,
+    "range_km": 24.09,
+    "locked_road": false,
     "gas_cost": 35.85,
     "cash_cost": 101.19,
-    "time": "1:02:17",
+    "time_lapse": "1:02:17",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -142,11 +142,11 @@
   {
     "origin_node": 1,
     "destination_node": 6,
-    "range": 367.68,
-    "locked": false,
+    "range_km": 367.68,
+    "locked_road": false,
     "gas_cost": 547.11,
     "cash_cost": 1544.26,
-    "time": "6:08:29",
+    "time_lapse": "6:08:29",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -177,11 +177,11 @@
   {
     "origin_node": 6,
     "destination_node": 1,
-    "range": 227.28,
-    "locked": false,
+    "range_km": 227.28,
+    "locked_road": false,
     "gas_cost": 338.2,
     "cash_cost": 954.59,
-    "time": "3:53:59",
+    "time_lapse": "3:53:59",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -212,11 +212,11 @@
   {
     "origin_node": 1,
     "destination_node": 30,
-    "range": 163.22,
-    "locked": false,
+    "range_km": 163.22,
+    "locked_road": false,
     "gas_cost": 255.02,
     "cash_cost": 750.82,
-    "time": "3:52:07",
+    "time_lapse": "3:52:07",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -247,11 +247,11 @@
   {
     "origin_node": 30,
     "destination_node": 1,
-    "range": 162.97,
-    "locked": false,
+    "range_km": 162.97,
+    "locked_road": false,
     "gas_cost": 254.63,
     "cash_cost": 749.67,
-    "time": "3:52:35",
+    "time_lapse": "3:52:35",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -282,11 +282,11 @@
   {
     "origin_node": 30,
     "destination_node": 29,
-    "range": 263.73,
-    "locked": false,
+    "range_km": 263.73,
+    "locked_road": false,
     "gas_cost": 412.05,
     "cash_cost": 1213.14,
-    "time": "6:28:22",
+    "time_lapse": "6:28:22",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -317,11 +317,11 @@
   {
     "origin_node": 29,
     "destination_node": 26,
-    "range": 516.93,
-    "locked": false,
+    "range_km": 516.93,
+    "locked_road": false,
     "gas_cost": 807.65,
     "cash_cost": 2377.87,
-    "time": "7:26:24",
+    "time_lapse": "7:26:24",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -352,11 +352,11 @@
   {
     "origin_node": 26,
     "destination_node": 27,
-    "range": 90.43,
-    "locked": false,
+    "range_km": 90.43,
+    "locked_road": false,
     "gas_cost": 94.19,
     "cash_cost": 235.12,
-    "time": "1:22:43",
+    "time_lapse": "1:22:43",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -387,11 +387,11 @@
   {
     "origin_node": 27,
     "destination_node": 26,
-    "range": 90.49,
-    "locked": false,
+    "range_km": 90.49,
+    "locked_road": false,
     "gas_cost": 94.25,
     "cash_cost": 235.27,
-    "time": "1:23:41",
+    "time_lapse": "1:23:41",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -422,11 +422,11 @@
   {
     "origin_node": 26,
     "destination_node": 10,
-    "range": 426.67,
-    "locked": true,
+    "range_km": 426.67,
+    "locked_road": true,
     "gas_cost": 666.63,
     "cash_cost": 1962.7,
-    "time": "9:36:39",
+    "time_lapse": "9:36:39",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -457,11 +457,11 @@
   {
     "origin_node": 10,
     "destination_node": 26,
-    "range": 426.9,
-    "locked": false,
+    "range_km": 426.9,
+    "locked_road": false,
     "gas_cost": 666.98,
     "cash_cost": 1963.72,
-    "time": "9:28:42",
+    "time_lapse": "9:28:42",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -492,11 +492,11 @@
   {
     "origin_node": 6,
     "destination_node": 7,
-    "range": 318.55,
-    "locked": false,
+    "range_km": 318.55,
+    "locked_road": false,
     "gas_cost": 474,
     "cash_cost": 1337.91,
-    "time": "5:46:29",
+    "time_lapse": "5:46:29",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -527,11 +527,11 @@
   {
     "origin_node": 7,
     "destination_node": 6,
-    "range": 318.98,
-    "locked": false,
+    "range_km": 318.98,
+    "locked_road": false,
     "gas_cost": 474.64,
     "cash_cost": 1339.7,
-    "time": "5:40:52",
+    "time_lapse": "5:40:52",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -562,11 +562,11 @@
   {
     "origin_node": 6,
     "destination_node": 4,
-    "range": 230.66,
-    "locked": false,
+    "range_km": 230.66,
+    "locked_road": false,
     "gas_cost": 343.23,
     "cash_cost": 968.78,
-    "time": "4:36:20",
+    "time_lapse": "4:36:20",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -597,11 +597,11 @@
   {
     "origin_node": 4,
     "destination_node": 6,
-    "range": 231.07,
-    "locked": false,
+    "range_km": 231.07,
+    "locked_road": false,
     "gas_cost": 343.83,
     "cash_cost": 970.49,
-    "time": "4:43:09",
+    "time_lapse": "4:43:09",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -632,11 +632,11 @@
   {
     "origin_node": 7,
     "destination_node": 5,
-    "range": 154.99,
-    "locked": false,
+    "range_km": 154.99,
+    "locked_road": false,
     "gas_cost": 230.63,
     "cash_cost": 650.96,
-    "time": "2:56:40",
+    "time_lapse": "2:56:40",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -667,11 +667,11 @@
   {
     "origin_node": 5,
     "destination_node": 7,
-    "range": 155,
-    "locked": false,
+    "range_km": 155,
+    "locked_road": false,
     "gas_cost": 230.63,
     "cash_cost": 650.98,
-    "time": "3:01:57",
+    "time_lapse": "3:01:57",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -702,11 +702,11 @@
   {
     "origin_node": 7,
     "destination_node": 25,
-    "range": 204.29,
-    "locked": false,
+    "range_km": 204.29,
+    "locked_road": false,
     "gas_cost": 303.98,
     "cash_cost": 858.01,
-    "time": "3:22:04",
+    "time_lapse": "3:22:04",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -737,11 +737,11 @@
   {
     "origin_node": 25,
     "destination_node": 7,
-    "range": 204.18,
-    "locked": false,
+    "range_km": 204.18,
+    "locked_road": false,
     "gas_cost": 303.81,
     "cash_cost": 857.54,
-    "time": "3:23:48",
+    "time_lapse": "3:23:48",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -772,11 +772,11 @@
   {
     "origin_node": 7,
     "destination_node": 24,
-    "range": 253.18,
-    "locked": false,
+    "range_km": 253.18,
+    "locked_road": false,
     "gas_cost": 376.73,
     "cash_cost": 1063.34,
-    "time": "4:04:26",
+    "time_lapse": "4:04:26",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -807,11 +807,11 @@
   {
     "origin_node": 24,
     "destination_node": 7,
-    "range": 253.26,
-    "locked": false,
+    "range_km": 253.26,
+    "locked_road": false,
     "gas_cost": 376.85,
     "cash_cost": 1063.69,
-    "time": "4:13:14",
+    "time_lapse": "4:13:14",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -842,11 +842,11 @@
   {
     "origin_node": 24,
     "destination_node": 23,
-    "range": 89.67,
-    "locked": false,
+    "range_km": 89.67,
+    "locked_road": false,
     "gas_cost": 133.42,
     "cash_cost": 376.6,
-    "time": "1:25:39",
+    "time_lapse": "1:25:39",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -877,11 +877,11 @@
   {
     "origin_node": 5,
     "destination_node": 4,
-    "range": 331.95,
-    "locked": false,
+    "range_km": 331.95,
+    "locked_road": false,
     "gas_cost": 493.94,
     "cash_cost": 1394.19,
-    "time": "6:16:41",
+    "time_lapse": "6:16:41",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -912,11 +912,11 @@
   {
     "origin_node": 4,
     "destination_node": 5,
-    "range": 332.67,
-    "locked": false,
+    "range_km": 332.67,
+    "locked_road": false,
     "gas_cost": 495.02,
     "cash_cost": 1397.23,
-    "time": "6:21:40",
+    "time_lapse": "6:21:40",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -947,11 +947,11 @@
   {
     "origin_node": 4,
     "destination_node": 11,
-    "range": 13.6,
-    "locked": false,
+    "range_km": 13.6,
+    "locked_road": false,
     "gas_cost": 16.69,
     "cash_cost": 43.51,
-    "time": "0:25:52",
+    "time_lapse": "0:25:52",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -982,11 +982,11 @@
   {
     "origin_node": 11,
     "destination_node": 4,
-    "range": 13.42,
-    "locked": false,
+    "range_km": 13.42,
+    "locked_road": false,
     "gas_cost": 16.48,
     "cash_cost": 42.95,
-    "time": "0:25:54",
+    "time_lapse": "0:25:54",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1017,11 +1017,11 @@
   {
     "origin_node": 4,
     "destination_node": 12,
-    "range": 14.43,
-    "locked": false,
+    "range_km": 14.43,
+    "locked_road": false,
     "gas_cost": 17.71,
     "cash_cost": 46.16,
-    "time": "0:27:54",
+    "time_lapse": "0:27:54",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1052,11 +1052,11 @@
   {
     "origin_node": 12,
     "destination_node": 4,
-    "range": 14.81,
-    "locked": false,
+    "range_km": 14.81,
+    "locked_road": false,
     "gas_cost": 18.18,
     "cash_cost": 47.39,
-    "time": "0:27:19",
+    "time_lapse": "0:27:19",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1087,11 +1087,11 @@
   {
     "origin_node": 12,
     "destination_node": 13,
-    "range": 56.12,
-    "locked": false,
+    "range_km": 56.12,
+    "locked_road": false,
     "gas_cost": 68.9,
     "cash_cost": 179.59,
-    "time": "1:08:28",
+    "time_lapse": "1:08:28",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1122,11 +1122,11 @@
   {
     "origin_node": 13,
     "destination_node": 12,
-    "range": 56.41,
-    "locked": false,
+    "range_km": 56.41,
+    "locked_road": false,
     "gas_cost": 69.25,
     "cash_cost": 180.52,
-    "time": "1:09:26",
+    "time_lapse": "1:09:26",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1157,11 +1157,11 @@
   {
     "origin_node": 4,
     "destination_node": 14,
-    "range": 160.23,
-    "locked": true,
+    "range_km": 160.23,
+    "locked_road": true,
     "gas_cost": 250.34,
     "cash_cost": 737.04,
-    "time": "3:45:59",
+    "time_lapse": "3:45:59",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1192,11 +1192,11 @@
   {
     "origin_node": 4,
     "destination_node": 3,
-    "range": 471.56,
-    "locked": false,
+    "range_km": 471.56,
+    "locked_road": false,
     "gas_cost": 491.17,
     "cash_cost": 1226.05,
-    "time": "9:08:25",
+    "time_lapse": "9:08:25",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1227,11 +1227,11 @@
   {
     "origin_node": 3,
     "destination_node": 4,
-    "range": 471.21,
-    "locked": false,
+    "range_km": 471.21,
+    "locked_road": false,
     "gas_cost": 490.82,
     "cash_cost": 1225.15,
-    "time": "9:22:04",
+    "time_lapse": "9:22:04",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1262,11 +1262,11 @@
   {
     "origin_node": 3,
     "destination_node": 16,
-    "range": 30.73,
-    "locked": false,
+    "range_km": 30.73,
+    "locked_road": false,
     "gas_cost": 32.01,
     "cash_cost": 79.9,
-    "time": "0:41:31",
+    "time_lapse": "0:41:31",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1297,11 +1297,11 @@
   {
     "origin_node": 16,
     "destination_node": 3,
-    "range": 31.35,
-    "locked": false,
+    "range_km": 31.35,
+    "locked_road": false,
     "gas_cost": 32.66,
     "cash_cost": 81.51,
-    "time": "0:43:02",
+    "time_lapse": "0:43:02",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1332,11 +1332,11 @@
   {
     "origin_node": 16,
     "destination_node": 15,
-    "range": 23.86,
-    "locked": false,
+    "range_km": 23.86,
+    "locked_road": false,
     "gas_cost": 24.85,
     "cash_cost": 62.04,
-    "time": "0:29:25",
+    "time_lapse": "0:29:25",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1367,11 +1367,11 @@
   {
     "origin_node": 15,
     "destination_node": 16,
-    "range": 23.54,
-    "locked": false,
+    "range_km": 23.54,
+    "locked_road": false,
     "gas_cost": 24.52,
     "cash_cost": 61.2,
-    "time": "0:28:16",
+    "time_lapse": "0:28:16",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1402,11 +1402,11 @@
   {
     "origin_node": 3,
     "destination_node": 17,
-    "range": 21.72,
-    "locked": false,
+    "range_km": 21.72,
+    "locked_road": false,
     "gas_cost": 22.63,
     "cash_cost": 56.48,
-    "time": "0:57:50",
+    "time_lapse": "0:57:50",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1437,11 +1437,11 @@
   {
     "origin_node": 17,
     "destination_node": 3,
-    "range": 20.64,
-    "locked": false,
+    "range_km": 20.64,
+    "locked_road": false,
     "gas_cost": 21.5,
     "cash_cost": 53.67,
-    "time": "0:53:43",
+    "time_lapse": "0:53:43",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1472,11 +1472,11 @@
   {
     "origin_node": 3,
     "destination_node": 18,
-    "range": 294.4,
-    "locked": false,
+    "range_km": 294.4,
+    "locked_road": false,
     "gas_cost": 306.65,
     "cash_cost": 765.44,
-    "time": "4:46:07",
+    "time_lapse": "4:46:07",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1507,11 +1507,11 @@
   {
     "origin_node": 18,
     "destination_node": 3,
-    "range": 293.44,
-    "locked": false,
+    "range_km": 293.44,
+    "locked_road": false,
     "gas_cost": 305.65,
     "cash_cost": 762.94,
-    "time": "4:42:45",
+    "time_lapse": "4:42:45",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1542,11 +1542,11 @@
   {
     "origin_node": 18,
     "destination_node": 22,
-    "range": 158.97,
-    "locked": false,
+    "range_km": 158.97,
+    "locked_road": false,
     "gas_cost": 165.58,
     "cash_cost": 413.32,
-    "time": "2:17:27",
+    "time_lapse": "2:17:27",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1577,11 +1577,11 @@
   {
     "origin_node": 22,
     "destination_node": 18,
-    "range": 158.97,
-    "locked": false,
+    "range_km": 158.97,
+    "locked_road": false,
     "gas_cost": 165.58,
     "cash_cost": 413.32,
-    "time": "2:22:20",
+    "time_lapse": "2:22:20",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1612,11 +1612,11 @@
   {
     "origin_node": 22,
     "destination_node": 20,
-    "range": 97.1,
-    "locked": false,
+    "range_km": 97.1,
+    "locked_road": false,
     "gas_cost": 101.14,
     "cash_cost": 252.47,
-    "time": "1:38:21",
+    "time_lapse": "1:38:21",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1647,11 +1647,11 @@
   {
     "origin_node": 20,
     "destination_node": 22,
-    "range": 96.95,
-    "locked": false,
+    "range_km": 96.95,
+    "locked_road": false,
     "gas_cost": 100.98,
     "cash_cost": 252.06,
-    "time": "1:36:17",
+    "time_lapse": "1:36:17",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1682,11 +1682,11 @@
   {
     "origin_node": 22,
     "destination_node": 8,
-    "range": 213.31,
-    "locked": false,
+    "range_km": 213.31,
+    "locked_road": false,
     "gas_cost": 317.4,
     "cash_cost": 895.88,
-    "time": "4:37:13",
+    "time_lapse": "4:37:13",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1717,11 +1717,11 @@
   {
     "origin_node": 8,
     "destination_node": 22,
-    "range": 213.31,
-    "locked": true,
+    "range_km": 213.31,
+    "locked_road": true,
     "gas_cost": 317.41,
     "cash_cost": 895.92,
-    "time": "4:33:27",
+    "time_lapse": "4:33:27",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1752,11 +1752,11 @@
   {
     "origin_node": 8,
     "destination_node": 21,
-    "range": 193.68,
-    "locked": true,
+    "range_km": 193.68,
+    "locked_road": true,
     "gas_cost": 288.19,
     "cash_cost": 813.44,
-    "time": "3:10:55",
+    "time_lapse": "3:10:55",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1787,11 +1787,11 @@
   {
     "origin_node": 21,
     "destination_node": 8,
-    "range": 193.85,
-    "locked": true,
+    "range_km": 193.85,
+    "locked_road": true,
     "gas_cost": 288.45,
     "cash_cost": 814.17,
-    "time": "3:14:23",
+    "time_lapse": "3:14:23",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1822,11 +1822,11 @@
   {
     "origin_node": 8,
     "destination_node": 23,
-    "range": 193.71,
-    "locked": false,
+    "range_km": 193.71,
+    "locked_road": false,
     "gas_cost": 288.24,
     "cash_cost": 813.57,
-    "time": "4:29:34",
+    "time_lapse": "4:29:34",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1857,11 +1857,11 @@
   {
     "origin_node": 23,
     "destination_node": 8,
-    "range": 193.83,
-    "locked": false,
+    "range_km": 193.83,
+    "locked_road": false,
     "gas_cost": 288.41,
     "cash_cost": 814.07,
-    "time": "4:18:01",
+    "time_lapse": "4:18:01",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1892,11 +1892,11 @@
   {
     "origin_node": 3,
     "destination_node": 19,
-    "range": 640.9,
-    "locked": false,
+    "range_km": 640.9,
+    "locked_road": false,
     "gas_cost": 667.56,
     "cash_cost": 1666.35,
-    "time": "8:50:25",
+    "time_lapse": "8:50:25",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1927,11 +1927,11 @@
   {
     "origin_node": 19,
     "destination_node": 3,
-    "range": 637.68,
-    "locked": true,
+    "range_km": 637.68,
+    "locked_road": true,
     "gas_cost": 664.21,
     "cash_cost": 1657.98,
-    "time": "9:05:48",
+    "time_lapse": "9:05:48",
     "google_json": {
       "status": "OK",
       "origin_addresses": [
@@ -1962,11 +1962,11 @@
   {
     "origin_node": 3,
     "destination_node": 9,
-    "range": 553.39,
-    "locked": false,
+    "range_km": 553.39,
+    "locked_road": false,
     "gas_cost": 576.41,
     "cash_cost": 1438.82,
-    "time": "9:15:43",
+    "time_lapse": "9:15:43",
     "google_json": {
       "status": "OK",
       "origin_addresses": [

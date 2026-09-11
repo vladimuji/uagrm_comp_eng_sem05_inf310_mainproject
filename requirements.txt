@@ -2,3 +2,5 @@ Django==6.1.1
 gunicorn
 python-dotenv
 mysqlclient
+mssql-django==1.8.0
+pyodbc

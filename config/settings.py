@@ -80,20 +80,32 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
-DB_ENGINE = os.getenv(
-    "DB_ENGINE",
-    "django.db.backends.sqlite3",
-)
+DB_ENGINE_KIND = os.getenv("DB_ENGINE_KIND", "sqlite")
 
-if DB_ENGINE == "django.db.backends.mysql":
+if DB_ENGINE_KIND == "mysql":
     DATABASES = {
         "default": {
-            "ENGINE": DB_ENGINE,
-            "NAME": os.environ["DB_NAME"],
-            "USER": os.environ["DB_USER"],
-            "PASSWORD": os.environ["DB_PASSWORD"],
-            "HOST": os.getenv("DB_HOST", "localhost"),
-            "PORT": os.getenv("DB_PORT", "3306"),
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": os.environ["MYSQL_NAME"],
+            "USER": os.environ["MYSQL_USER"],
+            "PASSWORD": os.environ["MYSQL_PASSWORD"],
+            "HOST": os.getenv("MYSQL_HOST", "localhost"),
+            "PORT": os.getenv("MYSQL_PORT", "3306"),
+        }
+    }
+elif DB_ENGINE_KIND == "mssql":
+    DATABASES = {
+        "default": {
+            "ENGINE": "mssql",
+            "NAME": os.environ["MSSQL_NAME"],
+            "USER": os.environ["MSSQL_USER"],
+            "PASSWORD": os.environ["MSSQL_PASSWORD"],
+            "HOST": os.getenv("MSSQL_HOST", "localhost"),
+            "PORT": os.getenv("MSSQL_PORT", "1433"),
+            "OPTIONS": {
+                "driver": "ODBC Driver 18 for SQL Server",
+                "extra_params": "TrustServerCertificate=yes;",
+            },
         }
     }
 else:

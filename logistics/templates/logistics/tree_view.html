@@ -39,10 +39,16 @@
 
 {% block extra_scripts %}
 	<script>
-		const treeData = [100, 50, 150, 25, 75, 125, 175, 10, 30, 60, 90];
+		//const treeData = [100, 50, 150, 25, 75, 125, 175, 10, 30, 60, 90];
+		/*const treeData = [40, 88, 98, 15, 5, 4, 3, 2, 1, 99, 55, 33, 11, 14, 200, 73, -12,
+            120, -45, 67, 250, -89, 310, 27, -150, 180, 92, -33, 61, 144, -77,
+            500, 321, -210, 76, 135, -64, 412, 222, -101, 305, 170, -250, 66,
+            47, -5, 82, 390, -300, 215, 141, -187, 268];*/
 		const treeCanvas = document.querySelector("#tree-canvas");
 		const treeLevels = document.querySelector("#tree-levels");
 		const treeLines = document.querySelector("#tree-lines");
+
+		let treeData = [];
 
 		function getLevels(data) {
 			const levels = [];
@@ -126,7 +132,20 @@
 			});
 		}
 
-		renderTree();
+		async function loadTree() {
+			const response = await fetch("/api/trees/avl/");
+			
+			const payload = await response.json();
+			console.log('loadTree response:', response);
+			console.log('loadTree payload:', payload);
+			return;
+			treeData = payload.structure;
+			renderTree();
+		}
+
+		loadTree();
+
+		//renderTree();
 		window.addEventListener("resize", drawConnections);
 	</script>
 {% endblock %}

@@ -1,5 +1,9 @@
 import json
 from pathlib import Path
+from datastructures.data.city_node import CityNode
+from datastructures.data.route_edge import RouteEdge
+from datastructures.graph.graph import Graph
+from logistics.models import Node, Route
 
 
 def get_graph_data():
@@ -12,3 +16,11 @@ def get_graph_data():
 		edges = json.load(edges_file)
 
 	return {"nodes": nodes, "edges": edges}
+
+
+def build_route_edges(weight_field="range_km"):
+    rows = Route.objects.values()
+    return [
+        RouteEdge(**row, weight_field=weight_field)
+        for row in rows
+    ]

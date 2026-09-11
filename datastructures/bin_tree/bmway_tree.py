@@ -12,7 +12,7 @@ Author: Vladimir
 
 import math
 
-from bin_tree.mway_search_tree import MWayNode, MWaySearchTree
+from datastructures.bin_tree.mway_search_tree import MWayNode, MWaySearchTree
 
 
 class BMWayNode(MWayNode):

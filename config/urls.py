@@ -16,8 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-#from logistics.views import base_view, tree_view, graph_view, heap_view
 from logistics.views import BaseView, TreeView, GraphView, HeapView
+from logistics.views.api_views import TreeOperationView
 
 urlpatterns = [
     path('', BaseView.as_view(), name='home'),
@@ -26,4 +26,5 @@ urlpatterns = [
     path('graphs/', GraphView.as_view(), name='graphs'),
     path('heaps/', HeapView.as_view(), name='heaps'),
     path('admin/', admin.site.urls),
+    path('api/trees/<str:kind>/', TreeOperationView.as_view(), name='tree-api'),
 ]
