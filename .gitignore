@@ -24,13 +24,13 @@ env/
 media/
 staticfiles/
 *.mo
-*.sql
+logistics/data/*.sql
 
 # Edges and nodes json
-edges.json
-edges_copy.json
-nodes.json
-nodes_copy.json
+logistics/data/edges.json
+logistics/data/edges_copy.json
+logistics/data/nodes.json
+logistics/data/nodes_copy.json
 
 # Local settings and credentials
 settings_local.py
