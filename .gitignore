@@ -24,6 +24,13 @@ env/
 media/
 staticfiles/
 *.mo
+*.sql
+
+# Edges and nodes json
+edges.json
+edges_copy.json
+nodes.json
+nodes_copy.json
 
 # Local settings and credentials
 settings_local.py
