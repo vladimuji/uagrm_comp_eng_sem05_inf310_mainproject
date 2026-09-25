@@ -1,0 +1,962 @@
+[
+  {
+    "ID": 1,
+    "name": "La Paz",
+    "state": "La Paz",
+    "latitude": -16.5,
+    "longitude": -68.1193,
+    "listed": true
+  },
+  {
+    "ID": 2,
+    "name": "El Alto",
+    "state": "La Paz",
+    "latitude": -16.5047,
+    "longitude": -68.1633,
+    "listed": true
+  },
+  {
+    "ID": 3,
+    "name": "Santa Cruz de la Sierra",
+    "state": "Santa Cruz",
+    "latitude": -17.7833,
+    "longitude": -63.1821,
+    "listed": true
+  },
+  {
+    "ID": 4,
+    "name": "Cochabamba",
+    "state": "Cochabamba",
+    "latitude": -17.3895,
+    "longitude": -66.1568,
+    "listed": true
+  },
+  {
+    "ID": 5,
+    "name": "Sucre",
+    "state": "Chuquisaca",
+    "latitude": -19.0333,
+    "longitude": -65.2627,
+    "listed": true
+  },
+  {
+    "ID": 6,
+    "name": "Oruro",
+    "state": "Oruro",
+    "latitude": -17.9833,
+    "longitude": -67.15,
+    "listed": true
+  },
+  {
+    "ID": 7,
+    "name": "Potosí",
+    "state": "Potosí",
+    "latitude": -19.5836,
+    "longitude": -65.7531,
+    "listed": true
+  },
+  {
+    "ID": 8,
+    "name": "Tarija",
+    "state": "Tarija",
+    "latitude": -21.5355,
+    "longitude": -64.7296,
+    "listed": true
+  },
+  {
+    "ID": 9,
+    "name": "Trinidad",
+    "state": "Beni",
+    "latitude": -14.8333,
+    "longitude": -64.9,
+    "listed": true
+  },
+  {
+    "ID": 10,
+    "name": "Cobija",
+    "state": "Pando",
+    "latitude": -11.0267,
+    "longitude": -68.7692,
+    "listed": true
+  },
+  {
+    "ID": 11,
+    "name": "Quillacollo",
+    "state": "Cochabamba",
+    "latitude": -17.3936,
+    "longitude": -66.2769,
+    "listed": true
+  },
+  {
+    "ID": 12,
+    "name": "Sacaba",
+    "state": "Cochabamba",
+    "latitude": -17.4058,
+    "longitude": -66.0397,
+    "listed": true
+  },
+  {
+    "ID": 13,
+    "name": "Punata",
+    "state": "Cochabamba",
+    "latitude": -17.5486,
+    "longitude": -65.8322,
+    "listed": true
+  },
+  {
+    "ID": 14,
+    "name": "Villa Tunari",
+    "state": "Cochabamba",
+    "latitude": -16.9667,
+    "longitude": -65.4167,
+    "listed": true
+  },
+  {
+    "ID": 15,
+    "name": "Montero",
+    "state": "Santa Cruz",
+    "latitude": -17.3333,
+    "longitude": -63.25,
+    "listed": true
+  },
+  {
+    "ID": 16,
+    "name": "Warnes",
+    "state": "Santa Cruz",
+    "latitude": -17.5142,
+    "longitude": -63.1667,
+    "listed": true
+  },
+  {
+    "ID": 17,
+    "name": "La Guardia",
+    "state": "Santa Cruz",
+    "latitude": -17.9167,
+    "longitude": -63.1833,
+    "listed": true
+  },
+  {
+    "ID": 18,
+    "name": "Camiri",
+    "state": "Santa Cruz",
+    "latitude": -20.05,
+    "longitude": -63.5167,
+    "listed": true
+  },
+  {
+    "ID": 19,
+    "name": "Puerto Suárez",
+    "state": "Santa Cruz",
+    "latitude": -18.95,
+    "longitude": -57.8,
+    "listed": true
+  },
+  {
+    "ID": 20,
+    "name": "Yacuiba",
+    "state": "Tarija",
+    "latitude": -22.0333,
+    "longitude": -63.6667,
+    "listed": true
+  },
+  {
+    "ID": 21,
+    "name": "Bermejo",
+    "state": "Tarija",
+    "latitude": -22.7333,
+    "longitude": -64.3333,
+    "listed": true
+  },
+  {
+    "ID": 22,
+    "name": "Villamontes",
+    "state": "Tarija",
+    "latitude": -21.25,
+    "longitude": -63.45,
+    "listed": true
+  },
+  {
+    "ID": 23,
+    "name": "Villazón",
+    "state": "Potosí",
+    "latitude": -22.0866,
+    "longitude": -65.5942,
+    "listed": true
+  },
+  {
+    "ID": 24,
+    "name": "Tupiza",
+    "state": "Potosí",
+    "latitude": -21.4444,
+    "longitude": -65.7167,
+    "listed": true
+  },
+  {
+    "ID": 25,
+    "name": "Uyuni",
+    "state": "Potosí",
+    "latitude": -20.46,
+    "longitude": -66.825,
+    "listed": true
+  },
+  {
+    "ID": 26,
+    "name": "Riberalta",
+    "state": "Beni",
+    "latitude": -10.9833,
+    "longitude": -66.1,
+    "listed": true
+  },
+  {
+    "ID": 27,
+    "name": "Guayaramerín",
+    "state": "Beni",
+    "latitude": -10.8333,
+    "longitude": -65.3667,
+    "listed": true
+  },
+  {
+    "ID": 28,
+    "name": "San Borja",
+    "state": "Beni",
+    "latitude": -14.8167,
+    "longitude": -66.8333,
+    "listed": true
+  },
+  {
+    "ID": 29,
+    "name": "Rurrenabaque",
+    "state": "Beni",
+    "latitude": -14.4333,
+    "longitude": -67.5333,
+    "listed": true
+  },
+  {
+    "ID": 30,
+    "name": "Caranavi",
+    "state": "La Paz",
+    "latitude": -15.8333,
+    "longitude": -67.5667,
+    "listed": true
+  },
+  {
+    "ID": 31,
+    "name": "Viacha",
+    "state": "La Paz",
+    "latitude": -16.65,
+    "longitude": -68.3,
+    "listed": true
+  },
+  {
+    "ID": 32,
+    "name": "Sica Sica",
+    "state": "La Paz",
+    "latitude": -17.3333,
+    "longitude": -67.7167,
+    "listed": false
+  },
+  {
+    "ID": 33,
+    "name": "Charazani",
+    "state": "La Paz",
+    "latitude": -15.1833,
+    "longitude": -68.9833,
+    "listed": false
+  },
+  {
+    "ID": 34,
+    "name": "Ixiamas",
+    "state": "La Paz",
+    "latitude": -13.75,
+    "longitude": -68.1167,
+    "listed": false
+  },
+  {
+    "ID": 35,
+    "name": "Puerto Acosta",
+    "state": "La Paz",
+    "latitude": -15.5,
+    "longitude": -69.05,
+    "listed": false
+  },
+  {
+    "ID": 36,
+    "name": "Apolo",
+    "state": "La Paz",
+    "latitude": -14.7167,
+    "longitude": -68.4667,
+    "listed": false
+  },
+  {
+    "ID": 37,
+    "name": "Curahuara de Carangas",
+    "state": "La Paz",
+    "latitude": -18.0833,
+    "longitude": -68.4667,
+    "listed": false
+  },
+  {
+    "ID": 38,
+    "name": "Inquisivi",
+    "state": "La Paz",
+    "latitude": -17.0333,
+    "longitude": -67.25,
+    "listed": false
+  },
+  {
+    "ID": 39,
+    "name": "Santiago de Machaca",
+    "state": "La Paz",
+    "latitude": -17.0833,
+    "longitude": -69.2667,
+    "listed": false
+  },
+  {
+    "ID": 40,
+    "name": "Sorata",
+    "state": "La Paz",
+    "latitude": -15.7667,
+    "longitude": -68.65,
+    "listed": false
+  },
+  {
+    "ID": 41,
+    "name": "Luribay",
+    "state": "La Paz",
+    "latitude": -17.05,
+    "longitude": -67.6167,
+    "listed": false
+  },
+  {
+    "ID": 42,
+    "name": "Pucarani",
+    "state": "La Paz",
+    "latitude": -16.3833,
+    "longitude": -68.4833,
+    "listed": false
+  },
+  {
+    "ID": 43,
+    "name": "Copacabana",
+    "state": "La Paz",
+    "latitude": -16.1667,
+    "longitude": -69.0833,
+    "listed": false
+  },
+  {
+    "ID": 44,
+    "name": "Chuma",
+    "state": "La Paz",
+    "latitude": -15.4667,
+    "longitude": -68.9167,
+    "listed": false
+  },
+  {
+    "ID": 45,
+    "name": "Coroico",
+    "state": "La Paz",
+    "latitude": -16.1833,
+    "longitude": -67.7333,
+    "listed": false
+  },
+  {
+    "ID": 46,
+    "name": "Achacachi",
+    "state": "La Paz",
+    "latitude": -16.05,
+    "longitude": -68.6833,
+    "listed": false
+  },
+  {
+    "ID": 47,
+    "name": "Coro Coro",
+    "state": "La Paz",
+    "latitude": -17.1833,
+    "longitude": -68.45,
+    "listed": false
+  },
+  {
+    "ID": 48,
+    "name": "Palca",
+    "state": "La Paz",
+    "latitude": -16.5833,
+    "longitude": -67.95,
+    "listed": false
+  },
+  {
+    "ID": 49,
+    "name": "Chulumani",
+    "state": "La Paz",
+    "latitude": -16.4,
+    "longitude": -67.5167,
+    "listed": false
+  },
+  {
+    "ID": 50,
+    "name": "Sabaya",
+    "state": "Oruro",
+    "latitude": -19.0333,
+    "longitude": -68.3833,
+    "listed": false
+  },
+  {
+    "ID": 51,
+    "name": "Corque",
+    "state": "Oruro",
+    "latitude": -18.3333,
+    "longitude": -67.7,
+    "listed": false
+  },
+  {
+    "ID": 52,
+    "name": "Challapata",
+    "state": "Oruro",
+    "latitude": -18.9,
+    "longitude": -66.7667,
+    "listed": false
+  },
+  {
+    "ID": 53,
+    "name": "Huanuni",
+    "state": "Oruro",
+    "latitude": -18.2833,
+    "longitude": -66.8333,
+    "listed": false
+  },
+  {
+    "ID": 54,
+    "name": "Poopó",
+    "state": "Oruro",
+    "latitude": -18.3833,
+    "longitude": -66.9667,
+    "listed": false
+  },
+  {
+    "ID": 55,
+    "name": "Machacamarca",
+    "state": "Oruro",
+    "latitude": -18.1667,
+    "longitude": -67.05,
+    "listed": false
+  },
+  {
+    "ID": 56,
+    "name": "Villa de Sacaca",
+    "state": "Potosí",
+    "latitude": -18.1167,
+    "longitude": -66.0,
+    "listed": false
+  },
+  {
+    "ID": 57,
+    "name": "Arampampa",
+    "state": "Potosí",
+    "latitude": -18.2167,
+    "longitude": -66.2333,
+    "listed": false
+  },
+  {
+    "ID": 58,
+    "name": "San Pedro de Buena Vista",
+    "state": "Potosí",
+    "latitude": -18.2333,
+    "longitude": -65.95,
+    "listed": false
+  },
+  {
+    "ID": 59,
+    "name": "Colquechaca",
+    "state": "Potosí",
+    "latitude": -18.6833,
+    "longitude": -65.9333,
+    "listed": false
+  },
+  {
+    "ID": 60,
+    "name": "Betanzos",
+    "state": "Potosí",
+    "latitude": -19.55,
+    "longitude": -65.4667,
+    "listed": false
+  },
+  {
+    "ID": 61,
+    "name": "Llica",
+    "state": "Potosí",
+    "latitude": -19.85,
+    "longitude": -68.25,
+    "listed": false
+  },
+  {
+    "ID": 62,
+    "name": "San Agustín",
+    "state": "Potosí",
+    "latitude": -20.95,
+    "longitude": -66.8667,
+    "listed": false
+  },
+  {
+    "ID": 63,
+    "name": "Puna",
+    "state": "Potosí",
+    "latitude": -19.7667,
+    "longitude": -65.5,
+    "listed": false
+  },
+  {
+    "ID": 64,
+    "name": "Cotagaita",
+    "state": "Potosí",
+    "latitude": -20.8167,
+    "longitude": -65.6833,
+    "listed": false
+  },
+  {
+    "ID": 65,
+    "name": "Colcha K",
+    "state": "Potosí",
+    "latitude": -20.6667,
+    "longitude": -67.6833,
+    "listed": false
+  },
+  {
+    "ID": 66,
+    "name": "Uncía",
+    "state": "Potosí",
+    "latitude": -18.4667,
+    "longitude": -66.5333,
+    "listed": false
+  },
+  {
+    "ID": 67,
+    "name": "San Pablo de Lípez",
+    "state": "Potosí",
+    "latitude": -21.6667,
+    "longitude": -66.6167,
+    "listed": false
+  },
+  {
+    "ID": 68,
+    "name": "Tinguipaya",
+    "state": "Potosí",
+    "latitude": -19.2,
+    "longitude": -65.9833,
+    "listed": false
+  },
+  {
+    "ID": 69,
+    "name": "Azurduy",
+    "state": "Chuquisaca",
+    "latitude": -19.9667,
+    "longitude": -64.5333,
+    "listed": false
+  },
+  {
+    "ID": 70,
+    "name": "Villa Zudáñez",
+    "state": "Chuquisaca",
+    "latitude": -19.1167,
+    "longitude": -64.9333,
+    "listed": false
+  },
+  {
+    "ID": 71,
+    "name": "Padilla",
+    "state": "Chuquisaca",
+    "latitude": -19.3,
+    "longitude": -64.3167,
+    "listed": false
+  },
+  {
+    "ID": 72,
+    "name": "Monteagudo",
+    "state": "Chuquisaca",
+    "latitude": -19.8167,
+    "longitude": -63.9667,
+    "listed": false
+  },
+  {
+    "ID": 73,
+    "name": "Tarabuco",
+    "state": "Chuquisaca",
+    "latitude": -19.1833,
+    "longitude": -64.9167,
+    "listed": false
+  },
+  {
+    "ID": 74,
+    "name": "Camargo",
+    "state": "Chuquisaca",
+    "latitude": -20.6333,
+    "longitude": -65.2,
+    "listed": false
+  },
+  {
+    "ID": 75,
+    "name": "Villa Abecia",
+    "state": "Chuquisaca",
+    "latitude": -21.0,
+    "longitude": -65.35,
+    "listed": false
+  },
+  {
+    "ID": 76,
+    "name": "Villa Serrano",
+    "state": "Chuquisaca",
+    "latitude": -19.1167,
+    "longitude": -64.4333,
+    "listed": false
+  },
+  {
+    "ID": 77,
+    "name": "Muyupampa",
+    "state": "Chuquisaca",
+    "latitude": -20.0667,
+    "longitude": -63.7333,
+    "listed": false
+  },
+  {
+    "ID": 78,
+    "name": "Cliza",
+    "state": "Cochabamba",
+    "latitude": -17.5975,
+    "longitude": -65.9328,
+    "listed": false
+  },
+  {
+    "ID": 79,
+    "name": "Tarata",
+    "state": "Cochabamba",
+    "latitude": -17.6167,
+    "longitude": -66.0167,
+    "listed": false
+  },
+  {
+    "ID": 80,
+    "name": "Aiquile",
+    "state": "Cochabamba",
+    "latitude": -18.2003,
+    "longitude": -65.1747,
+    "listed": false
+  },
+  {
+    "ID": 81,
+    "name": "Mizque",
+    "state": "Cochabamba",
+    "latitude": -17.9439,
+    "longitude": -65.3181,
+    "listed": false
+  },
+  {
+    "ID": 82,
+    "name": "Totora",
+    "state": "Cochabamba",
+    "latitude": -17.7167,
+    "longitude": -65.1667,
+    "listed": false
+  },
+  {
+    "ID": 83,
+    "name": "Ivirgarzama",
+    "state": "Cochabamba",
+    "latitude": -17.0333,
+    "longitude": -64.9667,
+    "listed": false
+  },
+  {
+    "ID": 84,
+    "name": "Colomi",
+    "state": "Cochabamba",
+    "latitude": -17.3419,
+    "longitude": -65.8747,
+    "listed": false
+  },
+  {
+    "ID": 85,
+    "name": "Vinto",
+    "state": "Cochabamba",
+    "latitude": -17.3833,
+    "longitude": -66.2833,
+    "listed": false
+  },
+  {
+    "ID": 86,
+    "name": "Sipe Sipe",
+    "state": "Cochabamba",
+    "latitude": -17.4333,
+    "longitude": -66.3833,
+    "listed": false
+  },
+  {
+    "ID": 87,
+    "name": "Anzaldo",
+    "state": "Cochabamba",
+    "latitude": -17.7333,
+    "longitude": -65.95,
+    "listed": false
+  },
+  {
+    "ID": 88,
+    "name": "Arani",
+    "state": "Cochabamba",
+    "latitude": -17.5667,
+    "longitude": -65.7667,
+    "listed": false
+  },
+  {
+    "ID": 89,
+    "name": "Capinota",
+    "state": "Cochabamba",
+    "latitude": -17.7167,
+    "longitude": -66.25,
+    "listed": false
+  },
+  {
+    "ID": 90,
+    "name": "Independencia",
+    "state": "Cochabamba",
+    "latitude": -17.1,
+    "longitude": -66.4,
+    "listed": false
+  },
+  {
+    "ID": 91,
+    "name": "San Ignacio de Velasco",
+    "state": "Santa Cruz",
+    "latitude": -16.3733,
+    "longitude": -60.9542,
+    "listed": false
+  },
+  {
+    "ID": 92,
+    "name": "Buena Vista",
+    "state": "Santa Cruz",
+    "latitude": -17.4581,
+    "longitude": -63.6608,
+    "listed": false
+  },
+  {
+    "ID": 93,
+    "name": "San José de Chiquitos",
+    "state": "Santa Cruz",
+    "latitude": -17.85,
+    "longitude": -60.7667,
+    "listed": false
+  },
+  {
+    "ID": 94,
+    "name": "Portachuelo",
+    "state": "Santa Cruz",
+    "latitude": -17.3556,
+    "longitude": -63.3931,
+    "listed": false
+  },
+  {
+    "ID": 95,
+    "name": "Lagunillas",
+    "state": "Santa Cruz",
+    "latitude": -18.9333,
+    "longitude": -63.6833,
+    "listed": false
+  },
+  {
+    "ID": 96,
+    "name": "Vallegrande",
+    "state": "Santa Cruz",
+    "latitude": -18.4833,
+    "longitude": -64.1,
+    "listed": false
+  },
+  {
+    "ID": 97,
+    "name": "Samaipata",
+    "state": "Santa Cruz",
+    "latitude": -18.1783,
+    "longitude": -63.8767,
+    "listed": false
+  },
+  {
+    "ID": 98,
+    "name": "Concepción",
+    "state": "Santa Cruz",
+    "latitude": -16.1333,
+    "longitude": -62.0333,
+    "listed": false
+  },
+  {
+    "ID": 99,
+    "name": "San Matías",
+    "state": "Santa Cruz",
+    "latitude": -16.3667,
+    "longitude": -58.4,
+    "listed": false
+  },
+  {
+    "ID": 100,
+    "name": "Comarapa",
+    "state": "Santa Cruz",
+    "latitude": -17.9167,
+    "longitude": -64.5333,
+    "listed": false
+  },
+  {
+    "ID": 101,
+    "name": "Ascensión de Guarayos",
+    "state": "Santa Cruz",
+    "latitude": -15.9,
+    "longitude": -63.1167,
+    "listed": false
+  },
+  {
+    "ID": 102,
+    "name": "Yapacaní",
+    "state": "Santa Cruz",
+    "latitude": -17.4,
+    "longitude": -63.8333,
+    "listed": false
+  },
+  {
+    "ID": 103,
+    "name": "Cotoca",
+    "state": "Santa Cruz",
+    "latitude": -17.8167,
+    "longitude": -63.05,
+    "listed": false
+  },
+  {
+    "ID": 104,
+    "name": "Pailón",
+    "state": "Santa Cruz",
+    "latitude": -17.6667,
+    "longitude": -62.75,
+    "listed": false
+  },
+  {
+    "ID": 105,
+    "name": "Padcaya",
+    "state": "Tarija",
+    "latitude": -21.9333,
+    "longitude": -64.9667,
+    "listed": false
+  },
+  {
+    "ID": 106,
+    "name": "Entre Ríos",
+    "state": "Tarija",
+    "latitude": -21.5333,
+    "longitude": -64.2333,
+    "listed": false
+  },
+  {
+    "ID": 107,
+    "name": "San Lorenzo",
+    "state": "Tarija",
+    "latitude": -21.4333,
+    "longitude": -64.8,
+    "listed": false
+  },
+  {
+    "ID": 108,
+    "name": "Uriondo",
+    "state": "Tarija",
+    "latitude": -21.7167,
+    "longitude": -64.7333,
+    "listed": false
+  },
+  {
+    "ID": 109,
+    "name": "Reyes",
+    "state": "Beni",
+    "latitude": -14.3167,
+    "longitude": -67.3667,
+    "listed": false
+  },
+  {
+    "ID": 110,
+    "name": "Santa Ana de Yacuma",
+    "state": "Beni",
+    "latitude": -13.75,
+    "longitude": -65.4167,
+    "listed": false
+  },
+  {
+    "ID": 111,
+    "name": "San Ignacio de Moxos",
+    "state": "Beni",
+    "latitude": -14.9833,
+    "longitude": -65.6333,
+    "listed": false
+  },
+  {
+    "ID": 112,
+    "name": "Loreto",
+    "state": "Beni",
+    "latitude": -15.2,
+    "longitude": -64.6833,
+    "listed": false
+  },
+  {
+    "ID": 113,
+    "name": "San Joaquín",
+    "state": "Beni",
+    "latitude": -13.05,
+    "longitude": -64.15,
+    "listed": false
+  },
+  {
+    "ID": 114,
+    "name": "Magdalena",
+    "state": "Beni",
+    "latitude": -13.3333,
+    "longitude": -64.1167,
+    "listed": false
+  },
+  {
+    "ID": 115,
+    "name": "San Javier",
+    "state": "Beni",
+    "latitude": -15.9333,
+    "longitude": -64.7167,
+    "listed": false
+  },
+  {
+    "ID": 116,
+    "name": "Santa Rosa de Abuná",
+    "state": "Pando",
+    "latitude": -10.4667,
+    "longitude": -66.6667,
+    "listed": false
+  },
+  {
+    "ID": 117,
+    "name": "Puerto Rico",
+    "state": "Pando",
+    "latitude": -11.1167,
+    "longitude": -67.55,
+    "listed": false
+  },
+  {
+    "ID": 118,
+    "name": "Porvenir",
+    "state": "Pando",
+    "latitude": -11.05,
+    "longitude": -68.7,
+    "listed": false
+  },
+  {
+    "ID": 119,
+    "name": "Filadelfia",
+    "state": "Pando",
+    "latitude": -11.4667,
+    "longitude": -68.9333,
+    "listed": false
+  },
+  {
+    "ID": 120,
+    "name": "Bella Flor",
+    "state": "Pando",
+    "latitude": -10.8667,
+    "longitude": -65.3833,
+    "listed": false
+  }
+]
