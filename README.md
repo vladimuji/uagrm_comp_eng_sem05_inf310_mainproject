@@ -96,13 +96,14 @@ This project provides clean, educational implementations of common data structur
     │   │   ├── graph_view.html     # Graph visualization template
     │   │   ├── tree_view.html      # Tree visualization template
     │   │   ├── heap_view.html      # Heap visualization template
+    │   │   ├── map_view.html      # 
     │   │   └── partials/
     │   │       └── menu.html       # Navigation menu partial
     │   ├── __init__.py
     │   ├── admin.py                # Django administration configuration
     │   ├── apps.py                 # Application configuration
     │   └── tests.py                # Application tests
-    ├── db.sqlite3                  # Local SQLite database
+    ├── .env_sample                 # 
     ├── main.py                     # Main Python entry point
     ├── manage.py                   # Django command-line utility
     ├── README.md                   # Project documentation
