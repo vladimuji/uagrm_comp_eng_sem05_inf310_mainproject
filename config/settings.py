@@ -84,6 +84,8 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DB_ENGINE_KIND = os.getenv("DB_ENGINE_KIND", "sqlite")
 
+GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY", "")
+
 if DB_ENGINE_KIND == "mysql":
     DATABASES = {
         "default": {

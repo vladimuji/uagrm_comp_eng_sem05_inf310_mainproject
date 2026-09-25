@@ -4,7 +4,7 @@ from django.db import IntegrityError
 from django.http import JsonResponse
 from django.views import View
 
-from logistics.services import tree_service
+from logistics.services import tree_service, graph_service
 
 ALLOWED_SORT_KEYS = {"id", "city_name"}
 DEFAULT_SORT_KEY = "id"
@@ -103,3 +103,8 @@ class ExpressionTreeView(View):
         except (ValueError, ZeroDivisionError, IndexError) as error:
             return JsonResponse({"error": str(error)}, status=400)
         return JsonResponse(result)
+
+
+class GraphDataView(View):
+    def get(self, request):
+        return JsonResponse(graph_service.get_map_data())

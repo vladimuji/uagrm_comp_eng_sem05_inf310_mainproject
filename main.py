@@ -2,6 +2,7 @@ from datastructures.bin_tree.binary_tree import BinaryTree
 from datastructures.bin_tree.search_binary_tree import SearchBinaryTree
 from datastructures.bin_tree.expression_tree import ExpressionTree
 from datastructures.bin_tree.avl_tree import AVLTree
+from datastructures.bin_tree.mway_search_tree import MWaySearchTree
 from exercices.tic_tac_toe import Tree
 
 #tree = BinaryTree()
@@ -168,7 +169,36 @@ from exercices.tic_tac_toe import Tree
 # Demo (mirrors AVLTree.generateAVLTree() from the Java version)
 # ------------------------------------------------------------------
 
-tree = AVLTree()
+# tree = AVLTree()
+# tree.insert(10)
+# tree.insert(20)
+# tree.insert(30)
+# tree.insert(40)
+# tree.insert(50)
+# tree.insert(60)
+# tree.insert(70)
+# tree.insert(80)
+# tree.insert(90)
+# tree.print_tree_recursive()
+# print("Balanced: " + str(tree.is_balanced()))
+# tree.insert(100)
+# tree.insert(110)
+# tree.insert(120)
+# tree.insert(130)
+# tree.insert(140)
+# tree.insert(150)
+# tree.print_tree_recursive()
+# tree.delete(50)
+# tree.print_tree_recursive()
+# print("Balanced: " + str(tree.is_balanced()))
+
+"""Testing the MWayTree class."""
+
+# ------------------------------------------------------------------
+# Demo (mirrors MWaySearchTree from the Java version)
+# ------------------------------------------------------------------
+
+tree = MWaySearchTree(4)
 tree.insert(10)
 tree.insert(20)
 tree.insert(30)
@@ -178,15 +208,35 @@ tree.insert(60)
 tree.insert(70)
 tree.insert(80)
 tree.insert(90)
-tree.print_tree_recursive()
-print("Balanced: " + str(tree.is_balanced()))
+print("InOrder: " + str(tree.in_order()))
+print("PreOrder: " + str(tree.pre_order()))
+print("PosOrder: " + str(tree.post_order()))
+#print("ByLevels: " + str(tree.iteration_by_levels()))
 tree.insert(100)
 tree.insert(110)
 tree.insert(120)
 tree.insert(130)
 tree.insert(140)
 tree.insert(150)
-tree.print_tree_recursive()
+
+# Search testing
+print("¿Has 40? " + str(tree.has(40)))
+print("¿Has 105? " + str(tree.has(105)))
+
+# High and Size testing
+print("High: " + str(tree.high()))
+print("size: " + str(tree.size()))
+
+# Delete testing
+tree.delete(30)
+print("After deleting 30 (InOrder): " + str(tree.in_order()))
+print("size: " + str(tree.size()))
+
 tree.delete(50)
-tree.print_tree_recursive()
-print("Balanced: " + str(tree.is_balanced()))
+print("After deleting 50 (InOrder): " + str(tree.in_order()))
+print("size: " + str(tree.size()))
+
+# Emptying testing
+tree.empty()
+print("Tree is empty: " + str(tree.is_empty_tree()))
+print("size: " + str(tree.size()))

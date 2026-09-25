@@ -16,8 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from logistics.views import BaseView, TreeView, GraphView, HeapView
-from logistics.views.api_views import TreeOperationView, ExpressionTreeView
+from logistics.views import BaseView, TreeView, GraphView, HeapView, MapView
+from logistics.views.api_views import TreeOperationView, ExpressionTreeView, GraphDataView
 from logistics.views.system_views import RestoreDatabaseView
 
 urlpatterns = [
@@ -35,4 +35,7 @@ urlpatterns = [
     path('api/trees/expression/', ExpressionTreeView.as_view(), name='expression-tree-api'),
 
     path('system/restore/<str:token>/', RestoreDatabaseView.as_view(), name='restore-db'),
+
+    path('map/', MapView.as_view(), name='map'),
+    path('api/graph/', GraphDataView.as_view(), name='graph-api'),
 ]

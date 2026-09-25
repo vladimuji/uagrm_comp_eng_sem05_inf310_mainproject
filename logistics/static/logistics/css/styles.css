@@ -268,3 +268,64 @@
 			.graph-canvas { min-height: 480px; overflow-x: auto; }
 			.graph-lines, .graph-nodes { min-width: 620px; }
 		}
+		.map-panel { 
+			padding: 2.5rem 0 4rem; 
+		}
+		.map-panel-heading { 
+			display: flex; 
+			justify-content: space-between; 
+			align-items: end; 
+			gap: 2rem; 
+		}
+		.map-panel-heading h2 { 
+			margin-bottom: 0; 
+		}
+		.map-summary { 
+			margin: 0; 
+			color: var(--muted); 
+			font-weight: 700; 
+		}
+		.map-legend { 
+			display: flex; 
+			flex-wrap: wrap; 
+			gap: 1.25rem; 
+			margin-top: 1rem; 
+			color: var(--muted); 
+			font: 700 .85rem/1.2 Arial, sans-serif; 
+		}
+		.map-legend span { 
+			display: flex; 
+			align-items: center; 
+			gap: .6rem; 
+		}
+		.legend-line--reverse { 
+			border-color: #28515a; 
+		}
+		.map-canvas { 
+			height: 70vh; 
+			min-height: 480px; 
+			margin-top: 1.5rem; 
+			border: 1px solid var(--line); 
+			background: #e8eee9; 
+		}
+		.map-dot { 
+			border-radius: 50%; 
+			transform: translateY(50%); 
+		}
+		.map-dot--listed { 
+			width: 14px; 
+			height: 14px; 
+			background: var(--accent-dark); 
+			border: 2px solid #f3bf8a; 
+		}
+		.map-dot--unlisted { 
+			width: 8px; 
+			height: 8px; 
+			background: #6e7e85; 
+			border: 1px solid #c5ced0; 
+		}
+		@media (max-width: 700px) { 
+			.map-panel-heading { 
+				display: block; 
+			} 
+		}

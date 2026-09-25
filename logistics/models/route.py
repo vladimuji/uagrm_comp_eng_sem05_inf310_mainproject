@@ -14,7 +14,7 @@ class Route(models.Model):
     locked_road = models.BooleanField(default=False)
     gas_cost = models.FloatField()
     cash_cost = models.FloatField()
-    time_lapse = models.DurationField()
+    time_lapse = models.TimeField()
     google_json = models.JSONField(default=dict, blank=True)
 
     class Meta:

@@ -1,0 +1,194 @@
+{% extends "logistics/base.html" %}
+
+{% block title %}Route Map | Logistics{% endblock %}
+
+{% block hero %}
+	<div id="map-page-hero">
+		<p class="eyebrow">Final project | Map</p>
+		<h1>Bolivia route map</h1>
+		<p>Every city and every route stored in the database, drawn from saved Google Directions polylines.</p>
+	</div>
+{% endblock %}
+
+{% block content %}
+	<section class="map-panel" aria-labelledby="map-heading">
+		<div class="map-panel-heading">
+			<div>
+				<p class="eyebrow">Current data</p>
+				<h2 id="map-heading">Cities and routes</h2>
+			</div>
+			<p id="map-summary" class="map-summary">Loading...</p>
+		</div>
+		<div class="map-legend" aria-label="Map legend">
+			<span><i class="legend-dot legend-dot--covered"></i>Listed city</span>
+			<span><i class="legend-dot legend-dot--pending"></i>Unlisted city</span>
+			<span><i class="legend-line"></i>Route</span>
+			<span><i class="legend-line legend-line--reverse"></i>Return route</span>
+			<span><i class="legend-line legend-line--blocked"></i>Locked road</span>
+		</div>
+		<div id="map-canvas" class="map-canvas"></div>
+	</section>
+{% endblock %}
+
+{% block extra_scripts %}
+	<script>
+		const MAPS_KEY = "{{ google_maps_api_key }}";
+		const COLORS = { forward: "#bd4b2d", reverse: "#28515a", locked: "#6e7e85" };
+		const LANE_OFFSET_METERS = 250; // separates A->B from B->A when zoomed in
+		const BOLIVIA_BOUNDS = { south: -23.0, west: -70.0, north: -9.5, east: -57.3 };
+
+		const summaryEl = document.querySelector("#map-summary");
+		const dataPromise = fetch("{% url 'graph-api' %}").then((response) => {
+			if (!response.ok) throw new Error("API returned " + response.status);
+			return response.json();
+		});
+
+		function infoContent(title, lines) {
+			const box = document.createElement("div");
+			const heading = document.createElement("strong");
+			heading.textContent = title;
+			box.appendChild(heading);
+			lines.forEach((line) => {
+				const row = document.createElement("div");
+				row.textContent = line;
+				box.appendChild(row);
+			});
+			return box;
+		}
+
+		// Shifts every point to the right of the travel direction.
+		function offsetPath(path, meters) {
+			const spherical = google.maps.geometry.spherical;
+			return path.map((point, i) => {
+				const last = i === path.length - 1;
+				const from = last ? path[i - 1] : point;
+				const to = last ? point : path[i + 1];
+				return spherical.computeOffset(point, meters, spherical.computeHeading(from, to) + 90);
+			});
+		}
+
+		function drawNodes(map, infoWindow, nodes, connectedIds) {
+			nodes.forEach((node) => {
+				const dot = document.createElement("div");
+				dot.className = "map-dot" + (node.listed ? " map-dot--listed" : " map-dot--unlisted");
+				if (connectedIds.has(node.id)) dot.classList.add("map-dot--connected");
+
+				const marker = new google.maps.marker.AdvancedMarkerElement({
+					map,
+					position: { lat: node.latitude, lng: node.longitude },
+					content: dot,
+					title: node.city_name,
+				});
+				marker.addListener("click", () => {
+					infoWindow.setContent(infoContent(node.city_name, [
+						"ID: " + node.id,
+						"State: " + node.state,
+						"Listed: " + (node.listed ? "yes" : "no"),
+					]));
+					infoWindow.setPosition(marker.position);
+					infoWindow.open(map);
+				});
+			});
+		}
+
+		function drawEdges(map, infoWindow, edges, nodeById) {
+			edges.forEach((edge) => {
+				if (!edge.polyline) return;
+
+				let path = google.maps.geometry.encoding.decodePath(edge.polyline);
+				if (edge.two_way) path = offsetPath(path, LANE_OFFSET_METERS);
+
+				const isReturn = edge.two_way && edge.origin > edge.destination;
+				const color = edge.locked ? COLORS.locked : (isReturn ? COLORS.reverse : COLORS.forward);
+
+				const icons = [{
+					icon: { path: google.maps.SymbolPath.FORWARD_OPEN_ARROW, scale: 2.5, strokeColor: color, strokeWeight: 1.5 },
+					offset: "50%",
+					repeat: "180px",
+				}];
+				if (edge.locked) {
+					// Dashed look: invisible line + repeated small dashes.
+					icons.push({
+						icon: { path: "M 0,-1 0,1", strokeOpacity: 1, strokeColor: color, scale: 2.5 },
+						offset: "0",
+						repeat: "12px",
+					});
+				}
+
+				const line = new google.maps.Polyline({
+					map,
+					path,
+					icons,
+					strokeColor: color,
+					strokeOpacity: edge.locked ? 0 : 0.85,
+					strokeWeight: 3,
+				});
+
+				line.addListener("mouseover", () => line.setOptions({ strokeWeight: 6, zIndex: 10 }));
+				line.addListener("mouseout", () => line.setOptions({ strokeWeight: 3, zIndex: 0 }));
+				line.addListener("click", (event) => {
+					const origin = nodeById.get(edge.origin);
+					const destination = nodeById.get(edge.destination);
+					infoWindow.setContent(infoContent(
+						(origin ? origin.city_name : edge.origin) + " \u2192 " + (destination ? destination.city_name : edge.destination),
+						[
+							"Distance: " + edge.range_km + " km",
+							"Time: " + edge.time,
+							"Gas cost: " + edge.gas_cost,
+							"Cash cost: " + edge.cash_cost,
+							"Locked road: " + (edge.locked ? "yes" : "no"),
+						]
+					));
+					infoWindow.setPosition(event.latLng);
+					infoWindow.open(map);
+				});
+			});
+		}
+
+		async function renderMap() {
+			const data = await dataPromise;
+
+			await google.maps.importLibrary("maps");
+			await google.maps.importLibrary("geometry");
+			await google.maps.importLibrary("marker");
+
+			const map = new google.maps.Map(document.querySelector("#map-canvas"), {
+				center: { lat: -16.7, lng: -64.7 },
+				zoom: 6,
+				mapId: "DEMO_MAP_ID", // required by AdvancedMarkerElement
+				streetViewControl: false,
+			});
+			map.fitBounds(BOLIVIA_BOUNDS);
+
+			const infoWindow = new google.maps.InfoWindow();
+			const nodeById = new Map(data.nodes.map((node) => [node.id, node]));
+			const connectedIds = new Set();
+			data.edges.forEach((edge) => {
+				connectedIds.add(edge.origin);
+				connectedIds.add(edge.destination);
+			});
+
+			drawEdges(map, infoWindow, data.edges, nodeById);
+			drawNodes(map, infoWindow, data.nodes, connectedIds);
+
+			summaryEl.textContent = `${data.nodes.length} cities | ${data.edges.length} routes`;
+		}
+
+		window.initMap = function () {
+			renderMap().catch((error) => {
+				console.error(error);
+				summaryEl.textContent = "Could not load the map: " + error.message;
+			});
+		};
+
+		if (!MAPS_KEY) {
+			summaryEl.textContent = "Missing GOOGLE_MAPS_API_KEY in settings/.env";
+		} else {
+			const script = document.createElement("script");
+			script.src = "https://maps.googleapis.com/maps/api/js?key=" + encodeURIComponent(MAPS_KEY)
+				+ "&loading=async&callback=initMap&v=weekly";
+			script.async = true;
+			document.head.appendChild(script);
+		}
+	</script>
+{% endblock %}

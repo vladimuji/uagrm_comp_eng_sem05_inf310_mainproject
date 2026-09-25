@@ -23,6 +23,18 @@ CREATE TABLE edges (
 	primary key (origin_node, destination_node)
 );
 
+CREATE TABLE edges_directions (
+	origin_node INT NOT NULL,
+	destination_node INT NOT NULL, 
+	range_km DOUBLE NOT NULL,
+	locked_road BOOLEAN DEFAULT FALSE,
+	gas_cost DOUBLE NOT NULL,
+	cash_cost DOUBLE NOT NULL,
+	time_lapse TIME NOT NULL,
+	google_json JSON NOT NULL,
+	primary key (origin_node, destination_node)
+);
+
 
 
 ----------------------------------------------
