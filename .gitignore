@@ -32,6 +32,9 @@ logistics/data/edges_copy.json
 logistics/data/nodes.json
 logistics/data/nodes_copy.json
 
+# DB slq and T-SQL files
+logistics/data/db/
+
 # Local settings and credentials
 settings_local.py
 local_settings.py
