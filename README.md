@@ -18,8 +18,11 @@ This project provides clean, educational implementations of common data structur
 - **[UNIDAD 1 - Tarea : Representacion del ADT Arboles binarios de busquedas](https://github.com/vladimuji/uagrm_comp_eng_sem05_inf310_mainproject/blob/unit_1_search_bintree/bin_tree/search_binary_tree.py)**
 - **[UNIDAD 1 - Tarea : Implementar Árbol de Expresión para evaluar cadena infija](https://github.com/vladimuji/uagrm_comp_eng_sem05_inf310_mainproject/blob/unit_1_expression_tree/bin_tree/expression_tree.py)**
 - **[UNIDAD 1 - Tarea unidad 1: Implementar metodos de Arboles Binarios AVL](https://github.com/vladimuji/uagrm_comp_eng_sem05_inf310_mainproject/blob/unit_1_avl_tree_implementation/bin_tree/avl_tree.py)**
-- **[UNIDAD 1 - Tarea unidad 1: Crear interfaz grafica]()**
+- **[UNIDAD 1 - Tarea unidad 1: Crear interfaz grafica](https://inf310.vladimuji.com/trees/)**
 - **[UNIDAD 1 - Arbol binario: Metodo eliminar y AVL](https://github.com/vladimuji/uagrm_comp_eng_sem05_inf310_mainproject/blob/unit_1_avl_tree_implementation/bin_tree/avl_tree.py)**
+- **[UNIDAD 2 - Reto Unidad 2 : Arboles M-vias](https://github.com/vladimuji/uagrm_comp_eng_sem05_inf310_mainproject/blob/main/datastructures/bin_tree/mway_search_tree.py)**
+- **[UNIDAD 2 - Tarea Unidad 2: Arboles Mvias](https://github.com/vladimuji/uagrm_comp_eng_sem05_inf310_mainproject/blob/main/datastructures/bin_tree/mway_search_tree.py)**
+- **[UNIDAD 2 - Tarea Arbol Mvias implementar todos los metodos vistos en ABB](https://github.com/vladimuji/uagrm_comp_eng_sem05_inf310_mainproject/blob/main/datastructures/bin_tree/mway_search_tree.py)**
 
 ## 📁 Project Structure
 
@@ -68,8 +71,13 @@ This project provides clean, educational implementations of common data structur
     │   │   ├── edges_copy.json
     │   │   ├── nodes.json
     │   │   ├── nodes_copy.json
-    │   │   ├── logistics_mysql.sql
-    │   │   └── logistics_mssql.sql
+    │   │   └── db/                 # 
+    │   │       ├── logistics_mysql.sql
+    │   │       ├── logistics_mssql.sql
+    │   │       ├── functions/      # 
+    │   │       ├── procedures/     # 
+    │   │           └── procedure_restore_nodes_edges.sql
+    │   │       └── triggers/       # 
     │   ├── migrations/             # Database migration files
     │   │   └── __init__.py
     │   ├── models/                 # Django ORM models

@@ -15,6 +15,6 @@ class RestoreDatabaseView(View):
             raise Http404
 
         with connection.cursor() as cursor:
-            cursor.execute("EXEC dbo.reset_nodes_edges;")
+            cursor.execute("EXEC dbo.sp_reset_nodes_edges;")
 
         return redirect("home")
