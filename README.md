@@ -212,7 +212,7 @@ This is an educational project focused on:
 
 ## 📄 License
 
-Educational project for academic purposes.
+Educational project for academic purposes.(https://github.com/vladimuji/uagrm_comp_eng_sem05_inf310_mainproject/blob/main/License.md)
 
 ---
 
