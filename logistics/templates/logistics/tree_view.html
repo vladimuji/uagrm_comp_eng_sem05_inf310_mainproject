@@ -125,7 +125,7 @@
 		<p v-if="loading" class="op-hint">Loading&hellip;</p>
 
 		<!-- binary-heap-shaped trees: avl, bst, expression -->
-		<div v-if="!loading && isHeapShaped && levels.length" class="tree-canvas" ref="heapCanvas">
+		<!-- <div v-if="!loading && isHeapShaped && levels.length" class="tree-canvas" ref="heapCanvas">
 			<svg class="tree-lines" ref="heapLines" aria-hidden="true"></svg>
 			<div class="tree-levels" ref="heapLevels">
 				<div v-for="(level, levelIndex) in levels" :key="levelIndex"
@@ -139,6 +139,36 @@
 						</div>
 					</div>
 				</div>
+			</div>
+		</div> -->
+
+		<!-- <div v-if="!loading && isHeapShaped && treeData && treeData.structure" class="binary-canvas">
+			<binary-node :node="treeData.structure"></binary-node>
+		</div> -->
+
+		<!-- binary trees: avl, bst, expression -->
+		<div v-if="!loading && isHeapShaped && layout" class="binary-wrap">
+			<div class="zoom-bar">
+				<button type="button" class="zoom-btn" @click="zoomOut">&minus;</button>
+				<button type="button" class="zoom-btn" @click="zoomIn">+</button>
+				<button type="button" class="zoom-btn" @click="fitZoom">Fit</button>
+				<button type="button" class="zoom-btn" @click="zoom = 1">100%</button>
+				<span class="op-hint">{{ Math.round(zoom * 100) }}%</span>
+			</div>
+			<div class="binary-canvas" ref="binaryCanvas">
+				<svg class="binary-svg"
+					:width="layout.width * zoom" :height="layout.height * zoom"
+					:viewBox="`0 0 ${layout.width} ${layout.height}`">
+					<line v-for="(e, i) in layout.edges" :key="'e' + i"
+						class="binary-line"
+						:x1="e.x1" :y1="e.y1" :x2="e.x2" :y2="e.y2"></line>
+					<g v-for="n in layout.nodes" :key="n.key"
+					:transform="`translate(${n.x}, ${n.y})`">
+						<title>{{ tooltipFor(n.data) }}</title>
+						<circle class="binary-circle" :r="layout.radius"></circle>
+						<text class="binary-text" text-anchor="middle" dy=".35em">{{ shortLabel(n.data) }}</text>
+					</g>
+				</svg>
 			</div>
 		</div>
 
@@ -250,6 +280,31 @@
 		height: .75rem;
 		border-left: 2px solid var(--accent);
 	}
+	.binary-wrap { margin-top: 1rem; }
+	.zoom-bar { display: flex; align-items: center; gap: .5rem; margin-bottom: .75rem; }
+	.zoom-btn {
+		padding: .35rem .8rem;
+		color: var(--ink);
+		background: var(--surface);
+		border: 1px solid var(--line);
+		font: 700 .8rem/1.2 Arial, sans-serif;
+		cursor: pointer;
+	}
+	.zoom-btn:hover { border-color: var(--accent); }
+	.binary-canvas {
+		overflow: auto;
+		max-height: 75vh;
+		background: var(--surface);
+		border: 1px solid var(--line);
+	}
+	.binary-svg { display: block; }
+	.binary-line { stroke: var(--accent); stroke-width: 2; }
+	.binary-circle { fill: var(--accent-dark); stroke: #f3bf8a; stroke-width: 3; }
+	.binary-text {
+		fill: #fffaf2;
+		font: 700 10px Arial, sans-serif;
+		pointer-events: none;
+	}
 </style>
 
 {% verbatim %}
@@ -289,6 +344,115 @@ const MwayNode = {
 	},
 };
 
+// const BinaryNode = {
+//     name: 'binary-node',
+//     props: { node: Object },
+//     template: `
+//         <div class="binary-node" v-if="node">
+//             <svg class="binary-links" aria-hidden="true" :viewBox="viewBox" :width="width" :height="height">
+//                 <line v-for="(line, i) in lines" :key="i"
+//                       :x1="line.x1" :y1="line.y1"
+//                       :x2="line.x2" :y2="line.y2"></line>
+//             </svg>
+
+//             <div class="binary-value" :title="tooltipFor(node.data)">
+//                 {{ nodeLabel(node.data) }}
+//             </div>
+
+//             <div class="binary-children">
+//                 <div class="binary-slot">
+//                     <binary-node v-if="node.left" :node="node.left"></binary-node>
+//                     <div v-else class="binary-empty"></div>
+//                 </div>
+//                 <div class="binary-slot">
+//                     <binary-node v-if="node.right" :node="node.right"></binary-node>
+//                     <div v-else class="binary-empty"></div>
+//                 </div>
+//             </div>
+//         </div>
+//     `,
+//     computed: {
+//         width() {
+//             return this.measure(this.node) * 120 + 80;
+//         },
+//         height() {
+//             return 120;
+//         },
+//         viewBox() {
+//             return `0 0 ${this.width} ${this.height}`;
+//         },
+//         lines() {
+//             const lines = [];
+//             const walk = (current, x, y, leftX, rightX) => {
+//                 if (!current) return;
+//                 const centerX = x;
+//                 const centerY = y;
+
+//                 if (current.left) {
+//                     const leftCenterX = leftX;
+//                     const leftCenterY = y + 82;
+//                     lines.push({
+//                         x1: centerX,
+//                         y1: centerY + 28,
+//                         x2: leftCenterX,
+//                         y2: leftCenterY,
+//                     });
+//                     walk(current.left, leftCenterX, leftCenterY, leftX - 56, leftX + 56);
+//                 }
+
+//                 if (current.right) {
+//                     const rightCenterX = rightX;
+//                     const rightCenterY = y + 82;
+//                     lines.push({
+//                         x1: centerX,
+//                         y1: centerY + 28,
+//                         x2: rightCenterX,
+//                         y2: rightCenterY,
+//                     });
+//                     walk(current.right, rightCenterX, rightCenterY, rightX - 56, rightX + 56);
+//                 }
+//             };
+
+//             const rootX = this.width / 2;
+//             const rootY = 28;
+//             const leftX = rootX - 70;
+//             const rightX = rootX + 70;
+
+//             if (this.node.left) {
+//                 walk(this.node.left, leftX, rootY + 82, leftX - 56, leftX + 56);
+//             }
+//             if (this.node.right) {
+//                 walk(this.node.right, rightX, rootY + 82, rightX - 56, rightX + 56);
+//             }
+
+//             return lines;
+//         },
+//     },
+//     methods: {
+//         measure(node) {
+//             if (!node) return 0;
+//             const left = this.measure(node.left);
+//             const right = this.measure(node.right);
+//             return Math.max(1, left + right + 1);
+//         },
+//         nodeLabel(data) {
+//             if (data === null || data === undefined) return '';
+//             return typeof data === 'object' ? (data.city_name ?? data.id) : data;
+//         },
+//         tooltipFor(data) {
+//             if (data === null || data === undefined) return '';
+//             if (typeof data !== 'object') return String(data);
+//             return [
+//                 'id: ' + data.id,
+//                 'city: ' + data.city_name,
+//                 'state: ' + data.state,
+//                 'lat/lon: ' + data.latitude + ', ' + data.longitude,
+//                 'listed: ' + data.listed,
+//             ].join('\n');
+//         },
+//     },
+// };
+
 createApp({
 	components: { MwayNode },
 	data() {
@@ -323,6 +487,7 @@ createApp({
 			deleteId: null,
 			infixInput: '(((3 + 6) * (2 - 4)) + 7)',
 			expressionSummary: '',
+			zoom: 1,
 		};
 	},
 	computed: {
@@ -348,9 +513,53 @@ createApp({
 		isHeapShaped() {
 			return this.activeKind === 'avl' || this.activeKind === 'bst' || this.activeKind === 'expression';
 		},
-		levels() {
-			if (!this.treeData || !this.treeData.structure) return [];
-			return this.getLevels(this.treeData.structure);
+		// levels() {
+		// 	if (!this.treeData || !this.treeData.structure) return [];
+		// 	return this.getLevels(this.treeData.structure);
+		// },
+		layout() {
+			if (!this.isHeapShaped || !this.treeData || !this.treeData.structure) return null;
+
+			const HGAP = 58, VGAP = 84, RADIUS = 26, PAD = 40;
+			const nodes = [];
+			const edges = [];
+			let nextLeaf = 0;
+			let maxDepth = 0;
+
+			// Returns the placed node so the parent can center itself over its children.
+			const walk = (raw, depth, key) => {
+				maxDepth = Math.max(maxDepth, depth);
+				const kids = [];
+				if (raw.left) kids.push(walk(raw.left, depth + 1, key + 'L'));
+				if (raw.right) kids.push(walk(raw.right, depth + 1, key + 'R'));
+
+				const slot = kids.length === 0
+					? nextLeaf++
+					: (kids[0].slot + kids[kids.length - 1].slot) / 2;
+
+				const node = {
+					key,
+					slot,
+					data: raw.data,
+					x: PAD + slot * HGAP,
+					y: PAD + depth * VGAP,
+				};
+				kids.forEach((kid) => {
+					edges.push({ x1: node.x, y1: node.y, x2: kid.x, y2: kid.y });
+				});
+				nodes.push(node);
+				return node;
+			};
+
+			walk(this.treeData.structure, 0, 'R');
+
+			return {
+				nodes,
+				edges,
+				radius: RADIUS,
+				width: PAD * 2 + Math.max(nextLeaf - 1, 0) * HGAP,
+				height: PAD * 2 + maxDepth * VGAP,
+			};
 		},
 		summaryText() {
 			if (!this.treeData) return '';
@@ -390,14 +599,16 @@ createApp({
 			this.error = null;
 			try {
 				const response = await fetch(this.apiUrl(this.activeKind));
+				console.log('loadTree response', response);
 				const payload = await response.json();
 				if (!response.ok) throw new Error(payload.error || 'Failed to load tree');
 				this.treeData = payload;
-				this.$nextTick(this.drawHeapLines);
+				// this.$nextTick(this.drawHeapLines);
 			} catch (err) {
 				this.error = err.message;
 			} finally {
 				this.loading = false;
+				this.$nextTick(this.fitZoom);
 			}
 		},
 		buildInsertBody() {
@@ -428,7 +639,7 @@ createApp({
 				if (!response.ok) throw new Error(payload.error || 'Insert failed');
 				this.treeData = payload;
 				this.insertForm = { id: null, city_name: '', state: '', latitude: null, longitude: null, listed: false };
-				this.$nextTick(this.drawHeapLines);
+				// this.$nextTick(this.drawHeapLines);
 			} catch (err) {
 				this.error = err.message;
 			} finally {
@@ -449,7 +660,7 @@ createApp({
 				if (!response.ok) throw new Error(payload.error || 'Delete failed');
 				this.treeData = payload;
 				this.deleteId = null;
-				this.$nextTick(this.drawHeapLines);
+				// this.$nextTick(this.drawHeapLines);
 			} catch (err) {
 				this.error = err.message;
 			} finally {
@@ -470,73 +681,100 @@ createApp({
 				if (!response.ok) throw new Error(payload.error || 'Evaluation failed');
 				this.treeData = payload;
 				this.expressionSummary = `infix: ${payload.infix} | prefix: ${payload.prefix} | postfix: ${payload.postfix} | result: ${payload.result}`;
-				this.$nextTick(this.drawHeapLines);
+				// this.$nextTick(this.drawHeapLines);
 			} catch (err) {
 				this.error = err.message;
 			} finally {
 				this.loading = false;
+				this.$nextTick(this.fitZoom);
 			}
 		},
-		getLevels(data) {
-			const levels = [];
-			let levelStart = 0;
-			let slotCount = 1;
-			while (levelStart < data.length) {
-				levels.push(data.slice(levelStart, levelStart + slotCount));
-				levelStart += slotCount;
-				slotCount *= 2;
-			}
-			return levels;
-		},
-		nodeLabel(value) {
-			if (value === null || value === undefined) return '';
-			if (typeof value === 'object') {
-				return value.city_name !== undefined ? value.city_name : value.id;
-			}
-			return value;
-		},
-		nodeTooltip(value) {
-			if (value === null || value === undefined) return '';
-			if (typeof value === 'object') {
-				return [
-					'id: ' + value.id,
-					'city: ' + value.city_name,
-					'state: ' + value.state,
-					'lat/lon: ' + value.latitude + ', ' + value.longitude,
-					'listed: ' + value.listed,
-				].join('\n');
-			}
-			return String(value);
-		},
-		drawHeapLines() {
-			const canvas = this.$refs.heapCanvas;
-			const svg = this.$refs.heapLines;
-			if (!canvas || !svg) return;
-			const canvasBounds = canvas.getBoundingClientRect();
-			svg.setAttribute('width', canvas.clientWidth);
-			svg.setAttribute('height', canvas.clientHeight);
-			svg.setAttribute('viewBox', `0 0 ${canvas.clientWidth} ${canvas.clientHeight}`);
-			svg.innerHTML = '';
+		// getLevels(data) {
+		// 	const levels = [];
+		// 	let levelStart = 0;
+		// 	let slotCount = 1;
+		// 	while (levelStart < data.length) {
+		// 		levels.push(data.slice(levelStart, levelStart + slotCount));
+		// 		levelStart += slotCount;
+		// 		slotCount *= 2;
+		// 	}
+		// 	return levels;
+		// },
+		// nodeLabel(value) {
+		// 	if (value === null || value === undefined) return '';
+		// 	if (typeof value === 'object') {
+		// 		return value.city_name !== undefined ? value.city_name : value.id;
+		// 	}
+		// 	return value;
+		// },
+		// nodeTooltip(value) {
+		// 	if (value === null || value === undefined) return '';
+		// 	if (typeof value === 'object') {
+		// 		return [
+		// 			'id: ' + value.id,
+		// 			'city: ' + value.city_name,
+		// 			'state: ' + value.state,
+		// 			'lat/lon: ' + value.latitude + ', ' + value.longitude,
+		// 			'listed: ' + value.listed,
+		// 		].join('\n');
+		// 	}
+		// 	return String(value);
+		// },
+		// drawHeapLines() {
+		// 	const canvas = this.$refs.heapCanvas;
+		// 	const svg = this.$refs.heapLines;
+		// 	if (!canvas || !svg) return;
+		// 	const canvasBounds = canvas.getBoundingClientRect();
+		// 	svg.setAttribute('width', canvas.clientWidth);
+		// 	svg.setAttribute('height', canvas.clientHeight);
+		// 	svg.setAttribute('viewBox', `0 0 ${canvas.clientWidth} ${canvas.clientHeight}`);
+		// 	svg.innerHTML = '';
 
-			canvas.querySelectorAll('.tree-node').forEach((node) => {
-				const nodeIndex = Number(node.parentElement.dataset.index);
-				[2 * nodeIndex + 1, 2 * nodeIndex + 2].forEach((childIndex) => {
-					const child = canvas.querySelector(`[data-index="${childIndex}"] .tree-node`);
-					if (!child) return;
-					const parentBounds = node.getBoundingClientRect();
-					const childBounds = child.getBoundingClientRect();
-					const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-					line.setAttribute('x1', parentBounds.left + parentBounds.width / 2 - canvasBounds.left);
-					line.setAttribute('y1', parentBounds.bottom - canvasBounds.top);
-					line.setAttribute('x2', childBounds.left + childBounds.width / 2 - canvasBounds.left);
-					line.setAttribute('y2', childBounds.top - canvasBounds.top);
-					svg.appendChild(line);
-				});
-			});
+		// 	canvas.querySelectorAll('.tree-node').forEach((node) => {
+		// 		const nodeIndex = Number(node.parentElement.dataset.index);
+		// 		[2 * nodeIndex + 1, 2 * nodeIndex + 2].forEach((childIndex) => {
+		// 			const child = canvas.querySelector(`[data-index="${childIndex}"] .tree-node`);
+		// 			if (!child) return;
+		// 			const parentBounds = node.getBoundingClientRect();
+		// 			const childBounds = child.getBoundingClientRect();
+		// 			const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+		// 			line.setAttribute('x1', parentBounds.left + parentBounds.width / 2 - canvasBounds.left);
+		// 			line.setAttribute('y1', parentBounds.bottom - canvasBounds.top);
+		// 			line.setAttribute('x2', childBounds.left + childBounds.width / 2 - canvasBounds.left);
+		// 			line.setAttribute('y2', childBounds.top - canvasBounds.top);
+		// 			svg.appendChild(line);
+		// 		});
+		// 	});
+		// },
+		zoomIn() { this.zoom = Math.min(2, +(this.zoom + 0.1).toFixed(2)); },
+		zoomOut() { this.zoom = Math.max(0.2, +(this.zoom - 0.1).toFixed(2)); },
+		fitZoom() {
+			const canvas = this.$refs.binaryCanvas;
+			if (!canvas || !this.layout) return;
+			const fit = (canvas.clientWidth - 2) / this.layout.width;
+			this.zoom = Math.max(0.2, Math.min(1, +fit.toFixed(2)));
+		},
+		shortLabel(data) {
+			if (data === null || data === undefined) return '';
+			const text = typeof data === 'object'
+				? String(data.city_name ?? data.id)
+				: String(data);
+			return text.length > 9 ? text.slice(0, 8) + '…' : text;
+		},
+		tooltipFor(data) {
+			if (data === null || data === undefined) return '';
+			if (typeof data !== 'object') return String(data);
+			return [
+				'id: ' + data.id,
+				'city: ' + data.city_name,
+				'state: ' + data.state,
+				'lat/lon: ' + data.latitude + ', ' + data.longitude,
+				'listed: ' + data.listed,
+			].join('\n');
 		},
 	},
 	mounted() {
-		this.loadTree();
+		// this.loadTree();
 		window.addEventListener('resize', this.drawHeapLines);
 	},
 }).mount('#tree-app');

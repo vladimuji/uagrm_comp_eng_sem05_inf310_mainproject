@@ -287,6 +287,7 @@ class MWaySearchTree:
             current = nodes_queue.popleft()
             result.extend(current.keys)
             for child in current.children:
-                nodes_queue.append(child)
+                if child is not None:
+                    nodes_queue.append(child)
 
         return result

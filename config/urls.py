@@ -28,12 +28,12 @@ urlpatterns = [
     path('heaps/', HeapView.as_view(), name='heaps'),
     path('admin/', admin.site.urls),
 
-        # avl / bst / bway / mway -> DB-backed CRUD-ish endpoint
-    path('api/trees/<str:kind>/', TreeOperationView.as_view(), name='tree-api'),
- 
     # expression tree -> ephemeral, no DB, no 'kind'
     path('api/trees/expression/', ExpressionTreeView.as_view(), name='expression-tree-api'),
-
+    
+    # avl / bst / bway / mway -> DB-backed CRUD-ish endpoint
+    path('api/trees/<str:kind>/', TreeOperationView.as_view(), name='tree-api'),
+ 
     path('system/restore/<str:token>/', RestoreDatabaseView.as_view(), name='restore-db'),
 
     path('map/', MapView.as_view(), name='map'),

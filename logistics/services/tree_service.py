@@ -14,6 +14,13 @@ from datastructures.bin_tree.bmway_tree import BMWayTree
 from datastructures.bin_tree.mway_search_tree import MWaySearchTree
 from datastructures.bin_tree.expression_tree import ExpressionTree
 from logistics.models import Node
+from logistics.services.sql_node_service import (
+    sp_get_all_nodes,
+    sp_insert_node,
+    sp_delete_node,
+    STATUS_ALREADY_EXISTS,
+    STATUS_NOT_FOUND,
+)
 
 # ----------------------------------------------------------------------
 # Tree registries
@@ -54,16 +61,15 @@ def _resolve_tree_class(kind):
 # ----------------------------------------------------------------------
 def build_tree(kind, sort_key=DEFAULT_SORT_KEY, order=DEFAULT_ORDER):
     tree_cls = _resolve_tree_class(kind)
+    rows = sp_get_all_nodes()
 
     if _is_mway(kind):
         tree = tree_cls(order)
-        ids = Node.objects.order_by("id").values_list("id", flat=True)
-        for node_id in ids:
-            tree.insert(node_id)
+        for row in rows:
+            tree.insert(row["id"])
         return tree
 
     tree = tree_cls()
-    rows = Node.objects.order_by("id").values()
     for row in rows:
         tree.insert(CityNode(**row, sort_key=sort_key))
     return tree
@@ -100,12 +106,25 @@ def insert_node(kind, node_id, sort_key=DEFAULT_SORT_KEY,
             raise NodeAlreadyExists(node_id)
 
     fields = _apply_default_fields(node_id, extra_fields)
-    Node.objects.create(id=node_id, **fields)
+    # Node.objects.create(id=node_id, **fields) # No more altering directly the DB via ORM, use the stored proc instead
+    # NEW: instead of Node.objects.create(...), call the T-SQL proc
+    status = sp_insert_node(
+        node_id,
+        fields.get("city_name"),
+        fields.get("state"),
+        fields.get("latitude"),
+        fields.get("longitude"),
+        fields.get("listed"),
+    )
+    if status == STATUS_ALREADY_EXISTS:
+        raise NodeAlreadyExists(node_id)   # DB said no, even if the tree missed it
 
     if _is_mway(kind):
         tree.insert(node_id)
     else:
-        row = Node.objects.values().get(id=node_id)
+        row = next((item for item in sp_get_all_nodes() if item["id"] == node_id), None)
+        if row is None:
+            raise NodeNotFound(node_id)
         tree.insert(CityNode(**row, sort_key=sort_key))
     return tree
 
@@ -122,9 +141,13 @@ def delete_node(kind, node_id, sort_key=DEFAULT_SORT_KEY, order=DEFAULT_ORDER):
         if delete_target is None:
             raise NodeNotFound(node_id)
 
-    deleted_count, _ = Node.objects.filter(id=node_id).delete()
-    if deleted_count == 0:
-        raise NodeNotFound(node_id)
+    # deleted_count, _ = Node.objects.filter(id=node_id).delete()
+    # if deleted_count == 0:
+    #     raise NodeNotFound(node_id)
+
+    status = sp_delete_node(node_id)
+    if status == STATUS_NOT_FOUND:
+        raise NodeNotFound(node_id)  # DB said no, even if the tree had it
 
     tree.delete(delete_target)  # int for bway/mway, CityNode for avl/bst
     return tree
@@ -150,23 +173,40 @@ def serialize_binary_tree(tree):
         "size": tree.size(),
     }
 
+#---------------------------------------
+# This is old, coz got cruxhed on 120 level
+#---------------------------------------
+# def serialize_structure(tree):
+#     """Binary-heap-indexed flat array (root at 0, children at 2i+1/2i+2).
+#     Only meaningful for AVL/BST (fixed left/right child shape)."""
+#     height = tree.high()
+#     size = (2 ** height) - 1 if height else 0
+#     array = [None] * size
+
+#     def walk(node, index):
+#         if node is None or index >= size:
+#             return
+#         array[index] = node.data.to_dict()
+#         walk(node.left_child, 2 * index + 1)
+#         walk(node.right_child, 2 * index + 2)
+
+#     walk(tree.root, 0)
+#     return array
+
 
 def serialize_structure(tree):
-    """Binary-heap-indexed flat array (root at 0, children at 2i+1/2i+2).
-    Only meaningful for AVL/BST (fixed left/right child shape)."""
-    height = tree.high()
-    size = (2 ** height) - 1 if height else 0
-    array = [None] * size
-
-    def walk(node, index):
-        if node is None or index >= size:
-            return
-        array[index] = node.data.to_dict()
-        walk(node.left_child, 2 * index + 1)
-        walk(node.right_child, 2 * index + 2)
-
-    walk(tree.root, 0)
-    return array
+    """Recursive nested structure: {data, left, right}. Cost is O(n),
+    unlike the old flat 2^height array which blows up for skewed trees
+    like an unbalanced BST."""
+    def walk(node):
+        if node is None:
+            return None
+        return {
+            "data": node.data.to_dict(),
+            "left": walk(node.left_child),
+            "right": walk(node.right_child),
+        }
+    return walk(tree.root)
 
 
 def serialize_mway_tree(tree):
@@ -187,12 +227,25 @@ def serialize_mway_tree(tree):
     }
 
 
+# def _serialize_mway_node(node):
+#     if node is None:
+#         return None
+#     return {
+#         "keys": list(node.keys),
+#         "children": [_serialize_mway_node(child) for child in node.children],
+#     }
+
+
 def _serialize_mway_node(node):
     if node is None:
         return None
     return {
         "keys": list(node.keys),
-        "children": [_serialize_mway_node(child) for child in node.children],
+        "children": [
+            _serialize_mway_node(child)
+            for child in node.children
+            if child is not None
+        ],
     }
 
 
@@ -200,8 +253,9 @@ def _build_node_info_map(ids):
     """id -> full row dict, for frontend hover tooltips."""
     if not ids:
         return {}
-    rows = Node.objects.filter(id__in=ids).values()
-    return {row["id"]: row for row in rows}
+    rows = sp_get_all_nodes()
+    id_set = set(ids)
+    return {row["id"]: row for row in rows if row["id"] in id_set}
 
 
 # ----------------------------------------------------------------------
@@ -219,20 +273,36 @@ def evaluate_expression(infix_expression):
         "size": tree.size(),
     }
 
+#---------------------------------------
+# This is old, coz got cruxhed on 120 level
+#---------------------------------------
+# def _serialize_generic_structure(tree):
+#     """Same binary-heap indexing as serialize_structure, but for nodes
+#     whose data is a plain float/str (ExpressionNode) instead of CityNode."""
+#     height = tree.high()
+#     size = (2 ** height) - 1 if height else 0
+#     array = [None] * size
+
+#     def walk(node, index):
+#         if node is None or index >= size:
+#             return
+#         array[index] = node.data
+#         walk(node.left_child, 2 * index + 1)
+#         walk(node.right_child, 2 * index + 2)
+
+#     walk(tree.root, 0)
+#     return array
 
 def _serialize_generic_structure(tree):
-    """Same binary-heap indexing as serialize_structure, but for nodes
-    whose data is a plain float/str (ExpressionNode) instead of CityNode."""
-    height = tree.high()
-    size = (2 ** height) - 1 if height else 0
-    array = [None] * size
-
-    def walk(node, index):
-        if node is None or index >= size:
-            return
-        array[index] = node.data
-        walk(node.left_child, 2 * index + 1)
-        walk(node.right_child, 2 * index + 2)
-
-    walk(tree.root, 0)
-    return array
+    """Same nested {data, left, right} shape as serialize_structure,
+    just without .to_dict() since expression node data is a raw float/str,
+    not a CityNode."""
+    def walk(node):
+        if node is None:
+            return None
+        return {
+            "data": node.data,
+            "left": walk(node.left_child),
+            "right": walk(node.right_child),
+        }
+    return walk(tree.root)
