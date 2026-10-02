@@ -65,6 +65,10 @@
                 │   │   ├── __init__.py
                 │   │   ├── city_node.py
                 │   │   └── route_edge.py
+                │   ├── game/
+                │   │   ├── game_model.py
+                │   │   ├── minimax_agent.py
+                │   │   └── ml_agent.py
                 │   ├── graph/ 
                 │   │   ├── graph.py
                 │   │   ├── digraph.py 
@@ -95,9 +99,22 @@
                 │   │       ├── logistics_mysql.sql
                 │   │       ├── logistics_mssql.sql
                 │   │       ├── functions/
+                │   │       │   ├── fn_node_exists.sql
+                │   │       │   └── tictactoe/
+                │   │       │       └── fn_get_winner.sql
                 │   │       ├── procedures/
-                │   │           └── procedure_restore_nodes_edges.sql
+                │   │       │   └── sp_reset_nodes_edges.sql
+                │   │       │   └── sp_delete_node.sql
+                │   │       │   └── sp_get_all_nodes.sql
+                │   │       │   └── sp_insert_node.sql
+                │   │       │   └── tictactoe/
+                │   │       │       └── sp_create_games.sql
+                │   │       │       └── sp_get_games.sql
+                │   │       │       └── sp_make_mode.sql
                 │   │       └── triggers/
+                │   │           ├── trg_audit_nodes.sql
+                │   │           └── tictactoe/
+                │   │               └── trg_audit_game_move.sql
                 |   ├── migrations/
                 |   |   └── __init__.py
                 |   ├── models/
@@ -105,8 +122,11 @@
                 |   |   ├── node.py
                 |   |   └── route.py
                 |   ├── services/
+                |   |   ├── game_service.py
                 |   |   ├── graph_service.py
                 |   |   ├── heap_service.py
+                |   |   ├── sql_game_service.py
+                |   |   ├── sql_node_service.py
                 |   |   └── tree_service.py
                 |   ├── static/
                 |   |   └── logistics/
@@ -123,11 +143,13 @@
                 |   |       ├── tree_view.html
                 |   |       ├── heap_view.html
                 |   |       ├── map_view.html
+                |   |       ├── tictactoe_view.html
                 |   |       └── partials/
                 |   |           └── menu.html
                 |   ├── views/
                 |   |   ├── __init__.py
                 |   |   ├── views.py
+                |   |   ├── system_views.py
                 |   |   └── api_views.py
                 |   ├── __init__.py
                 |   ├── admin.py
@@ -137,6 +159,7 @@
                 |-- .env_sample
                 |-- main.py
                 |-- manage.py
+                |-- License.md
                 |-- README.md
                 └── requirements.txt
         </code></pre>

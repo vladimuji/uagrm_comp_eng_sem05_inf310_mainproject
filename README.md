@@ -47,15 +47,19 @@ This project provides clean, educational implementations of common data structur
     │   │   ├── __init__.py
     │   │   ├── city_node.py        # City node representation
     │   │   └── route_edge.py       # Route edge representation
+    │   ├── game/                   # Game logic and AI agents
+    │   │   ├── game_model.py       # Game state and rules
+    │   │   ├── minimax_agent.py    # Minimax-based game AI
+    │   │   └── ml_agent.py         # Machine learning game agent
     │   ├── graph/                  # Graph data structure and datasets
     │   │   ├── graph.py            # Undirected graph implementation
     │   │   ├── digraph.py          # Directed graph implementation
     │   │   ├── wgraph.py           # Weighted graph implementation
     │   │   ├── graph_algorithms.py # Graph algorithms (DFS, BFS, etc.)
     │   │   └── data/               # Graph test data
-    │   │       ├── adjacent_with_weight.py
-    │   │       ├── edge.py
-    │   │       └── union_find.py
+    │   │       ├── adjacent_with_weight.py # Weighted adjacency data
+    │   │       ├── edge.py          # Edge representation data
+    │   │       └── union_find.py    # Union-find helper data
     │   └── heap/                   # Heap data structure
     │       ├── i_heap.py           # Heap interface
     │       ├── abstract_heap.py    # Abstract heap base class
@@ -67,17 +71,30 @@ This project provides clean, educational implementations of common data structur
     │   └── tic_tac_toe_strategy.py # Tic-Tac-Toe strategy using a binary tree
     ├── logistics/                  # Django application for the web interface
     │   ├── data/                   # Database files and test data
-    │   │   ├── edges.json
-    │   │   ├── edges_copy.json
-    │   │   ├── nodes.json
-    │   │   ├── nodes_copy.json
-    │   │   └── db/                 # 
-    │   │       ├── logistics_mysql.sql
-    │   │       ├── logistics_mssql.sql
-    │   │       ├── functions/      # 
-    │   │       ├── procedures/     # 
-    │   │           └── procedure_restore_nodes_edges.sql
-    │   │       └── triggers/       # 
+    │   │   ├── edges.json          # Graph edge dataset
+    │   │   ├── edges_copy.json     # Copy of graph edge dataset
+    │   │   ├── nodes.json          # Graph node dataset
+    │   │   ├── nodes_copy.json     # Copy of graph node dataset
+    │   │   └── db/                 # Database scripts and SQL logic
+    │   │       ├── logistics_mysql.sql   # MySQL schema and data scripts
+    │   │       ├── logistics_mssql.sql   # MSSQL schema and data scripts
+    │   │       ├── functions/            # SQL functions for validation logic
+    │   │       │   ├── fn_node_exists.sql # Checks whether a node exists
+    │   │       │   └── tictactoe/         # Tic-Tac-Toe SQL helper functions
+    │   │       │       └── fn_get_winner.sql # Determines winner of a game
+    │   │       ├── procedures/           # Stored procedures for the application
+    │   │       │   ├── sp_delete_node.sql # Removes a node and related edges
+    │   │       │   ├── sp_get_all_nodes.sql # Retrieves the full node set
+    │   │       │   ├── sp_insert_node.sql # Inserts a new node into the graph
+    │   │       │   ├── sp_reset_nodes_edges.sql # Resets graph node and edge data
+    │   │       │   └── tictactoe/         # Tic-Tac-Toe procedures
+    │   │       │       ├── sp_create_games.sql # Creates a new game record
+    │   │       │       ├── sp_get_games.sql    # Fetches game information
+    │   │       │       └── sp_make_mode.sql    # Updates a move in the game
+    │   │       └── triggers/              # Database triggers for auditing and cleanup
+    │   │           ├── trg_audit_nodes.sql # Logs node changes
+    │   │           └── tictactoe/         # Tic-Tac-Toe triggers
+    │   │               └── trg_audit_game_move.sql # Tracks game move changes
     │   ├── migrations/             # Database migration files
     │   │   └── __init__.py
     │   ├── models/                 # Django ORM models
@@ -85,37 +102,45 @@ This project provides clean, educational implementations of common data structur
     │   │   ├── node.py             # Node model
     │   │   └── route.py            # Route model
     │   ├── services/               # Business logic services
-    │   │   ├── graph_service.py    # Graph service methods
-    │   │   ├── heap_service.py     # Heap service methods
-    │   │   └── tree_service.py     # Tree service methods
-    │   ├── static/logistics/       # Static files (CSS, JS, images)
-    │   │   ├── css/
-    │   │   │   └── styles.css
-    │   │   ├── js/
-    │   │   │   └── menu.js
-    │   │   └── images/
-    │   ├── views/                  # VIEWS (Controllers)
+    │   │   ├── game_service.py    # Game logic service
+    │   │   ├── graph_service.py   # Graph service methods
+    │   │   ├── heap_service.py    # Heap service methods
+    │   │   ├── sql_game_service.py # SQL game service logic
+    │   │   ├── sql_node_service.py # SQL node service logic
+    │   │   └── tree_service.py    # Tree service methods
+    │   ├── static/                # Static files (CSS, JS, images)
+    │   │   └── logistics/
+    │   │       ├── css/
+    │   │       │   └── styles.css  # Application styles
+    │   │       ├── js/
+    │   │       │   └── menu.js     # Navigation menu script
+    │   │       └── images/
+    │   ├── templates/             # Django templates for views
+    │   │   └── logistics/
+    │   │       ├── base.html       # Base template
+    │   │       ├── index.html      # Main project home page
+    │   │       ├── graph_view.html # Graph visualization template
+    │   │       ├── tree_view.html  # Tree visualization template
+    │   │       ├── heap_view.html  # Heap visualization template
+    │   │       ├── map_view.html   # Map visualization template
+    │   │       ├── tictactoe_view.html # Tic-Tac-Toe board template
+    │   │       └── partials/
+    │   │           └── menu.html   # Navigation menu partial
+    │   ├── views/                 # Views (controllers)
     │   │   ├── __init__.py
-    │   │   ├── views.py            # Views that render the web pages
-    │   │   └── api_views.py        # API views
-    │   ├── templates/logistics/    # TEMPLATES (Views)
-    │   │   ├── base.html           # Base template
-    │   │   ├── index.html          # Main project home page
-    │   │   ├── graph_view.html     # Graph visualization template
-    │   │   ├── tree_view.html      # Tree visualization template
-    │   │   ├── heap_view.html      # Heap visualization template
-    │   │   ├── map_view.html      # 
-    │   │   └── partials/
-    │   │       └── menu.html       # Navigation menu partial
+    │   │   ├── views.py           # Views that render the web pages
+    │   │   ├── system_views.py    # System-level web views
+    │   │   └── api_views.py       # API views
     │   ├── __init__.py
-    │   ├── admin.py                # Django administration configuration
-    │   ├── apps.py                 # Application configuration
-    │   └── tests.py                # Application tests
-    ├── .env_sample                 # 
-    ├── main.py                     # Main Python entry point
-    ├── manage.py                   # Django command-line utility
-    ├── README.md                   # Project documentation
-    └── requirements.txt            # Python project dependencies
+    │   ├── admin.py               # Django administration configuration
+    │   ├── apps.py                # Application configuration
+    │   └── tests.py               # Application tests
+    ├── .env_sample               # Environment sample configuration
+    ├── main.py                   # Main Python entry point
+    ├── manage.py                 # Django command-line utility
+    ├── License.md                # Project license
+    ├── README.md                 # Project documentation
+    └── requirements.txt          # Python project dependencies
 ```
 
 ## 🌳 Binary Tree Implementation
