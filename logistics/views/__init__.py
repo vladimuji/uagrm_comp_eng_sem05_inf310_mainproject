@@ -1,1 +1,1 @@
-from .views import BaseView, TreeView, GraphView, HeapView, MapView
+from .views import BaseView, TreeView, GraphView, HeapView, MapView, TicTacToeView

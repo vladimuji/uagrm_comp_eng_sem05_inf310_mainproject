@@ -1,0 +1,152 @@
+{% extends "logistics/base.html" %}
+
+{% block title %}Tic-Tac-Toe | Data Structures II{% endblock %}
+
+{% block hero %}
+	<div id="ttt-page-hero">
+		<p class="eyebrow">INF310 | Minimax</p>
+		<h1>Tic-Tac-Toe</h1>
+		<p>Every move is validated and saved in SQL Server. In Minimax mode the AI explores the game tree with backtracking.</p>
+	</div>
+{% endblock %}
+
+{% block content %}
+{% verbatim %}
+<div id="ttt-app">
+	<section class="op-panel">
+		<form class="op-form" @submit.prevent="newGame">
+			<label class="op-field">
+				<span>Mode</span>
+				<select v-model="mode">
+					<option value="human">Human vs Human</option>
+					<option value="minimax">Human vs Minimax</option>
+				</select>
+			</label>
+			<button type="submit" class="op-submit" :disabled="loading">New game</button>
+		</form>
+		<p class="op-hint">You play X. In Minimax mode the AI plays O.</p>
+	</section>
+
+	<section class="tree-panel">
+		<div class="tree-panel-heading">
+			<div>
+				<p class="eyebrow">{{ game ? 'Game #' + game.id : 'No game yet' }}</p>
+				<h2>{{ statusText }}</h2>
+			</div>
+			<p class="tree-summary" v-if="nodes !== null">{{ nodes.toLocaleString() }} nodes explored by Minimax</p>
+		</div>
+
+		<p v-if="error" class="op-error">{{ error }}</p>
+
+		<div v-if="game" class="ttt-board">
+			<template v-for="(row, r) in game.board" :key="r">
+				<button v-for="(cell, c) in row" :key="r + '-' + c"
+						type="button"
+						:class="['ttt-cell', { 'is-x': cell === 'X', 'is-o': cell === 'O' }]"
+						:disabled="loading || cell !== '-' || game.status !== 'playing'"
+						@click="move(r, c)">
+					{{ cell === '-' ? '' : cell }}
+				</button>
+			</template>
+		</div>
+	</section>
+</div>
+{% endverbatim %}
+{% endblock %}
+
+{% block extra_scripts %}
+<style>
+	.ttt-board {
+		display: grid;
+		grid-template-columns: repeat(3, 6rem);
+		gap: .5rem;
+		justify-content: center;
+		margin-top: 2rem;
+	}
+	.ttt-cell {
+		width: 6rem;
+		height: 6rem;
+		font: 700 2.5rem/1 Arial, sans-serif;
+		color: var(--ink);
+		background: var(--surface);
+		border: 2px solid var(--line);
+		cursor: pointer;
+	}
+	.ttt-cell:hover:not(:disabled) { border-color: var(--accent); }
+	.ttt-cell:disabled { cursor: default; }
+	.ttt-cell.is-x { color: var(--accent-dark); }
+	.ttt-cell.is-o { color: #28515a; }
+	.op-panel {
+		padding: 1.25rem;
+		margin-bottom: 1.5rem;
+		background: var(--surface);
+		border: 1px solid var(--line);
+		border-top: 4px solid var(--accent);
+	}
+	.op-form { display: flex; flex-wrap: wrap; align-items: end; gap: 1rem; }
+	.op-field { display: flex; flex-direction: column; gap: .3rem; font: 700 .75rem/1.2 Arial, sans-serif; color: var(--muted); }
+	.op-field select { padding: .5rem .6rem; font: 1rem/1.2 Georgia, serif; border: 1px solid var(--line); background: var(--paper); color: var(--ink); }
+	.op-submit { padding: .6rem 1.25rem; color: #fffaf2; background: var(--accent-dark); border: none; font: 700 .85rem/1.2 Arial, sans-serif; cursor: pointer; }
+	.op-submit:hover { background: var(--accent); }
+	.op-hint { margin: .75rem 0 0; color: var(--muted); font-size: .85rem; }
+	.op-error { color: #b3261e; font-weight: 700; }
+</style>
+
+{% verbatim %}
+<script>
+const { createApp } = Vue;
+
+function getCookie(name) {
+	const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+	return match ? decodeURIComponent(match[2]) : null;
+}
+
+createApp({
+	data() {
+		return { mode: 'minimax', game: null, nodes: null, loading: false, error: null };
+	},
+	computed: {
+		statusText() {
+			if (!this.game) return 'Start a new game';
+			if (this.game.status === 'draw') return "It's a draw";
+			if (this.game.status === 'X' || this.game.status === 'O') return this.game.status + ' wins!';
+			return 'Turn: ' + this.game.turn;
+		},
+	},
+	methods: {
+		async request(url, method, body) {
+			this.loading = true;
+			this.error = null;
+			try {
+				const response = await fetch(url, {
+					method,
+					headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+					body: body ? JSON.stringify(body) : undefined,
+				});
+				const payload = await response.json();
+				if (!response.ok) throw new Error(payload.error || 'Request failed');
+				return payload;
+			} catch (err) {
+				this.error = err.message;
+				return null;
+			} finally {
+				this.loading = false;
+			}
+		},
+		async newGame() {
+			const payload = await this.request('/api/game/', 'POST', { mode: this.mode });
+			if (payload) { this.game = payload; this.nodes = null; }
+		},
+		async move(row, column) {
+			const payload = await this.request(`/api/game/${this.game.id}/move/`, 'POST', { row, column });
+			if (payload) {
+				this.nodes = payload.nodes_evaluated;
+				this.game = payload;
+			}
+		},
+	},
+	mounted() { this.newGame(); },
+}).mount('#ttt-app');
+</script>
+{% endverbatim %}
+{% endblock %}

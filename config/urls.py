@@ -16,8 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from logistics.views import BaseView, TreeView, GraphView, HeapView, MapView
-from logistics.views.api_views import TreeOperationView, ExpressionTreeView, GraphDataView
+from logistics.views import BaseView, TreeView, GraphView, HeapView, MapView, TicTacToeView
+# from logistics.views.api_views import TreeOperationView, ExpressionTreeView, GraphDataView
+from logistics.views.api_views import (
+    TreeOperationView, ExpressionTreeView, GraphDataView,
+    GameCreateView, GameDetailView, GameMoveView,
+)
 from logistics.views.system_views import RestoreDatabaseView
 
 urlpatterns = [
@@ -38,4 +42,10 @@ urlpatterns = [
 
     path('map/', MapView.as_view(), name='map'),
     path('api/graph/', GraphDataView.as_view(), name='graph-api'),
+
+    # For the TicTacToe Game
+    path('tictactoe/', TicTacToeView.as_view(), name='tictactoe'),
+    path('api/game/', GameCreateView.as_view(), name='game-create'),
+    path('api/game/<int:game_id>/', GameDetailView.as_view(), name='game-detail'),
+    path('api/game/<int:game_id>/move/', GameMoveView.as_view(), name='game-move'),
 ]

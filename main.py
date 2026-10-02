@@ -198,45 +198,54 @@ from exercices.tic_tac_toe import Tree
 # Demo (mirrors MWaySearchTree from the Java version)
 # ------------------------------------------------------------------
 
-tree = MWaySearchTree(4)
-tree.insert(10)
-tree.insert(20)
-tree.insert(30)
-tree.insert(40)
-tree.insert(50)
-tree.insert(60)
-tree.insert(70)
-tree.insert(80)
-tree.insert(90)
-print("InOrder: " + str(tree.in_order()))
-print("PreOrder: " + str(tree.pre_order()))
-print("PosOrder: " + str(tree.post_order()))
-#print("ByLevels: " + str(tree.iteration_by_levels()))
-tree.insert(100)
-tree.insert(110)
-tree.insert(120)
-tree.insert(130)
-tree.insert(140)
-tree.insert(150)
+# tree = MWaySearchTree(4)
+# tree.insert(10)
+# tree.insert(20)
+# tree.insert(30)
+# tree.insert(40)
+# tree.insert(50)
+# tree.insert(60)
+# tree.insert(70)
+# tree.insert(80)
+# tree.insert(90)
+# print("InOrder: " + str(tree.in_order()))
+# print("PreOrder: " + str(tree.pre_order()))
+# print("PosOrder: " + str(tree.post_order()))
+# #print("ByLevels: " + str(tree.iteration_by_levels()))
+# tree.insert(100)
+# tree.insert(110)
+# tree.insert(120)
+# tree.insert(130)
+# tree.insert(140)
+# tree.insert(150)
 
-# Search testing
-print("¿Has 40? " + str(tree.has(40)))
-print("¿Has 105? " + str(tree.has(105)))
+# # Search testing
+# print("¿Has 40? " + str(tree.has(40)))
+# print("¿Has 105? " + str(tree.has(105)))
 
-# High and Size testing
-print("High: " + str(tree.high()))
-print("size: " + str(tree.size()))
+# # High and Size testing
+# print("High: " + str(tree.high()))
+# print("size: " + str(tree.size()))
 
-# Delete testing
-tree.delete(30)
-print("After deleting 30 (InOrder): " + str(tree.in_order()))
-print("size: " + str(tree.size()))
+# # Delete testing
+# tree.delete(30)
+# print("After deleting 30 (InOrder): " + str(tree.in_order()))
+# print("size: " + str(tree.size()))
 
-tree.delete(50)
-print("After deleting 50 (InOrder): " + str(tree.in_order()))
-print("size: " + str(tree.size()))
+# tree.delete(50)
+# print("After deleting 50 (InOrder): " + str(tree.in_order()))
+# print("size: " + str(tree.size()))
 
-# Emptying testing
-tree.empty()
-print("Tree is empty: " + str(tree.is_empty_tree()))
-print("size: " + str(tree.size()))
+# # Emptying testing
+# tree.empty()
+# print("Tree is empty: " + str(tree.is_empty_tree()))
+# print("size: " + str(tree.size()))
+
+
+from datastructures.game.game_model import GameModel
+from datastructures.game.minimax_agent import MinimaxAgent
+
+m = GameModel()
+agent = MinimaxAgent("O", "X")
+m.make_move((0, 0), "X")
+print(agent.get_best_move(m), agent.nodes_evaluated)

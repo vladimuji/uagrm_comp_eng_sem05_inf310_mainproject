@@ -4,7 +4,7 @@ from django.db import IntegrityError
 from django.http import JsonResponse
 from django.views import View
 
-from logistics.services import tree_service, graph_service
+from logistics.services import tree_service, graph_service, game_service
 
 ALLOWED_SORT_KEYS = {"id", "city_name"}
 DEFAULT_SORT_KEY = "id"
@@ -108,3 +108,40 @@ class ExpressionTreeView(View):
 class GraphDataView(View):
     def get(self, request):
         return JsonResponse(graph_service.get_map_data())
+
+
+class GameCreateView(View):
+    def post(self, request):
+        payload = json.loads(request.body or "{}")
+        try:
+            game = game_service.create_game(payload.get("mode", "human"))
+        except game_service.InvalidMove as error:
+            return JsonResponse({"error": str(error)}, status=400)
+        return JsonResponse(game, status=201)
+
+
+class GameDetailView(View):
+    def get(self, request, game_id):
+        try:
+            return JsonResponse(game_service.get_game(game_id))
+        except game_service.GameNotFound:
+            return JsonResponse({"error": f"Game {game_id} not found"}, status=404)
+
+
+class GameMoveView(View):
+    def post(self, request, game_id):
+        payload = json.loads(request.body or "{}")
+        row, column = payload.get("row"), payload.get("column")
+        if row is None or column is None:
+            return JsonResponse({"error": "Missing 'row' or 'column'"}, status=400)
+        try:
+            game = game_service.play_move(game_id, row, column)
+        except game_service.GameNotFound:
+            return JsonResponse({"error": f"Game {game_id} not found"}, status=404)
+        except game_service.GameOver:
+            return JsonResponse({"error": "Game is already over"}, status=409)
+        except game_service.InvalidMove as error:
+            return JsonResponse({"error": str(error)}, status=400)
+        except game_service.DatabaseError as error:
+            return JsonResponse({"error": str(error)}, status=500)
+        return JsonResponse(game)
