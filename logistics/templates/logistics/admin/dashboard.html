@@ -1,0 +1,22 @@
+{% extends "logistics/admin/base_admin.html" %}
+
+{% block content %}
+{% verbatim %}
+<div id="dash-app">
+  <h1 class="h3 mb-4 text-gray-800">Dashboard</h1>
+  <div class="card shadow border-left-primary py-2" style="max-width: 18rem;">
+    <div class="card-body">
+      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Vue check</div>
+      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ message }}</div>
+    </div>
+  </div>
+</div>
+{% endverbatim %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  Vue.createApp({ data() { return { message: 'Vue is running inside SB Admin 2' }; } })
+    .mount('#dash-app');
+</script>
+{% endblock %}

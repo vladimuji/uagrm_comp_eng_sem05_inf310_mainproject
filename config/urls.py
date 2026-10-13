@@ -23,6 +23,8 @@ from logistics.views.api_views import (
     GameCreateView, GameDetailView, GameMoveView,
 )
 from logistics.views.system_views import RestoreDatabaseView
+from django.contrib.auth import views as auth_views
+from logistics.views.dashboard_views import DashboardView
 
 urlpatterns = [
     path('', BaseView.as_view(), name='home'),
@@ -48,4 +50,10 @@ urlpatterns = [
     path('api/game/', GameCreateView.as_view(), name='game-create'),
     path('api/game/<int:game_id>/', GameDetailView.as_view(), name='game-detail'),
     path('api/game/<int:game_id>/move/', GameMoveView.as_view(), name='game-move'),
+
+    # Authentication URLs
+    path('login/', auth_views.LoginView.as_view(
+        template_name='logistics/admin/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('dashboard/', DashboardView.as_view(), name='dashboard'),
 ]
