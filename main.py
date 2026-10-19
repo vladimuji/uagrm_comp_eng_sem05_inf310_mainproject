@@ -242,10 +242,20 @@ from exercices.tic_tac_toe import Tree
 # print("size: " + str(tree.size()))
 
 
-from datastructures.game.game_model import GameModel
-from datastructures.game.minimax_agent import MinimaxAgent
+# from datastructures.game.game_model import GameModel
+# from datastructures.game.minimax_agent import MinimaxAgent
 
-m = GameModel()
-agent = MinimaxAgent("O", "X")
-m.make_move((0, 0), "X")
-print(agent.get_best_move(m), agent.nodes_evaluated)
+# m = GameModel()
+# agent = MinimaxAgent("O", "X")
+# m.make_move((0, 0), "X")
+# print(agent.get_best_move(m), agent.nodes_evaluated)
+
+
+from datastructures.game.ml_agent import (
+    generate_dataset, build_dataframe, train_model, show_rules,
+)
+
+df = build_dataframe(generate_dataset(1000))
+tree, accuracy = train_model(df)
+print("positions:", len(df), "| accuracy:", round(accuracy, 3))
+print(show_rules(tree))

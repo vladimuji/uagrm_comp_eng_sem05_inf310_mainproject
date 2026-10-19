@@ -4,3 +4,5 @@ python-dotenv
 mysqlclient
 mssql-django==1.8.0
 pyodbc
+scikit-learn
+pandas
