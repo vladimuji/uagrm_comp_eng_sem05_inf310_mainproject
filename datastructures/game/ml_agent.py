@@ -80,3 +80,40 @@ class MLAgent:
         move = (cell // 3, cell % 3)
         # the tree can predict a taken cell on boards it never saw
         return move if move in moves else moves[0]
+
+    def get_move_with_explanation(self, model):
+        moves = model.get_available_moves()
+        if not moves:
+            return None, None
+
+        x = pd.DataFrame([model.to_features()], columns=FEATURES)
+        predicted_cell = int(self.tree.predict(x)[0])
+        predicted_move = (predicted_cell // 3, predicted_cell % 3)
+        # the tree can predict a taken cell on boards it never saw
+        move = predicted_move if predicted_move in moves else moves[0]
+
+        tree_structure = self.tree.tree_
+        path_nodes = self.tree.decision_path(x).indices
+        path = []
+        for node_id in path_nodes:
+            feature_index = tree_structure.feature[node_id]
+            if feature_index < 0:
+                continue
+
+            value = float(x.iloc[0, feature_index])
+            threshold = float(tree_structure.threshold[node_id])
+            path.append({
+                "cell": int(feature_index) + 1,
+                "value": int(value),
+                "threshold": round(threshold, 3),
+                "went_left": bool(value <= threshold),
+            })
+
+        explanation = {
+            "selected_cell": move[0] * 3 + move[1] + 1,
+            "predicted_cell": predicted_cell + 1,
+            "fallback_used": move != predicted_move,
+            "accuracy": float(self.accuracy),
+            "path": path,
+        }
+        return move, explanation

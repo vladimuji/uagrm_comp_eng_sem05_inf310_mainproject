@@ -51,6 +51,28 @@
 				</button>
 			</template>
 		</div>
+
+		<section v-if="mlExplanation" class="ml-explanation" aria-labelledby="ml-explanation-title">
+			<h3 id="ml-explanation-title">How the ML agent chose its move</h3>
+			<p>
+				The model predicted cell {{ mlExplanation.predicted_cell }} and chose
+				cell {{ mlExplanation.selected_cell }}.
+				<span v-if="mlExplanation.fallback_used">
+					The predicted cell was occupied, so it used the first available cell instead.
+				</span>
+			</p>
+			<p>Test accuracy: {{ (mlExplanation.accuracy * 100).toFixed(1) }}%.</p>
+			<p>Cells are numbered left to right, top to bottom. X = 1, O = -1, empty = 0.</p>
+			<p>The decision tree followed these rules:</p>
+			<ol v-if="mlExplanation.path.length">
+				<li v-for="(rule, index) in mlExplanation.path" :key="index">
+					Cell {{ rule.cell }} has value {{ rule.value }}:
+					{{ rule.value }} &le; {{ rule.threshold }}?
+					{{ rule.went_left ? 'Yes (left branch)' : 'No (right branch)' }}.
+				</li>
+			</ol>
+			<p v-else class="op-hint">The decision tree made its choice at its root, without any split rules.</p>
+		</section>
 	</section>
 </div>
 {% endverbatim %}
@@ -92,6 +114,16 @@
 	.op-submit:hover { background: var(--accent); }
 	.op-hint { margin: .75rem 0 0; color: var(--muted); font-size: .85rem; }
 	.op-error { color: #b3261e; font-weight: 700; }
+	.ml-explanation {
+		max-width: 34rem;
+		padding: 1rem 1.25rem;
+		margin: 1.5rem auto 0;
+		background: var(--paper);
+		border-left: 4px solid var(--accent);
+	}
+	.ml-explanation h3 { margin-top: 0; }
+	.ml-explanation p { margin: .5rem 0; }
+	.ml-explanation ol { margin-bottom: 0; }
 </style>
 
 {% verbatim %}
@@ -105,7 +137,7 @@ function getCookie(name) {
 
 createApp({
 	data() {
-		return { mode: 'minimax', game: null, nodes: null, loading: false, error: null, ms: null };
+		return { mode: 'minimax', game: null, nodes: null, loading: false, error: null, ms: null, mlExplanation: null };
 	},
 	computed: {
 		statusText() {
@@ -137,13 +169,14 @@ createApp({
 		},
 		async newGame() {
 			const payload = await this.request('/api/game/', 'POST', { mode: this.mode });
-			if (payload) { this.game = payload; this.nodes = null; this.ms = null }
+			if (payload) { this.game = payload; this.nodes = null; this.ms = null; this.mlExplanation = null }
 		},
 		async move(row, column) {
 			const payload = await this.request(`/api/game/${this.game.id}/move/`, 'POST', { row, column });
 			if (payload) {
 				this.nodes = payload.nodes_evaluated;
 				this.ms = payload.elapsed_ms
+				this.mlExplanation = payload.ml_explanation;
 				this.game = payload;
 			}
 		},

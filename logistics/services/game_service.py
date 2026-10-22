@@ -106,6 +106,7 @@ def play_move(game_id, row, column):
 
     nodes_evaluated = None
     elapsed_ms = None
+    ml_explanation = None
     if game["mode"] in ("minimax", "ml") and not model.is_game_over():
         if game["mode"] == "ml":
             ml_agent = _get_ml_agent()  # train before starting the timer
@@ -115,7 +116,7 @@ def play_move(game_id, row, column):
             ai_move = agent.get_best_move(model)
             nodes_evaluated = agent.nodes_evaluated
         else:
-            ai_move = ml_agent.get_best_move(model)
+            ai_move, ml_explanation = ml_agent.get_move_with_explanation(model)
         elapsed_ms = round((time.perf_counter() - start) * 1000, 3)
         _raise_for_status(sp_make_move(game_id, ai_move[0] * 3 + ai_move[1], "O"))
         model.make_move(ai_move, "O")
@@ -123,6 +124,7 @@ def play_move(game_id, row, column):
     result = serialize_game(sp_get_game(game_id))
     result["nodes_evaluated"] = nodes_evaluated
     result["elapsed_ms"] = elapsed_ms
+    result["ml_explanation"] = ml_explanation
     return result
 
 
