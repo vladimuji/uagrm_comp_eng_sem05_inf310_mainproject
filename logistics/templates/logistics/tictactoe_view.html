@@ -20,6 +20,7 @@
 				<select v-model="mode">
 					<option value="human">Human vs Human</option>
 					<option value="minimax">Human vs Minimax</option>
+					<option value="ml">Human vs Machine Learning</option>
 				</select>
 			</label>
 			<button type="submit" class="op-submit" :disabled="loading">New game</button>
@@ -33,7 +34,8 @@
 				<p class="eyebrow">{{ game ? 'Game #' + game.id : 'No game yet' }}</p>
 				<h2>{{ statusText }}</h2>
 			</div>
-			<p class="tree-summary" v-if="nodes !== null">{{ nodes.toLocaleString() }} nodes explored by Minimax</p>
+			<!-- <p class="tree-summary" v-if="nodes !== null">{{ nodes.toLocaleString() }} nodes explored by Minimax</p> -->
+			<p class="tree-summary" v-if="ms !== null">{{ ms }} ms<span v-if="nodes !== null"> | {{ nodes.toLocaleString() }} nodes explored</span></p>
 		</div>
 
 		<p v-if="error" class="op-error">{{ error }}</p>

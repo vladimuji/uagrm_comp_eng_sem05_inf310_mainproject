@@ -241,6 +241,11 @@ from exercices.tic_tac_toe import Tree
 # print("Tree is empty: " + str(tree.is_empty_tree()))
 # print("size: " + str(tree.size()))
 
+"""Testing Minimax and MLAgent."""
+
+# ------------------------------------------------------------------
+# Demo (mirrors MWaySearchTree from the Java version)
+# ------------------------------------------------------------------
 
 # from datastructures.game.game_model import GameModel
 # from datastructures.game.minimax_agent import MinimaxAgent
@@ -250,12 +255,32 @@ from exercices.tic_tac_toe import Tree
 # m.make_move((0, 0), "X")
 # print(agent.get_best_move(m), agent.nodes_evaluated)
 
+#------------------------------
 
-from datastructures.game.ml_agent import (
-    generate_dataset, build_dataframe, train_model, show_rules,
-)
+# from datastructures.game.ml_agent import (
+#     generate_dataset, build_dataframe, train_model, show_rules,
+# )
 
-df = build_dataframe(generate_dataset(1000))
-tree, accuracy = train_model(df)
-print("positions:", len(df), "| accuracy:", round(accuracy, 3))
-print(show_rules(tree))
+# df = build_dataframe(generate_dataset(1000))
+# tree, accuracy = train_model(df)
+# print("positions:", len(df), "| accuracy:", round(accuracy, 3))
+# print(show_rules(tree))
+
+#------------------------------
+
+import time
+from datastructures.game.game_model import GameModel
+from datastructures.game.minimax_agent import MinimaxAgent
+from datastructures.game.ml_agent import MLAgent
+
+ml = MLAgent()
+print("accuracy:", round(ml.accuracy, 3))
+
+m = GameModel()
+m.make_move((0, 0), "X")
+
+t = time.perf_counter(); mm_move = MinimaxAgent("O", "X").get_best_move(m)
+print("minimax:", mm_move, round((time.perf_counter() - t) * 1000, 2), "ms")
+
+t = time.perf_counter(); ml_move = ml.get_best_move(m)
+print("ml:     ", ml_move, round((time.perf_counter() - t) * 1000, 2), "ms")

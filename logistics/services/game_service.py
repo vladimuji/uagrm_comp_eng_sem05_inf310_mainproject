@@ -8,8 +8,11 @@ Flow for every move:
   4) only then mutate the model; if vs Minimax, the AI replies the same way
 """
 
+import time
+
 from datastructures.game.game_model import GameModel
 from datastructures.game.minimax_agent import MinimaxAgent
+from datastructures.game.ml_agent import MLAgent
 from logistics.services.sql_game_service import (
     sp_create_game,
     sp_make_move,
@@ -23,6 +26,7 @@ from logistics.services.sql_game_service import (
 )
 
 MODES = {"human", "minimax", "ml"}
+_ml_agent = None
 
 
 class GameNotFound(Exception):
@@ -88,16 +92,37 @@ def play_move(game_id, row, column):
     model.make_move((row, column), mark)
 
     # 4) AI reply (human is X, AI is O)
+    # nodes_evaluated = None
+    # if game["mode"] == "minimax" and not model.is_game_over():
+    #     agent = MinimaxAgent("O", "X")
+    #     ai_move = agent.get_best_move(model)
+    #     _raise_for_status(sp_make_move(game_id, ai_move[0] * 3 + ai_move[1], "O"))
+    #     model.make_move(ai_move, "O")
+    #     nodes_evaluated = agent.nodes_evaluated
+
+    # result = serialize_game(sp_get_game(game_id))
+    # result["nodes_evaluated"] = nodes_evaluated
+    # return result
+
     nodes_evaluated = None
-    if game["mode"] == "minimax" and not model.is_game_over():
-        agent = MinimaxAgent("O", "X")
-        ai_move = agent.get_best_move(model)
+    elapsed_ms = None
+    if game["mode"] in ("minimax", "ml") and not model.is_game_over():
+        if game["mode"] == "ml":
+            ml_agent = _get_ml_agent()  # train before starting the timer
+        start = time.perf_counter()
+        if game["mode"] == "minimax":
+            agent = MinimaxAgent("O", "X")
+            ai_move = agent.get_best_move(model)
+            nodes_evaluated = agent.nodes_evaluated
+        else:
+            ai_move = ml_agent.get_best_move(model)
+        elapsed_ms = round((time.perf_counter() - start) * 1000, 3)
         _raise_for_status(sp_make_move(game_id, ai_move[0] * 3 + ai_move[1], "O"))
         model.make_move(ai_move, "O")
-        nodes_evaluated = agent.nodes_evaluated
 
     result = serialize_game(sp_get_game(game_id))
     result["nodes_evaluated"] = nodes_evaluated
+    result["elapsed_ms"] = elapsed_ms
     return result
 
 
@@ -109,3 +134,10 @@ def serialize_game(game):
         "mode": game["mode"],
         "status": game["status"],
     }
+
+
+def _get_ml_agent():
+    global _ml_agent
+    if _ml_agent is None:
+        _ml_agent = MLAgent()  # trains once, on first use
+    return _ml_agent

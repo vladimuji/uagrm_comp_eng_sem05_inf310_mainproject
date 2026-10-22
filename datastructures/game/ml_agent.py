@@ -61,3 +61,22 @@ def train_model(df):
 
 def show_rules(tree, max_depth=3):
     return export_text(tree, feature_names=FEATURES, max_depth=max_depth)
+
+
+class MLAgent:
+    """Plays O using the trained tree instead of searching."""
+
+    def __init__(self, n_games=1000):
+        self.tree, self.accuracy = train_model(
+            build_dataframe(generate_dataset(n_games))
+        )
+
+    def get_best_move(self, model):
+        moves = model.get_available_moves()
+        if not moves:
+            return None
+        x = pd.DataFrame([model.to_features()], columns=FEATURES)
+        cell = int(self.tree.predict(x)[0])
+        move = (cell // 3, cell % 3)
+        # the tree can predict a taken cell on boards it never saw
+        return move if move in moves else moves[0]
