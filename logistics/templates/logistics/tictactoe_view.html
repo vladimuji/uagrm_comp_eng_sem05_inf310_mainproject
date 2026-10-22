@@ -105,7 +105,7 @@ function getCookie(name) {
 
 createApp({
 	data() {
-		return { mode: 'minimax', game: null, nodes: null, loading: false, error: null };
+		return { mode: 'minimax', game: null, nodes: null, loading: false, error: null, ms: null };
 	},
 	computed: {
 		statusText() {
@@ -137,12 +137,13 @@ createApp({
 		},
 		async newGame() {
 			const payload = await this.request('/api/game/', 'POST', { mode: this.mode });
-			if (payload) { this.game = payload; this.nodes = null; }
+			if (payload) { this.game = payload; this.nodes = null; this.ms = null }
 		},
 		async move(row, column) {
 			const payload = await this.request(`/api/game/${this.game.id}/move/`, 'POST', { row, column });
 			if (payload) {
 				this.nodes = payload.nodes_evaluated;
+				this.ms = payload.elapsed_ms
 				this.game = payload;
 			}
 		},

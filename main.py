@@ -269,18 +269,36 @@ from exercices.tic_tac_toe import Tree
 #------------------------------
 
 import time
+import random
 from datastructures.game.game_model import GameModel
 from datastructures.game.minimax_agent import MinimaxAgent
 from datastructures.game.ml_agent import MLAgent
 
+# ml = MLAgent()
+# print("accuracy:", round(ml.accuracy, 3))
+
+# m = GameModel()
+# m.make_move((0, 0), "X")
+
+# t = time.perf_counter(); mm_move = MinimaxAgent("O", "X").get_best_move(m)
+# print("minimax:", mm_move, round((time.perf_counter() - t) * 1000, 2), "ms")
+
+# t = time.perf_counter(); ml_move = ml.get_best_move(m)
+# print("ml:     ", ml_move, round((time.perf_counter() - t) * 1000, 2), "ms")
+
 ml = MLAgent()
-print("accuracy:", round(ml.accuracy, 3))
-
-m = GameModel()
-m.make_move((0, 0), "X")
-
-t = time.perf_counter(); mm_move = MinimaxAgent("O", "X").get_best_move(m)
-print("minimax:", mm_move, round((time.perf_counter() - t) * 1000, 2), "ms")
-
-t = time.perf_counter(); ml_move = ml.get_best_move(m)
-print("ml:     ", ml_move, round((time.perf_counter() - t) * 1000, 2), "ms")
+wins = draws = losses = 0
+for _ in range(500):
+    m = GameModel()
+    while True:
+        m.make_move(random.choice(m.get_available_moves()), "X")  # random X
+        if m.is_game_over():
+            break
+        m.make_move(ml.get_best_move(m), "O")                      # ML plays O
+        if m.is_game_over():
+            break
+    w = m.get_winner()
+    if w == "O": wins += 1
+    elif w == "X": losses += 1
+    else: draws += 1
+print("ML wins:", wins, "| draws:", draws, "| losses:", losses)
