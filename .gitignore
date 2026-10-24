@@ -60,3 +60,7 @@ logs/
 backup/
 tmp/
 .cache/
+
+# Miscellaneous
+.scss
+.less
