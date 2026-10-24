@@ -63,15 +63,31 @@
 			</p>
 			<p>Test accuracy: {{ (mlExplanation.accuracy * 100).toFixed(1) }}%.</p>
 			<p>Cells are numbered left to right, top to bottom. X = 1, O = -1, empty = 0.</p>
-			<p>The decision tree followed these rules:</p>
-			<ol v-if="mlExplanation.path.length">
-				<li v-for="(rule, index) in mlExplanation.path" :key="index">
-					Cell {{ rule.cell }} has value {{ rule.value }}:
-					{{ rule.value }} &le; {{ rule.threshold }}?
-					{{ rule.went_left ? 'Yes (left branch)' : 'No (right branch)' }}.
+			<p>The highlighted route shows the rules the decision tree followed:</p>
+			<ol v-if="mlExplanation.path.length" class="ml-decision-path">
+				<li v-for="(rule, index) in mlExplanation.path" :key="index" class="ml-path-step">
+					<div class="ml-path-node">
+						<strong>Question {{ index + 1 }}</strong>
+						<span>Is the value in cell {{ rule.cell }} ({{ rule.value }}) &le; {{ rule.threshold }}?</span>
+					</div>
+					<div class="ml-path-branch" :class="{ 'is-left': rule.went_left, 'is-right': !rule.went_left }">
+						<span class="ml-path-connector" aria-hidden="true"></span>
+						<span>{{ rule.went_left ? 'Yes — left branch' : 'No — right branch' }}</span>
+					</div>
+				</li>
+				<li class="ml-path-leaf">
+					<div class="ml-path-node is-leaf">
+						<strong>Decision</strong>
+						<span>Play cell {{ mlExplanation.selected_cell }}</span>
+					</div>
 				</li>
 			</ol>
-			<p v-else class="op-hint">The decision tree made its choice at its root, without any split rules.</p>
+			<div v-else class="ml-path-leaf">
+				<div class="ml-path-node is-leaf">
+					<strong>Decision at the root</strong>
+					<span>Play cell {{ mlExplanation.selected_cell }}</span>
+				</div>
+			</div>
 		</section>
 	</section>
 </div>
@@ -123,7 +139,52 @@
 	}
 	.ml-explanation h3 { margin-top: 0; }
 	.ml-explanation p { margin: .5rem 0; }
-	.ml-explanation ol { margin-bottom: 0; }
+	.ml-decision-path {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: 0;
+		margin: 1rem 0 0;
+		list-style: none;
+	}
+	.ml-path-step, .ml-path-leaf {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 100%;
+	}
+	.ml-path-node {
+		display: flex;
+		flex-direction: column;
+		gap: .35rem;
+		width: min(100%, 24rem);
+		padding: .75rem 1rem;
+		background: var(--surface);
+		border: 2px solid var(--line);
+		border-radius: .35rem;
+		text-align: center;
+	}
+	.ml-path-node.is-leaf {
+		background: var(--surface);
+		border-color: var(--accent-dark);
+		font-weight: 700;
+	}
+	.ml-path-branch {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: .25rem;
+		min-height: 3.25rem;
+		padding: .3rem 0;
+		font: 700 .8rem/1.2 Arial, sans-serif;
+	}
+	.ml-path-branch.is-left { color: var(--accent-dark); }
+	.ml-path-branch.is-right { color: #28515a; }
+	.ml-path-connector {
+		width: 2px;
+		height: 1rem;
+		background: currentColor;
+	}
 </style>
 
 {% verbatim %}
