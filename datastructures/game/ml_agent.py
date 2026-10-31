@@ -1,7 +1,7 @@
 """
 Module: ml_agent.py
 Subject: INF310 - Data Structures II
-Description: Builds a dataset from Minimax games and (next step)
+Description: Builds a dataset from Minimax games and 
              trains a DecisionTreeClassifier to imitate it.
 """
 
@@ -75,8 +75,8 @@ class MLAgent:
         moves = model.get_available_moves()
         if not moves:
             return None
-        x = pd.DataFrame([model.to_features()], columns=FEATURES)
-        cell = int(self.tree.predict(x)[0])
+        x = pd.DataFrame([model.to_features()], columns=FEATURES) # Convierte el tablero en una fila con 9 valires
+        cell = int(self.tree.predict(x)[0]) # pide al arbol que prediga qué casilla elegir
         move = (cell // 3, cell % 3)
         # the tree can predict a taken cell on boards it never saw
         return move if move in moves else moves[0]
