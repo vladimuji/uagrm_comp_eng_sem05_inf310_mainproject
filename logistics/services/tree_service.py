@@ -13,6 +13,7 @@ from datastructures.bin_tree.search_binary_tree import SearchBinaryTree
 from datastructures.bin_tree.bmway_tree import BMWayTree
 from datastructures.bin_tree.mway_search_tree import MWaySearchTree
 from datastructures.bin_tree.expression_tree import ExpressionTree
+from datastructures.bin_tree.bplus_tree import BPlusTree
 from logistics.models import Node
 from logistics.services.sql_node_service import (
     sp_get_all_nodes,
@@ -26,7 +27,7 @@ from logistics.services.sql_node_service import (
 # Tree registries
 # ----------------------------------------------------------------------
 BINARY_TREE_CLASSES = {"avl": AVLTree, "bst": SearchBinaryTree}
-MWAY_TREE_CLASSES = {"bway": BMWayTree, "mway": MWaySearchTree}
+MWAY_TREE_CLASSES = {"bway": BMWayTree, "mway": MWaySearchTree, "bplus": BPlusTree}
 TREE_CLASSES = {**BINARY_TREE_CLASSES, **MWAY_TREE_CLASSES}
 
 DEFAULT_SORT_KEY = "id"

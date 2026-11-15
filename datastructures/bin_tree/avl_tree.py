@@ -2,13 +2,14 @@
 Module: avl_tree.py
 Subject: INF310 - Data Structures II
 Description: AVL Tree (self-balancing Binary Search Tree), extending
-             BinaryTree with height-aware insertion, deletion and
+             SearchBinaryTree with height-aware insertion, deletion and
              rotations. Mirrors the Java AVLTree class.
 
 Author: Vladimir
 """
 
-from datastructures.bin_tree.binary_tree import BinaryNode, BinaryTree
+from datastructures.bin_tree.binary_tree import BinaryNode
+from datastructures.bin_tree.search_binary_tree import SearchBinaryTree
 
 
 class AVLNode(BinaryNode):
@@ -30,12 +31,15 @@ class AVLNode(BinaryNode):
         self._height = height
 
 
-class AVLTree(BinaryTree):
+class AVLTree(SearchBinaryTree):
     """AVL Tree: self-balancing Binary Search Tree.
 
-    Reused as-is (inherited without changes):
-    search, has, size, is_empty_tree, empty, level,
-    in_order / pre_order / post_order / iteration_by_levels.
+    Inherited from SearchBinaryTree: search, has, min, max.
+    Inherited from BinaryTree: size, is_empty_tree, in_order /
+    pre_order / post_order / iteration_by_levels.
+
+    Overridden here: insert, delete, create_node, high,
+    print_tree_recursive.
     """
 
     # ------------------------------------------------------------------
@@ -83,11 +87,6 @@ class AVLTree(BinaryTree):
                 node.right_child, successor.data
             )
         return self._rebalance(node)
-
-    def _min_node(self, node):
-        while not self.is_empty_node(node.left_child):
-            node = node.left_child
-        return node
 
     def create_node(self, data):
         return AVLNode(data)

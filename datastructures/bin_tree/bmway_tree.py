@@ -89,6 +89,10 @@ class BMWayTree(MWaySearchTree):
     # Specific B-Tree methods
     # ------------------------------------------------------------------
     def insert(self, data):
+        if data is None:
+            raise ValueError("The tree does not accept None.")
+        if self.has(data):
+            return  # no duplicates
         if self.root is None:
             self.root = BMWayNode(self.order)
 
@@ -117,50 +121,40 @@ class BMWayTree(MWaySearchTree):
         self._size += 1
 
     def delete(self, data):
-        if self.root is None:
+        if self.root is None or not self.has(data):
             return
 
         self._delete_recursive(self.root, data)
 
-        # Adjust the root if it ends up empty
+        # The root may end up empty after a merge: the tree shrinks
         if self.root.key_count() == 0 and not self.is_leaf(self.root):
             self.root = self.root.children[0]
 
     def _delete_recursive(self, node, data):
-        if node is None:
+        i = 0
+        while i < len(node.keys) and data > node.keys[i]:
+            i += 1
+        found = i < len(node.keys) and node.keys[i] == data
+
+        if self.is_leaf(node):
+            if found:
+                node.keys.pop(i)
+                self.decrement_size()
             return
 
-        # Look for the key in this node
-        index = -1
-        for i, key in enumerate(node.keys):
-            if key == data:
-                index = i
-                break
-
-        if index != -1:
-            # Case 1: key found
-            if self.is_leaf(node):
-                node.delete_key(data)
-                self.decrement_size()
-            else:
-                # Case 2: internal node -> replace with successor
-                successor_child = node.get_right_child(index)
-                successor_key = self._get_min_key(successor_child)
-                node.keys[index] = successor_key
-                self._delete_recursive(successor_child, successor_key)
+        if found:
+            # Internal node: replace by in-order successor, then delete
+            # the successor from the right subtree
+            child_index = i + 1
+            successor = self._get_min_key(node.children[child_index])
+            node.keys[i] = successor
+            self._delete_recursive(node.children[child_index], successor)
         else:
-            # Case 3: key not here -> go down to the right child
-            i = 0
-            while i < len(node.keys) and data > node.keys[i]:
-                i += 1
+            child_index = i
+            self._delete_recursive(node.children[child_index], data)
 
-            if i < len(node.children):
-                child = node.children[i]
-                self._delete_recursive(child, data)
-
-                # Balance: if the child ended up below min_keys
-                if child.key_count() < self._min_keys:
-                    self._merge_node(child)
+        if node.children[child_index].key_count() < self._min_keys:
+            self._fix_underflow(node, child_index)
 
     def search(self, data):
         return super().search(data)
@@ -218,53 +212,49 @@ class BMWayTree(MWaySearchTree):
         new_root.children.append(right)
         self.root = new_root
 
-    def _merge_node(self, node):
-        """Merge an underflowed node with a sibling."""
-        parent = self._find_parent(self.root, node)
-        if parent is None:
-            return  # it's the root, nothing to merge into
+    def _fix_underflow(self, parent, index):
+        """Child at parent.children[index] has too few keys:
+        borrow from a sibling if it can spare one, else merge."""
+        left = parent.children[index - 1] if index > 0 else None
+        right = (
+            parent.children[index + 1]
+            if index + 1 < len(parent.children) else None
+        )
 
-        index = parent.children.index(node)
+        if left is not None and left.key_count() > self._min_keys:
+            self._borrow_from_left(parent, index)
+        elif right is not None and right.key_count() > self._min_keys:
+            self._borrow_from_right(parent, index)
+        elif left is not None:
+            self._merge_children(parent, index - 1)
+        else:
+            self._merge_children(parent, index)
 
-        # Try to merge with the left sibling
-        if index > 0:
-            left_sibling = parent.children[index - 1]
-            separator_key = parent.keys[index - 1]
+    def _borrow_from_left(self, parent, index):
+        child = parent.children[index]
+        left = parent.children[index - 1]
+        child.keys.insert(0, parent.keys[index - 1])
+        parent.keys[index - 1] = left.keys.pop()
+        if left.children:
+            child.children.insert(0, left.children.pop())
 
-            left_sibling.keys.append(separator_key)
-            left_sibling.keys.extend(node.keys)
-            left_sibling.children.extend(node.children)
+    def _borrow_from_right(self, parent, index):
+        child = parent.children[index]
+        right = parent.children[index + 1]
+        child.keys.append(parent.keys[index])
+        parent.keys[index] = right.keys.pop(0)
+        if right.children:
+            child.children.append(right.children.pop(0))
 
-            parent.keys.pop(index - 1)
-            parent.children.pop(index)
-        # If there's no left sibling, merge with the right one
-        elif index < len(parent.children) - 1:
-            right_sibling = parent.children[index + 1]
-            separator_key = parent.keys[index]
-
-            node.keys.append(separator_key)
-            node.keys.extend(right_sibling.keys)
-            node.children.extend(right_sibling.children)
-
-            parent.keys.pop(index)
-            parent.children.pop(index + 1)
-
-        # If the parent ends up below min_keys, apply recursively
-        if parent is not self.root and parent.key_count() < self._min_keys:
-            self._merge_node(parent)
-
-    def _find_parent(self, current, target):
-        """Find the parent of target, searching from current downward."""
-        if current is None or self.is_leaf(current):
-            return None
-
-        for child in current.children:
-            if child is target:
-                return current
-            result = self._find_parent(child, target)
-            if result is not None:
-                return result
-        return None
+    def _merge_children(self, parent, index):
+        """Merge children[index] and children[index + 1] with the
+        separator key between them."""
+        left = parent.children[index]
+        right = parent.children[index + 1]
+        left.keys.append(parent.keys.pop(index))
+        left.keys.extend(right.keys)
+        left.children.extend(right.children)
+        parent.children.pop(index + 1)
 
     def _validate_btree(self):
         """Validate the B-Tree rules across every node."""

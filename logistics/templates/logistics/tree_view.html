@@ -473,6 +473,7 @@ createApp({
 					kinds: [
 						{ key: 'bway', label: 'B-way' },
 						{ key: 'mway', label: 'M-way' },
+						{ key: 'bplus', label: 'B+ Tree' },
 					],
 				},
 			],
@@ -508,7 +509,7 @@ createApp({
 			return this.activeKind === 'avl' || this.activeKind === 'bst';
 		},
 		isMwayKind() {
-			return this.activeKind === 'bway' || this.activeKind === 'mway';
+			return ['bway', 'mway', 'bplus'].includes(this.activeKind);
 		},
 		isHeapShaped() {
 			return this.activeKind === 'avl' || this.activeKind === 'bst' || this.activeKind === 'expression';

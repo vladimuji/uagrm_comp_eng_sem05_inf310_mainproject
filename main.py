@@ -286,19 +286,116 @@ from datastructures.game.ml_agent import MLAgent
 # t = time.perf_counter(); ml_move = ml.get_best_move(m)
 # print("ml:     ", ml_move, round((time.perf_counter() - t) * 1000, 2), "ms")
 
-ml = MLAgent()
-wins = draws = losses = 0
-for _ in range(500):
-    m = GameModel()
-    while True:
-        m.make_move(random.choice(m.get_available_moves()), "X")  # random X
-        if m.is_game_over():
-            break
-        m.make_move(ml.get_best_move(m), "O")                      # ML plays O
-        if m.is_game_over():
-            break
-    w = m.get_winner()
-    if w == "O": wins += 1
-    elif w == "X": losses += 1
-    else: draws += 1
-print("ML wins:", wins, "| draws:", draws, "| losses:", losses)
+# ml = MLAgent()
+# wins = draws = losses = 0
+# for _ in range(500):
+#     m = GameModel()
+#     while True:
+#         m.make_move(random.choice(m.get_available_moves()), "X")  # random X
+#         if m.is_game_over():
+#             break
+#         m.make_move(ml.get_best_move(m), "O")                      # ML plays O
+#         if m.is_game_over():
+#             break
+#     w = m.get_winner()
+#     if w == "O": wins += 1
+#     elif w == "X": losses += 1
+#     else: draws += 1
+# print("ML wins:", wins, "| draws:", draws, "| losses:", losses)
+
+"""Testing SearchBinarytree updated."""
+
+# ------------------------------------------------------------------
+# Demo ()
+# ------------------------------------------------------------------
+
+# from datastructures.bin_tree.search_binary_tree import SearchBinaryTree
+
+# t = SearchBinaryTree()
+# for k in [50, 30, 70, 20, 40, 60, 80]:
+#     t.insert(k)
+
+# t.delete(20)             # hoja
+# t.delete(30)             # un hijo (queda el 40)
+# t.delete(50)             # dos hijos (sucesor 60)
+# t.delete(999)            # no existe, no pasa nada
+
+# print(t.in_order())      # [40, 60, 70, 80]
+# print(t.min(), t.max())  # 40 80
+# print(t.size(), t.high())
+
+"""Testing AVLtree updated."""
+
+# ------------------------------------------------------------------
+# Demo ()
+# ------------------------------------------------------------------
+
+# from datastructures.bin_tree.avl_tree import AVLTree
+
+# t = AVLTree()
+# for k in [10, 20, 30, 40, 50, 25]:
+#     t.insert(k)
+
+# print(t.in_order())       # [10, 20, 25, 30, 40, 50]
+# print(t.high(), t.is_balanced())  # 3 True
+# print(t.has(25), t.has(99))       # True False
+# print(t.min(), t.max())           # 10 50
+
+# t.delete(10)
+# print(t.in_order(), t.is_balanced())  # [20, 25, 30, 40, 50] True
+
+"""Testing BMWayTree updated."""
+
+# ------------------------------------------------------------------
+# Demo ()
+# ------------------------------------------------------------------
+
+# import random
+# from datastructures.bin_tree.bmway_tree import BMWayTree
+
+# for order in (3, 4, 5, 6):
+#     t = BMWayTree(order)
+#     keys = list(range(1, 101))
+#     random.shuffle(keys)
+#     for k in keys:
+#         t.insert(k)
+#     assert t.in_order() == sorted(keys)
+
+#     random.shuffle(keys)
+#     remaining = set(keys)
+#     for k in keys:
+#         t.delete(k)
+#         remaining.discard(k)
+#         assert t.in_order() == sorted(remaining), (order, k)
+#         assert t._validate_btree(), (order, k)
+#         assert t.size() == len(remaining)
+#     print("order", order, "OK")
+
+"""Testing BPlusTree updated."""
+
+# ------------------------------------------------------------------
+# Demo ()
+# ------------------------------------------------------------------
+
+import random
+from datastructures.bin_tree.bplus_tree import BPlusTree
+
+for order in (3, 4, 5, 6):
+    t = BPlusTree(order)
+    keys = list(range(1, 101))
+    random.shuffle(keys)
+    for k in keys:
+        t.insert(k)
+        assert t._validate_bplus(), (order, k)
+    assert t.in_order() == sorted(keys)
+    assert t.range_search(10, 20) == list(range(10, 21))
+
+    random.shuffle(keys)
+    remaining = set(keys)
+    for k in keys:
+        t.delete(k)
+        remaining.discard(k)
+        assert t.in_order() == sorted(remaining), (order, k)
+        assert t._validate_bplus(), (order, k)
+        assert t.size() == len(remaining)
+    print("order", order, "OK")
