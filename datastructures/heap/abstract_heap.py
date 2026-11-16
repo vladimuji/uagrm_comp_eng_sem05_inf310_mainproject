@@ -12,7 +12,7 @@ Author: Vladimir
 
 from abc import abstractmethod
 
-from heap.i_heap import IHeap
+from datastructures.heap.i_heap import IHeap
 
 
 class AbstractHeap(IHeap):

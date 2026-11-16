@@ -7,7 +7,7 @@ Description: MaxHeap, extends AbstractHeap so the largest element is
 Author: Vladimir
 """
 
-from heap.abstract_heap import AbstractHeap
+from datastructures.heap.abstract_heap import AbstractHeap
 
 
 class MaxHeap(AbstractHeap):

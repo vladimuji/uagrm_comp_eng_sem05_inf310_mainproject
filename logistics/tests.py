@@ -7,7 +7,134 @@ from sklearn.tree import DecisionTreeClassifier
 
 from datastructures.game.game_model import GameModel
 from datastructures.game.ml_agent import FEATURES, MLAgent
-from logistics.services import game_service
+from datastructures.graph.digraph import DiGraph
+from datastructures.graph.graph import Graph
+from datastructures.heap.max_heap import MaxHeap
+from datastructures.heap.min_heap import MinHeap
+from logistics.services import game_service, graph_service
+
+
+class GraphRepresentationTests(TestCase):
+    def test_graph_exposes_independent_adjacency_list_and_matrix_copies(self):
+        graph = Graph(["A", "B", "C"])
+        graph.insert_edge("A", "B")
+
+        adjacency_list = graph.get_adjacency_list()
+        adjacency_matrix = graph.get_adjacency_matrix()
+        adjacency_list[0].clear()
+        adjacency_matrix[0][1] = 0
+
+        self.assertEqual(graph.get_adjacency_list(), [["B"], ["A"], []])
+        self.assertEqual(graph.get_adjacency_matrix(), [
+            [0, 1, 0],
+            [1, 0, 0],
+            [0, 0, 0],
+        ])
+
+    def test_set_vertex_preserves_edges_and_rejects_duplicate_values(self):
+        graph = Graph(["A", "B"])
+        graph.insert_edge("A", "B")
+
+        graph.set_vertex("A", "X")
+
+        self.assertEqual(graph.get_vertices(), ["X", "B"])
+        self.assertEqual(graph.adjacent_of_vertex("X"), ["B"])
+        with self.assertRaises(ValueError):
+            graph.set_vertex("X", "B")
+
+    def test_digraph_keeps_direction_in_both_representations(self):
+        graph = DiGraph(["A", "B", "C"])
+        graph.insert_edge("A", "B")
+        graph.insert_edge("A", "C")
+
+        self.assertEqual(graph.get_adjacency_list(), [["B", "C"], [], []])
+        self.assertEqual(graph.get_adjacency_matrix(), [
+            [0, 1, 1],
+            [0, 0, 0],
+            [0, 0, 0],
+        ])
+        self.assertEqual(graph.number_of_edges(), 2)
+        self.assertFalse(graph.has_cycle())
+
+        graph.insert_edge("B", "A")
+        self.assertTrue(graph.has_cycle())
+
+
+class GraphRepresentationViewTests(TestCase):
+    @patch("logistics.views.views.graph_service.get_graph_representation")
+    def test_graph_page_renders_database_representations(self, get_graph_data):
+        city_a = {"id": 1, "city_name": "City A", "state": "State"}
+        city_b = {"id": 2, "city_name": "City B", "state": "State"}
+        get_graph_data.return_value = {
+            "nodes": [city_a, city_b],
+            "edges": [{"origin": 1, "destination": 2}],
+            "adjacency_list": [
+                {"vertex": city_a, "neighbors": [city_b]},
+                {"vertex": city_b, "neighbors": []},
+            ],
+            "matrix_rows": [
+                {"vertex": city_a, "values": [0, 1]},
+                {"vertex": city_b, "values": [0, 0]},
+            ],
+            "vertex_count": 2,
+            "edge_count": 1,
+        }
+
+        response = self.client.get("/graphs/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Adjacency list")
+        self.assertContains(response, "Adjacency matrix")
+        self.assertContains(response, "City A")
+        self.assertContains(response, "City B")
+
+
+class GraphServiceRepresentationTests(TestCase):
+    def test_graph_representation_uses_listed_nodes_and_directed_routes(self):
+        nodes = [
+            {"id": 1, "city_name": "City A", "state": "State"},
+            {"id": 2, "city_name": "City B", "state": "State"},
+        ]
+        routes = [{"origin_node_id": 1, "destination_node_id": 2}]
+        node_query = Mock()
+        node_query.order_by.return_value.values.return_value = nodes
+        route_query = Mock()
+        route_query.order_by.return_value.values.return_value = routes
+
+        with (
+            patch(
+                "logistics.services.graph_service.Node.objects.filter",
+                return_value=node_query,
+            ),
+            patch(
+                "logistics.services.graph_service.Route.objects.filter",
+                return_value=route_query,
+            ),
+        ):
+            result = graph_service.get_graph_representation()
+
+        self.assertEqual(result["vertex_count"], 2)
+        self.assertEqual(result["edge_count"], 1)
+        self.assertEqual(
+            [row["values"] for row in result["matrix_rows"]],
+            [[0, 1], [0, 0]],
+        )
+        self.assertEqual(
+            result["adjacency_list"][0]["neighbors"],
+            [nodes[1]],
+        )
+
+
+class HeapInterfaceTests(TestCase):
+    def test_min_and_max_heaps_implement_the_restored_interface(self):
+        min_heap = MinHeap()
+        max_heap = MaxHeap()
+        for value in (3, 1, 2):
+            min_heap.insert(value)
+            max_heap.insert(value)
+
+        self.assertEqual(min_heap.extract_root(), 1)
+        self.assertEqual(max_heap.extract_root(), 3)
 
 
 class MLAgentExplanationTests(TestCase):

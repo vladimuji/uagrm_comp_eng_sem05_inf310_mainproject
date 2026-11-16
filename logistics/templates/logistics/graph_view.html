@@ -6,104 +6,156 @@
 	<div id="graph-page-hero">
 		<p class="eyebrow">INF310 | Graph</p>
 		<h1>City service network</h1>
-		<p>A first view of the cities and routes that can be covered by the logistics service.</p>
+		<p>Directed routes between listed cities, shown as a graph, adjacency list, and adjacency matrix.</p>
 	</div>
 {% endblock %}
 
 {% block content %}
 	<section class="graph-intro">
 		<div>
-			<h2>Integer graph</h2>
-			<p>Each circle represents a value from a simple array, and each line represents a connection between two nodes.</p>
+			<h2>Directed graph</h2>
+			<p>Rows are origin cities and columns are destinations. A value of 1 means that a route exists in that direction.</p>
 		</div>
 		<div class="graph-legend" aria-label="Graph legend">
-			<span><i class="legend-dot legend-dot--covered"></i>Node</span>
-			<span><i class="legend-line"></i>Edge</span>
+			<span><i class="legend-dot legend-dot--covered"></i>Listed city</span>
+			<span><i class="legend-line"></i>Directed route</span>
 		</div>
 	</section>
 
 	<section class="graph-panel" aria-labelledby="graph-heading">
 		<div class="graph-panel-heading">
 			<div>
-				<p class="eyebrow">Current data</p>
+				<p class="eyebrow">Database data</p>
 				<h2 id="graph-heading">Connected cities</h2>
 			</div>
-			<p id="graph-summary" class="graph-summary"></p>
+			<p class="graph-summary">{{ graph_data.vertex_count }} cities | {{ graph_data.edge_count }} directed routes</p>
 		</div>
-		<div id="graph-canvas" class="graph-canvas">
-			<svg id="graph-lines" class="graph-lines" aria-hidden="true"></svg>
-			<div id="graph-nodes" class="graph-nodes"></div>
-		</div>
+		{% if graph_data.nodes %}
+			<div id="graph-canvas" class="graph-canvas">
+				<svg id="graph-lines" class="graph-lines" aria-hidden="true">
+					<defs>
+						<marker id="graph-arrow" markerWidth="4" markerHeight="4" refX="3" refY="2" orient="auto">
+							<path d="M 0 0 L 4 2 L 0 4 z" fill="rgba(132, 49, 31, .7)"></path>
+						</marker>
+					</defs>
+				</svg>
+				<div id="graph-nodes" class="graph-nodes"></div>
+			</div>
+
+			<div class="graph-representations">
+				<section class="graph-representation-panel" aria-labelledby="adjacency-list-heading">
+					<h2 id="adjacency-list-heading">Adjacency list</h2>
+					<div class="graph-table-scroll">
+						<table class="graph-table">
+							<thead>
+								<tr><th scope="col">City</th><th scope="col">Outgoing routes</th></tr>
+							</thead>
+							<tbody>
+								{% for row in graph_data.adjacency_list %}
+									<tr>
+										<th scope="row">{{ row.vertex.id }} — {{ row.vertex.city_name }}</th>
+										<td>
+											{% for neighbor in row.neighbors %}
+												<span class="graph-neighbor">{{ neighbor.id }} — {{ neighbor.city_name }}</span>{% if not forloop.last %}, {% endif %}
+											{% empty %}
+												<span class="graph-empty">No outgoing routes</span>
+											{% endfor %}
+										</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</section>
+
+				<section class="graph-representation-panel" aria-labelledby="adjacency-matrix-heading">
+					<h2 id="adjacency-matrix-heading">Adjacency matrix</h2>
+					<div class="graph-table-scroll">
+						<table class="graph-table graph-matrix">
+							<thead>
+								<tr>
+									<th scope="col">From \ To</th>
+									{% for node in graph_data.nodes %}
+										<th scope="col" title="{{ node.city_name }}">{{ node.id }}</th>
+									{% endfor %}
+								</tr>
+							</thead>
+							<tbody>
+								{% for row in graph_data.matrix_rows %}
+									<tr>
+										<th scope="row" title="{{ row.vertex.city_name }}">{{ row.vertex.id }}</th>
+										{% for value in row.values %}
+											<td class="{% if value %}graph-matrix-cell--connected{% endif %}">{{ value }}</td>
+										{% endfor %}
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</section>
+			</div>
+		{% else %}
+			<p class="graph-empty-state">There are no listed cities to display.</p>
+		{% endif %}
 	</section>
 {% endblock %}
 
 {% block extra_scripts %}
-	<script>
-		const graphData = [10, 20, 30, 40, 50, 60, 70];
-		const graphNodes = graphData.map((value, index) => ({
-			id: index,
-			value,
-		}));
-		const graphEdges = graphNodes.slice(1).map((node, index) => ({
-			origin: graphNodes[index].id,
-			destination: node.id,
-		}));
-		const graphNodeLayer = document.querySelector("#graph-nodes");
-		const graphLines = document.querySelector("#graph-lines");
+	{% if graph_data.nodes %}
+		{{ graph_data|json_script:"graph-data" }}
+		<script>
+			const graphData = JSON.parse(document.querySelector("#graph-data").textContent);
+			const graphNodeLayer = document.querySelector("#graph-nodes");
+			const graphLines = document.querySelector("#graph-lines");
 
-		function getNodePosition(index) {
-			const columns = Math.ceil(Math.sqrt(graphNodes.length));
-			const row = Math.floor(index / columns);
-			const column = index % columns;
-			const rows = Math.ceil(graphNodes.length / columns);
+			function getNodePosition(index) {
+				const columns = Math.ceil(Math.sqrt(graphData.nodes.length));
+				const row = Math.floor(index / columns);
+				const column = index % columns;
+				const rows = Math.ceil(graphData.nodes.length / columns);
 
-			return {
-				x: ((column + 0.5) / columns) * 100,
-				y: ((row + 0.5) / rows) * 100,
-			};
-		}
+				return {
+					x: ((column + 0.5) / columns) * 100,
+					y: ((row + 0.5) / rows) * 100,
+				};
+			}
 
-		function renderGraph() {
-			const positions = new Map();
-			graphNodeLayer.innerHTML = "";
+			function renderGraph() {
+				const positions = new Map();
+				graphNodeLayer.innerHTML = "";
+				graphLines.querySelectorAll("line").forEach((route) => route.remove());
 
-			graphNodes.forEach((node, index) => {
-				const position = getNodePosition(index);
-				positions.set(node.id, position);
-				const marker = document.createElement("div");
-				marker.className = "graph-node";
-				marker.style.left = `${position.x}%`;
-				marker.style.top = `${position.y}%`;
-				marker.textContent = node.value;
-				marker.setAttribute("aria-label", `Node ${node.value}`);
-				graphNodeLayer.appendChild(marker);
-			});
+				graphData.nodes.forEach((node, index) => {
+					const position = getNodePosition(index);
+					positions.set(node.id, position);
+					const marker = document.createElement("div");
+					marker.className = "graph-node";
+					marker.style.left = `${position.x}%`;
+					marker.style.top = `${position.y}%`;
+					marker.textContent = node.id;
+					marker.title = node.city_name;
+					marker.setAttribute("aria-label", `${node.city_name} (${node.id})`);
+					graphNodeLayer.appendChild(marker);
+				});
 
-			drawRoutes(positions);
-			document.querySelector("#graph-summary").textContent =
-				`${graphNodes.length} cities | ${graphEdges.length} routes`;
-		}
+				graphData.edges.forEach((edge) => {
+					const origin = positions.get(edge.origin);
+					const destination = positions.get(edge.destination);
+					if (!origin || !destination) return;
 
-		function drawRoutes(positions) {
+					const route = document.createElementNS("http://www.w3.org/2000/svg", "line");
+					route.setAttribute("x1", origin.x);
+					route.setAttribute("y1", origin.y);
+					route.setAttribute("x2", destination.x);
+					route.setAttribute("y2", destination.y);
+					route.setAttribute("marker-end", "url(#graph-arrow)");
+					graphLines.appendChild(route);
+				});
+			}
+
 			graphLines.setAttribute("viewBox", "0 0 100 100");
-			graphLines.innerHTML = "";
-
-			graphEdges.forEach((edge) => {
-				const origin = positions.get(edge.origin);
-				const destination = positions.get(edge.destination);
-				if (!origin || !destination) return;
-
-				const route = document.createElementNS("http://www.w3.org/2000/svg", "line");
-				route.classList.toggle("graph-route--blocked", edge.bloqueado);
-				route.setAttribute("x1", origin.x);
-				route.setAttribute("y1", origin.y);
-				route.setAttribute("x2", destination.x);
-				route.setAttribute("y2", destination.y);
-				graphLines.appendChild(route);
-			});
-		}
-
-		renderGraph();
-		window.addEventListener("resize", renderGraph);
-	</script>
+			renderGraph();
+			window.addEventListener("resize", renderGraph);
+		</script>
+	{% endif %}
 {% endblock %}

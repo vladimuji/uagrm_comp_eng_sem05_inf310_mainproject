@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from datastructures.data.city_node import CityNode
 from datastructures.data.route_edge import RouteEdge
-from datastructures.graph.graph import Graph
+from datastructures.graph.digraph import DiGraph
 from logistics.models import Node, Route
 
 
@@ -57,3 +57,57 @@ def get_map_data():
     for e in edges:
         e["two_way"] = (e["destination"], e["origin"]) in pairs
     return {"nodes": nodes, "edges": edges}
+
+
+def get_graph_representation():
+    nodes = list(
+        Node.objects.filter(listed=True)
+        .order_by("id")
+        .values("id", "city_name", "state")
+    )
+    node_ids = [node["id"] for node in nodes]
+    graph = DiGraph(node_ids)
+
+    edges = []
+    if node_ids:
+        edges = list(
+            Route.objects.filter(
+                origin_node_id__in=node_ids,
+                destination_node_id__in=node_ids,
+            )
+            .order_by("origin_node_id", "destination_node_id")
+            .values("origin_node_id", "destination_node_id")
+        )
+        for edge in edges:
+            graph.insert_edge(
+                edge["origin_node_id"],
+                edge["destination_node_id"],
+            )
+
+    node_by_id = {node["id"]: node for node in nodes}
+    adjacency_list = [
+        {
+            "vertex": node_by_id[node],
+            "neighbors": [node_by_id[neighbor] for neighbor in adjacent],
+        }
+        for node, adjacent in zip(node_ids, graph.get_adjacency_list())
+    ]
+    matrix_rows = [
+        {"vertex": node_by_id[node], "values": row}
+        for node, row in zip(node_ids, graph.get_adjacency_matrix())
+    ]
+
+    return {
+        "nodes": nodes,
+        "edges": [
+            {
+                "origin": edge["origin_node_id"],
+                "destination": edge["destination_node_id"],
+            }
+            for edge in edges
+        ],
+        "adjacency_list": adjacency_list,
+        "matrix_rows": matrix_rows,
+        "vertex_count": graph.number_of_vertices(),
+        "edge_count": graph.number_of_edges(),
+    }

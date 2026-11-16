@@ -1,9 +1,8 @@
 """
 Module: graph.py
 Subject: INF310 - Data Structures II
-Description: Graph, a basic undirected graph using an adjacency-list
-             representation (vertex_list + parallel adjacency_lists of
-             indices). Mirrors the Java Graph class.
+Description: Graph, an adjacency-list graph (undirected by default),
+             using vertex_list and parallel adjacency_lists of indices.
 
 Author: Vladimir
 """
@@ -12,13 +11,14 @@ from collections import deque
 
 
 class Graph:
-    """Undirected graph over vertices of any comparable/hashable type."""
+    """Adjacency-list graph over vertices of any comparable/hashable type."""
 
     INVALID_VERTEX_NUM = -1
 
-    def __init__(self, vertices=None):
+    def __init__(self, vertices=None, directed=False):
         self._vertex_list = []
         self._adjacency_lists = []
+        self._directed = directed
         if vertices is not None:
             for vertex in vertices:
                 self.insert_vertex(vertex)
@@ -27,10 +27,22 @@ class Graph:
     # Vertex methods
     # ------------------------------------------------------------------
     def insert_vertex(self, vertex):
+        if vertex is None:
+            raise ValueError("Vertex can't be None")
         if self.exist_vertex(vertex):
             raise ValueError("Vertex already exists in the Graph")
         self._vertex_list.append(vertex)
         self._adjacency_lists.append([])
+
+    def set_vertex(self, old_vertex, new_vertex):
+        self._validate_vertex(old_vertex)
+        if new_vertex is None:
+            raise ValueError("Vertex can't be None")
+        new_vertex_num = self._get_num_of_vertex(new_vertex)
+        old_vertex_num = self._get_num_of_vertex(old_vertex)
+        if new_vertex_num != Graph.INVALID_VERTEX_NUM and new_vertex_num != old_vertex_num:
+            raise ValueError("Vertex already exists in the Graph")
+        self._vertex_list[old_vertex_num] = new_vertex
 
     def exist_vertex(self, vertex):
         if vertex is None:
@@ -79,6 +91,22 @@ class Graph:
     def get_vertices(self):
         return list(self._vertex_list)
 
+    def get_adjacency_list(self):
+        return [
+            [self._vertex_list[index] for index in adjacent]
+            for adjacent in self._adjacency_lists
+        ]
+
+    def get_adjacency_matrix(self):
+        matrix = [
+            [0] * len(self._vertex_list)
+            for _ in self._vertex_list
+        ]
+        for origin, adjacent in enumerate(self._adjacency_lists):
+            for destination in adjacent:
+                matrix[origin][destination] = 1
+        return matrix
+
     def adjacent_of_vertex(self, vertex):
         self._validate_vertex(vertex)
         adjacent_vertices = []
@@ -107,7 +135,7 @@ class Graph:
         adjacent_of_origin = self._adjacency_lists[num_origin_vertex]
         adjacent_of_origin.append(num_destination_vertex)
         adjacent_of_origin.sort()
-        if num_origin_vertex != num_destination_vertex:
+        if not self._directed and num_origin_vertex != num_destination_vertex:
             adjacent_of_destination = self._adjacency_lists[num_destination_vertex]
             adjacent_of_destination.append(num_origin_vertex)
             adjacent_of_destination.sort()
@@ -121,14 +149,19 @@ class Graph:
         adjacent_of_destination = self._adjacency_lists[num_destination_vertex]
         if num_destination_vertex in adjacent_of_origin:
             adjacent_of_origin.remove(num_destination_vertex)
-        if num_origin_vertex in adjacent_of_destination:
+        if not self._directed and num_origin_vertex in adjacent_of_destination:
             adjacent_of_destination.remove(num_origin_vertex)
 
     def number_of_edges(self):
         count = 0
-        for adjacency in self._adjacency_lists:
+        self_loops = 0
+        for vertex_num, adjacency in enumerate(self._adjacency_lists):
             count += len(adjacency)
-        return count // 2
+            if vertex_num in adjacency:
+                self_loops += 1
+        if self._directed:
+            return count
+        return (count + self_loops) // 2
 
     # ------------------------------------------------------------------
     # Traversals
@@ -186,6 +219,13 @@ class Graph:
         return visited
 
     def has_cycle(self):
+        if self._directed:
+            state = [0] * len(self._vertex_list)
+            for vertex_num in range(len(self._vertex_list)):
+                if state[vertex_num] == 0 and self._dfs_directed_cycle(vertex_num, state):
+                    return True
+            return False
+
         visited = [False] * len(self._vertex_list)
         for i in range(len(self._vertex_list)):
             if not visited[i]:
@@ -203,14 +243,38 @@ class Graph:
                 return True  # visited neighbor that is not the parent -> real cycle
         return False
 
+    def _dfs_directed_cycle(self, vertex_num, state):
+        state[vertex_num] = 1
+        for adjacent in self._adjacency_lists[vertex_num]:
+            if state[adjacent] == 1:
+                return True
+            if state[adjacent] == 0 and self._dfs_directed_cycle(adjacent, state):
+                return True
+        state[vertex_num] = 2
+        return False
+
     def count_islands(self):
         visited = [False] * len(self._vertex_list)
         island_count = 0
         for i in range(len(self._vertex_list)):
             if not visited[i]:
                 island_count += 1
-                self._dfs_mark_island(i, visited)
+                if self._directed:
+                    self._dfs_mark_weak_component(i, visited)
+                else:
+                    self._dfs_mark_island(i, visited)
         return island_count
+
+    def _dfs_mark_weak_component(self, vertex_num, visited):
+        visited[vertex_num] = True
+        neighbors = set(self._adjacency_lists[vertex_num])
+        neighbors.update(
+            origin for origin, adjacent in enumerate(self._adjacency_lists)
+            if vertex_num in adjacent
+        )
+        for adjacent in neighbors:
+            if not visited[adjacent]:
+                self._dfs_mark_weak_component(adjacent, visited)
 
     def _dfs_mark_island(self, v, visited):
         visited[v] = True
