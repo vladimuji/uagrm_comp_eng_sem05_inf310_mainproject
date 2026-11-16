@@ -38,6 +38,7 @@ This project provides clean, educational implementations of common data structur
     │   ├── bin_tree/               # Binary tree implementations
     │   │   ├── avl_tree.py         # Self-balancing AVL tree
     │   │   ├── binary_tree.py      # BinaryNode and BinaryTree classes
+    │   │   ├── bplus_tree.py       # B+ tree implementation
     │   │   ├── expression_tree.py  # Tree for evaluating expressions
     │   │   ├── search_binary_tree.py # Binary search tree implementation
     │   │   ├── bmway_tree.py       # B-way tree implementation
@@ -102,6 +103,7 @@ This project provides clean, educational implementations of common data structur
     │   │   ├── node.py             # Node model
     │   │   └── route.py            # Route model
     │   ├── services/               # Business logic services
+    │   │   ├── dashboard_service.py # Admin dashboard data and metrics
     │   │   ├── game_service.py    # Game logic service
     │   │   ├── graph_service.py   # Graph service methods
     │   │   ├── heap_service.py    # Heap service methods
@@ -110,6 +112,7 @@ This project provides clean, educational implementations of common data structur
     │   │   └── tree_service.py    # Tree service methods
     │   ├── static/                # Static files (CSS, JS, images)
     │   │   └── logistics/
+    │   │       ├── admin/         # Admin dashboard styles, scripts, and vendor assets
     │   │       ├── css/
     │   │       │   └── styles.css  # Application styles
     │   │       ├── js/
@@ -117,6 +120,10 @@ This project provides clean, educational implementations of common data structur
     │   │       └── images/
     │   ├── templates/             # Django templates for views
     │   │   └── logistics/
+    │   │       ├── admin/         # Admin dashboard templates
+    │   │       │   ├── base_admin.html # Base template for the admin dashboard
+    │   │       │   ├── dashboard.html # Admin dashboard page
+    │   │       │   └── login.html # Admin login page
     │   │       ├── base.html       # Base template
     │   │       ├── index.html      # Main project home page
     │   │       ├── graph_view.html # Graph visualization template
@@ -130,6 +137,7 @@ This project provides clean, educational implementations of common data structur
     │   │   ├── __init__.py
     │   │   ├── views.py           # Views that render the web pages
     │   │   ├── system_views.py    # System-level web views
+    │   │   ├── dashboard_views.py # Admin dashboard views
     │   │   └── api_views.py       # API views
     │   ├── __init__.py
     │   ├── admin.py               # Django administration configuration

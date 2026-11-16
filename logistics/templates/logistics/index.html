@@ -45,123 +45,127 @@
         <h2>Project structure</h2>
         <pre><code>
             00-code/
-                |-- config/
-                |   |-- __init__.py
-                |   |-- asgi.py
-                |   |-- settings.py
-                |   |-- urls.py
-                |   └── wsgi.py
-                |
-                ├── datastructures/
-                │   ├── bin_tree/ 
-                │   │   ├── avl_tree.py 
-                │   │   ├── binary_tree.py
-                │   │   ├── expression_tree.py
-                │   │   ├── search_binary_tree.py
-                │   │   ├── bmway_tree.py
-                │   │   ├── mway_search_tree.py
-                │   │   └── data/ 
-                │   ├── data/
-                │   │   ├── __init__.py
-                │   │   ├── city_node.py
-                │   │   └── route_edge.py
-                │   ├── game/
-                │   │   ├── game_model.py
-                │   │   ├── minimax_agent.py
-                │   │   └── ml_agent.py
-                │   ├── graph/ 
-                │   │   ├── graph.py
-                │   │   ├── digraph.py 
-                │   │   ├── wgraph.py 
-                │   │   ├── graph_algorithms.py
-                │   │   └── data/ 
-                │   │       ├── adjacent_with_weight.py
-                │   │       ├── edge.py
-                │   │       └── union_find.py
-                │   └── heap/ 
-                │       ├── i_heap.py 
-                │       ├── abstract_heap.py
-                │       ├── max_heap.py
-                │       └── min_heap.py
-                |
-                |-- exercices/
-                |   |-- pep8.py
-                |   |-- tic_tac_toe.py
-                |   └── tic_tac_toe_strategy.py
-                |
-                |-- logistics/
-                |   |-- data/
-                |   |   ├── edges.json
-                |   |   ├── edges_copy.json
-                |   |   ├── nodes.json
-                |   |   ├── nodes_copy.json
-                │   │   └── db/
-                │   │       ├── logistics_mysql.sql
-                │   │       ├── logistics_mssql.sql
-                │   │       ├── functions/
-                │   │       │   ├── fn_node_exists.sql
-                │   │       │   └── tictactoe/
-                │   │       │       └── fn_get_winner.sql
-                │   │       ├── procedures/
-                │   │       │   └── sp_reset_nodes_edges.sql
-                │   │       │   └── sp_delete_node.sql
-                │   │       │   └── sp_get_all_nodes.sql
-                │   │       │   └── sp_insert_node.sql
-                │   │       │   └── tictactoe/
-                │   │       │       └── sp_create_games.sql
-                │   │       │       └── sp_get_games.sql
-                │   │       │       └── sp_make_mode.sql
-                │   │       └── triggers/
-                │   │           ├── trg_audit_nodes.sql
-                │   │           └── tictactoe/
-                │   │               └── trg_audit_game_move.sql
-                |   ├── migrations/
-                |   |   └── __init__.py
-                |   ├── models/
-                |   |   ├── __init__.py
-                |   |   ├── node.py
-                |   |   └── route.py
-                |   ├── services/
-                |   |   ├── game_service.py
-                |   |   ├── graph_service.py
-                |   |   ├── heap_service.py
-                |   |   ├── sql_game_service.py
-                |   |   ├── sql_node_service.py
-                |   |   └── tree_service.py
-                |   ├── static/
-                |   |   └── logistics/
-                |   |       ├── css/
-                |   |       │   └── styles.css
-                |   |       ├── js/
-                |   |       │   └── menu.js
-                |   |       └── images/
-                |   ├── templates/
-                |   |   └── logistics/
-                |   |       ├── base.html
-                |   |       ├── index.html
-                |   |       ├── graph_view.html
-                |   |       ├── tree_view.html
-                |   |       ├── heap_view.html
-                |   |       ├── map_view.html
-                |   |       ├── tictactoe_view.html
-                |   |       └── partials/
-                |   |           └── menu.html
-                |   ├── views/
-                |   |   ├── __init__.py
-                |   |   ├── views.py
-                |   |   ├── system_views.py
-                |   |   └── api_views.py
-                |   ├── __init__.py
-                |   ├── admin.py
-                |   ├── apps.py
-                |   └── tests.py
-                |
-                |-- .env_sample
-                |-- main.py
-                |-- manage.py
-                |-- License.md
-                |-- README.md
-                └── requirements.txt
+            ├── config/
+            │   ├── __init__.py
+            │   ├── asgi.py
+            │   ├── settings.py
+            │   ├── urls.py
+            │   └── wsgi.py
+            ├── datastructures/
+            │   ├── bin_tree/
+            │   │   ├── avl_tree.py
+            │   │   ├── binary_tree.py
+            │   │   ├── bplus_tree.py
+            │   │   ├── expression_tree.py
+            │   │   ├── search_binary_tree.py
+            │   │   ├── bmway_tree.py
+            │   │   ├── mway_search_tree.py
+            │   │   └── data/
+            │   ├── data/
+            │   │   ├── __init__.py
+            │   │   ├── city_node.py
+            │   │   └── route_edge.py
+            │   ├── game/
+            │   │   ├── game_model.py
+            │   │   ├── minimax_agent.py
+            │   │   └── ml_agent.py
+            │   ├── graph/
+            │   │   ├── graph.py
+            │   │   ├── digraph.py
+            │   │   ├── wgraph.py
+            │   │   ├── graph_algorithms.py
+            │   │   └── data/
+            │   │       ├── adjacent_with_weight.py
+            │   │       ├── edge.py
+            │   │       └── union_find.py
+            │   └── heap/
+            │       ├── i_heap.py
+            │       ├── abstract_heap.py
+            │       ├── max_heap.py
+            │       └── min_heap.py
+            ├── exercices/
+            │   ├── pep8.py
+            │   ├── tic_tac_toe.py
+            │   └── tic_tac_toe_strategy.py
+            ├── logistics/
+            │   ├── data/
+            │   │   ├── edges.json
+            │   │   ├── edges_copy.json
+            │   │   ├── nodes.json
+            │   │   ├── nodes_copy.json
+            │   │   └── db/
+            │   │       ├── logistics_mysql.sql
+            │   │       ├── logistics_mssql.sql
+            │   │       ├── functions/
+            │   │       │   ├── fn_node_exists.sql
+            │   │       │   └── tictactoe/
+            │   │       │       └── fn_get_winner.sql
+            │   │       ├── procedures/
+            │   │       │   ├── sp_delete_node.sql
+            │   │       │   ├── sp_get_all_nodes.sql
+            │   │       │   ├── sp_insert_node.sql
+            │   │       │   ├── sp_reset_nodes_edges.sql
+            │   │       │   └── tictactoe/
+            │   │       │       ├── sp_create_games.sql
+            │   │       │       ├── sp_get_games.sql
+            │   │       │       └── sp_make_mode.sql
+            │   │       └── triggers/
+            │   │           ├── trg_audit_nodes.sql
+            │   │           └── tictactoe/
+            │   │               └── trg_audit_game_move.sql
+            │   ├── migrations/
+            │   │   └── __init__.py
+            │   ├── models/
+            │   │   ├── __init__.py
+            │   │   ├── node.py
+            │   │   └── route.py
+            │   ├── services/
+            │   │   ├── dashboard_service.py
+            │   │   ├── game_service.py
+            │   │   ├── graph_service.py
+            │   │   ├── heap_service.py
+            │   │   ├── sql_game_service.py
+            │   │   ├── sql_node_service.py
+            │   │   └── tree_service.py
+            │   ├── static/
+            │   │   └── logistics/
+            │   │       ├── admin/
+            │   │       ├── css/
+            │   │       │   └── styles.css
+            │   │       ├── js/
+            │   │       │   └── menu.js
+            │   │       └── images/
+            │   ├── templates/
+            │   │   └── logistics/
+            │   │       ├── admin/
+            │   │       │   ├── base_admin.html
+            │   │       │   ├── dashboard.html
+            │   │       │   └── login.html
+            │   │       ├── base.html
+            │   │       ├── index.html
+            │   │       ├── graph_view.html
+            │   │       ├── tree_view.html
+            │   │       ├── heap_view.html
+            │   │       ├── map_view.html
+            │   │       ├── tictactoe_view.html
+            │   │       └── partials/
+            │   │           └── menu.html
+            │   ├── views/
+            │   │   ├── __init__.py
+            │   │   ├── views.py
+            │   │   ├── system_views.py
+            │   │   ├── dashboard_views.py
+            │   │   └── api_views.py
+            │   ├── __init__.py
+            │   ├── admin.py
+            │   ├── apps.py
+            │   └── tests.py
+            ├── .env_sample
+            ├── main.py
+            ├── manage.py
+            ├── License.md
+            ├── README.md
+            └── requirements.txt
         </code></pre>
     </section>
     <section id="heaps">
