@@ -12,6 +12,9 @@ from datastructures.graph.graph import Graph
 from datastructures.heap.max_heap import MaxHeap
 from datastructures.heap.min_heap import MinHeap
 from logistics.services import game_service, graph_service
+from datastructures.graph.graph_algorithms import GraphAlgorithms
+from datastructures.graph.wgraph import WGraph
+from datastructures.graph.graph_adj_matrix import GraphAdjMatrix
 
 
 class GraphRepresentationTests(TestCase):
@@ -19,13 +22,13 @@ class GraphRepresentationTests(TestCase):
         graph = Graph(["A", "B", "C"])
         graph.insert_edge("A", "B")
 
-        adjacency_list = graph.get_adjacency_list()
-        adjacency_matrix = graph.get_adjacency_matrix()
+        adjacency_list = graph.adjacency_list
+        adjacency_matrix = graph.adjacency_matrix
         adjacency_list[0].clear()
         adjacency_matrix[0][1] = 0
 
-        self.assertEqual(graph.get_adjacency_list(), [["B"], ["A"], []])
-        self.assertEqual(graph.get_adjacency_matrix(), [
+        self.assertEqual(graph.adjacency_list, [["B"], ["A"], []])
+        self.assertEqual(graph.adjacency_matrix, [
             [0, 1, 0],
             [1, 0, 0],
             [0, 0, 0],
@@ -37,7 +40,7 @@ class GraphRepresentationTests(TestCase):
 
         graph.set_vertex("A", "X")
 
-        self.assertEqual(graph.get_vertices(), ["X", "B"])
+        self.assertEqual(graph.vertices, ["X", "B"])
         self.assertEqual(graph.adjacent_of_vertex("X"), ["B"])
         with self.assertRaises(ValueError):
             graph.set_vertex("X", "B")
@@ -47,17 +50,34 @@ class GraphRepresentationTests(TestCase):
         graph.insert_edge("A", "B")
         graph.insert_edge("A", "C")
 
-        self.assertEqual(graph.get_adjacency_list(), [["B", "C"], [], []])
-        self.assertEqual(graph.get_adjacency_matrix(), [
+        self.assertEqual(graph.adjacency_list, [["B", "C"], [], []])
+        self.assertEqual(graph.adjacency_matrix, [
             [0, 1, 1],
             [0, 0, 0],
             [0, 0, 0],
         ])
-        self.assertEqual(graph.number_of_edges(), 2)
+        self.assertEqual(graph.size(), 2)
         self.assertFalse(graph.has_cycle())
 
         graph.insert_edge("B", "A")
         self.assertTrue(graph.has_cycle())
+
+    def test_adjacency_list_setter_replaces_edges(self):
+        graph = DiGraph(["A", "B", "C"])
+        graph.adjacency_list = [["B", "C"], [], ["A"]]
+
+        self.assertEqual(graph.adjacency_list, [["B", "C"], [], ["A"]])
+        self.assertEqual(graph.adjacency_matrix, [
+            [0, 1, 1],
+            [0, 0, 0],
+            [1, 0, 0],
+        ])
+        with self.assertRaises(ValueError):
+            graph.adjacency_list = [["Z"], [], []]
+
+        undirected = Graph(["A", "B"])
+        with self.assertRaises(ValueError):
+            undirected.adjacency_list = [["B"], []]  # not symmetric
 
 
 class GraphRepresentationViewTests(TestCase):
@@ -123,6 +143,178 @@ class GraphServiceRepresentationTests(TestCase):
             result["adjacency_list"][0]["neighbors"],
             [nodes[1]],
         )
+
+
+class GraphAlgorithmsTests(TestCase):
+    def setUp(self):
+        self.algo = GraphAlgorithms()
+        # Undirected: A-B 1, B-C 2, A-C 4, C-D 1
+        self.undirected = WGraph(["A", "B", "C", "D"])
+        self.undirected.insert_edge("A", "B", 1)
+        self.undirected.insert_edge("B", "C", 2)
+        self.undirected.insert_edge("A", "C", 4)
+        self.undirected.insert_edge("C", "D", 1)
+
+    def test_bfs_and_dfs_order(self):
+        graph = Graph(["A", "B", "C", "D"])
+        graph.insert_edge("A", "B")
+        graph.insert_edge("A", "C")
+        graph.insert_edge("B", "D")
+
+        self.assertEqual(self.algo.breadth_first_search(graph, "A"), ["A", "B", "C", "D"])
+        self.assertEqual(self.algo.depth_first_search(graph, "A"), ["A", "B", "D", "C"])
+
+    def test_dijkstra_shortest_distances(self):
+        distance = self.algo.dijkstra(self.undirected, "A")
+
+        self.assertEqual(distance, {"A": 0.0, "B": 1, "C": 3, "D": 4})
+
+    def test_bellman_ford_matches_dijkstra_on_undirected_graph(self):
+        distance = self.algo.bellman_ford(self.undirected, "A")
+
+        self.assertEqual(distance, {"A": 0.0, "B": 1, "C": 3, "D": 4})
+
+    def test_bellman_ford_handles_negative_edges_in_directed_graph(self):
+        graph = WGraph(["A", "B", "C", "D"], directed=True)
+        graph.insert_edge("A", "B", 4)
+        graph.insert_edge("A", "C", 2)
+        graph.insert_edge("C", "B", -1)
+        graph.insert_edge("B", "D", 1)
+
+        distance = self.algo.bellman_ford(graph, "A")
+
+        self.assertEqual(distance, {"A": 0.0, "B": 1, "C": 2, "D": 2})
+
+    def test_bellman_ford_detects_negative_cycle(self):
+        graph = WGraph(["A", "B", "C"], directed=True)
+        graph.insert_edge("A", "B", 1)
+        graph.insert_edge("B", "C", -2)
+        graph.insert_edge("C", "A", -1)
+
+        with self.assertRaises(RuntimeError):
+            self.algo.bellman_ford(graph, "A")
+
+    def test_prim_builds_minimum_spanning_tree(self):
+        mst = self.algo.prim(self.undirected, "A")
+
+        self.assertEqual(len(mst), 3)
+        self.assertEqual(sum(edge.w for edge in mst), 4)
+
+    def test_kruskal_builds_minimum_spanning_tree(self):
+        mst = self.algo.kruskal(self.undirected)
+
+        self.assertEqual(len(mst), 3)
+        self.assertEqual(sum(edge.w for edge in mst), 4)
+
+
+class GraphAdjMatrixTests(TestCase):
+    def test_matrix_and_list_reflect_inserted_edges(self):
+        graph = GraphAdjMatrix(["A", "B", "C"])
+        graph.insert_edge("A", "B")
+
+        self.assertEqual(graph.adjacency_matrix, [
+            [0, 1, 0],
+            [1, 0, 0],
+            [0, 0, 0],
+        ])
+        self.assertEqual(graph.adjacency_list, [["B"], ["A"], []])
+        self.assertEqual(graph.order(), 3)
+        self.assertEqual(graph.size(), 1)
+
+    def test_matrix_getter_returns_independent_copy(self):
+        graph = GraphAdjMatrix(["A", "B"])
+        graph.insert_edge("A", "B")
+
+        matrix = graph.adjacency_matrix
+        matrix[0][1] = 0
+
+        self.assertEqual(graph.adjacency_matrix, [[0, 1], [1, 0]])
+
+    def test_matrix_setter_validates_input(self):
+        graph = GraphAdjMatrix(["A", "B"])
+
+        graph.adjacency_matrix = [[0, 1], [1, 0]]
+        self.assertEqual(graph.size(), 1)
+
+        with self.assertRaises(ValueError):
+            graph.adjacency_matrix = [[0, 1], [0, 0]]  # not symmetric
+        with self.assertRaises(ValueError):
+            graph.adjacency_matrix = [[0, 2], [2, 0]]  # values not 0/1
+        with self.assertRaises(ValueError):
+            graph.adjacency_matrix = [[0, 1, 0], [1, 0, 0]]  # wrong shape
+
+    def test_adjacency_list_setter_replaces_edges(self):
+        graph = GraphAdjMatrix(["A", "B", "C"], directed=True)
+        graph.adjacency_list = [["B", "C"], [], ["A"]]
+
+        self.assertEqual(graph.adjacency_list, [["B", "C"], [], ["A"]])
+        self.assertEqual(graph.adjacency_matrix, [
+            [0, 1, 1],
+            [0, 0, 0],
+            [1, 0, 0],
+        ])
+        with self.assertRaises(ValueError):
+            graph.adjacency_list = [["Z"], [], []]  # unknown vertex
+        with self.assertRaises(ValueError):
+            graph.adjacency_list = [["B", "B"], [], []]  # duplicate neighbor
+
+        undirected = GraphAdjMatrix(["A", "B"])
+        with self.assertRaises(ValueError):
+            undirected.adjacency_list = [["B"], []]  # not symmetric
+
+    def test_delete_vertex_removes_row_and_column(self):
+        graph = GraphAdjMatrix(["A", "B", "C"])
+        graph.insert_edge("A", "B")
+        graph.insert_edge("B", "C")
+
+        graph.delete_vertex("B")
+
+        self.assertEqual(graph.vertices, ["A", "C"])
+        self.assertEqual(graph.adjacency_matrix, [[0, 0], [0, 0]])
+
+    def test_traversals_cycles_and_islands(self):
+        graph = GraphAdjMatrix(["A", "B", "C", "D"])
+        graph.insert_edge("A", "B")
+        graph.insert_edge("A", "C")
+        graph.insert_edge("B", "D")
+
+        self.assertEqual(graph.bfs("A"), ["A", "B", "C", "D"])
+        self.assertEqual(graph.dfs_rec("A"), ["A", "B", "D", "C"])
+        self.assertEqual(graph.dfs_iter("A"), ["A", "B", "D", "C"])
+        self.assertFalse(graph.has_cycle())
+        self.assertEqual(graph.count_islands(), 1)
+
+        graph.insert_edge("C", "D")
+        self.assertTrue(graph.has_cycle())
+
+
+class GraphDemoApiTests(TestCase):
+    def post(self, kind, payload):
+        return self.client.post(
+            f"/api/graphs/{kind}/", json.dumps(payload),
+            content_type="application/json",
+        )
+
+    def test_default_graph_has_matrix_and_list(self):
+        data = self.client.get("/api/graphs/graph/").json()
+        self.assertEqual(data["order"], 5)
+        self.assertEqual(data["size"], 5)
+        self.assertEqual(data["adjacency_list"][0], ["B", "C"])
+
+    def test_matrix_and_list_setters_through_api(self):
+        response = self.post("digraph", {
+            "vertices": ["A", "B"], "matrix": [[0, 1], [0, 0]]})
+        self.assertEqual(response.json()["adjacency_list"], [["B"], []])
+
+        response = self.post("digraph", {
+            "vertices": ["A", "B"], "adjacency_list": [[], ["A"]]})
+        self.assertEqual(response.json()["adjacency_matrix"], [[0, 0], [1, 0]])
+
+    def test_setter_errors_return_400(self):
+        response = self.post("graph", {
+            "vertices": ["A", "B"], "matrix": [[0, 1], [0, 0]]})
+        self.assertEqual(response.status_code, 400)  # not symmetric
+        self.assertEqual(self.client.get("/api/graphs/nope/").status_code, 404)
 
 
 class HeapInterfaceTests(TestCase):

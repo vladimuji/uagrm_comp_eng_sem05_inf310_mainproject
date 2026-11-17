@@ -145,3 +145,30 @@ class GameMoveView(View):
         except game_service.DatabaseError as error:
             return JsonResponse({"error": str(error)}, status=500)
         return JsonResponse(game)
+
+
+class GraphDemoView(View):
+    """In-memory Graph/DiGraph demo. Stateless: the client sends the
+    whole graph every time and gets both representations back."""
+
+    def get(self, request, kind):
+        try:
+            graph = graph_service.default_demo_graph(kind)
+        except graph_service.GraphKindNotFound:
+            return JsonResponse({"error": f"Unknown graph kind '{kind}'"}, status=404)
+        return JsonResponse(graph_service.serialize_demo_graph(graph))
+
+    def post(self, request, kind):
+        try:
+            payload = json.loads(request.body or "{}")
+            graph = graph_service.build_demo_graph(
+                kind,
+                payload.get("vertices"),
+                payload.get("matrix"),
+                payload.get("adjacency_list"),
+            )
+        except graph_service.GraphKindNotFound:
+            return JsonResponse({"error": f"Unknown graph kind '{kind}'"}, status=404)
+        except (ValueError, TypeError, AttributeError) as error:
+            return JsonResponse({"error": str(error)}, status=400)
+        return JsonResponse(graph_service.serialize_demo_graph(graph))

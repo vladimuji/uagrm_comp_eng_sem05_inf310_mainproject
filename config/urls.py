@@ -25,6 +25,10 @@ from logistics.views.api_views import (
 from logistics.views.system_views import RestoreDatabaseView
 from django.contrib.auth import views as auth_views
 from logistics.views.dashboard_views import DashboardView
+from logistics.views.api_views import (
+    TreeOperationView, ExpressionTreeView, GraphDataView,
+    GameCreateView, GameDetailView, GameMoveView, GraphDemoView,
+)
 
 urlpatterns = [
     path('', BaseView.as_view(), name='home'),
@@ -44,6 +48,7 @@ urlpatterns = [
 
     path('map/', MapView.as_view(), name='map'),
     path('api/graph/', GraphDataView.as_view(), name='graph-api'),
+    path('api/graphs/<str:kind>/', GraphDemoView.as_view(), name='graph-demo-api'),
 
     # For the TicTacToe Game
     path('tictactoe/', TicTacToeView.as_view(), name='tictactoe'),
