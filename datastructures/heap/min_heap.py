@@ -7,7 +7,7 @@ Description: MinHeap, extends AbstractHeap so the smallest element is
 Author: Vladimir
 """
 
-from heap.abstract_heap import AbstractHeap
+from datastructures.heap.abstract_heap import AbstractHeap
 
 
 class MinHeap(AbstractHeap):

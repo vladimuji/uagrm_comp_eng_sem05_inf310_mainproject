@@ -1,237 +1,155 @@
 """
-Module: graph.py
+Module: wgraph.py
 Subject: INF310 - Data Structures II
-Description: Graph, a basic undirected graph using an adjacency-list
-             representation (vertex_list + parallel adjacency_lists of
-             indices). Mirrors the Java Graph class.
+Description: WGraph, a weighted graph built on top of Graph. The
+             adjacency lists (indices) are inherited; the weights live
+             in a dict {(origin_index, destination_index): weight}.
+             Undirected by default; directed=True gives a weighted
+             digraph (A -> B and B -> A can have different weights).
 
 Author: Vladimir
 """
 
-from collections import deque
+from datastructures.graph.graph import Graph
+from datastructures.graph.data.adjacent_with_weight import AdjacentWithWeight
+from datastructures.graph.data.edge import Edge
 
 
-class Graph:
-    """Undirected graph over vertices of any comparable/hashable type."""
+class WGraph(Graph):
+    """Weighted graph: every edge carries a weight."""
 
-    INVALID_VERTEX_NUM = -1
+    def __init__(self, vertices=None, directed=False):
+        self._weights = {}
+        super().__init__(vertices=vertices, directed=directed)
 
-    def __init__(self, vertices=None):
-        self._vertex_list = []
-        self._adjacency_lists = []
-        if vertices is not None:
-            for vertex in vertices:
-                self.insert_vertex(vertex)
+    # ------------------------------------------------------------------
+    # Properties (Pythonic getters and setters)
+    # ------------------------------------------------------------------
+    @property
+    def adjacency_matrix(self):
+        """0/1 matrix (read-only here: use weight_matrix to set edges)."""
+        return Graph.adjacency_matrix.fget(self)
+
+    @property
+    def adjacency_list(self):
+        """Adjacency list (read-only here: use weight_matrix to set edges)."""
+        return Graph.adjacency_list.fget(self)
+
+    @property
+    def weight_matrix(self):
+        """Matrix of weights; None where there is no edge."""
+        size = len(self._vertex_list)
+        matrix = [[None] * size for _ in range(size)]
+        for (origin, destination), weight in self._weights.items():
+            matrix[origin][destination] = weight
+        return matrix
+
+    @weight_matrix.setter
+    def weight_matrix(self, matrix):
+        """Replace every edge from a matrix of weights (None = no edge).
+        Must be square, match the vertices, and be symmetric if the
+        graph is undirected."""
+        size = len(self._vertex_list)
+        if len(matrix) != size or any(len(row) != size for row in matrix):
+            raise ValueError("Matrix must be square and match the vertices")
+        if not self._directed:
+            for i in range(size):
+                for j in range(i):
+                    if matrix[i][j] != matrix[j][i]:
+                        raise ValueError("Undirected graph needs a symmetric matrix")
+        self._adjacency_lists = [
+            [j for j, weight in enumerate(row) if weight is not None]
+            for row in matrix
+        ]
+        self._weights = {
+            (i, j): weight
+            for i, row in enumerate(matrix)
+            for j, weight in enumerate(row)
+            if weight is not None
+        }
+
+    @property
+    def edges(self):
+        """List of Edge(u, v, w) with vertex indices. In an undirected
+        graph each edge appears once (u <= v)."""
+        result = []
+        for origin, adjacent in enumerate(self._adjacency_lists):
+            for destination in adjacent:
+                if self._directed or origin <= destination:
+                    weight = self._weights[(origin, destination)]
+                    result.append(Edge(origin, destination, weight))
+        return result
+
+    @classmethod
+    def from_matrix(cls, vertices, matrix, directed=False):
+        raise NotImplementedError("Use from_weight_matrix in a WGraph")
+
+    @classmethod
+    def from_weight_matrix(cls, vertices, matrix, directed=False):
+        graph = cls(vertices, directed)
+        graph.weight_matrix = matrix
+        return graph
 
     # ------------------------------------------------------------------
     # Vertex methods
     # ------------------------------------------------------------------
-    def insert_vertex(self, vertex):
-        if self.exist_vertex(vertex):
-            raise ValueError("Vertex already exists in the Graph")
-        self._vertex_list.append(vertex)
-        self._adjacency_lists.append([])
-
-    def exist_vertex(self, vertex):
-        if vertex is None:
-            raise ValueError("Vertex can't be None")
-        return self._get_num_of_vertex(vertex) != Graph.INVALID_VERTEX_NUM
-
     def delete_vertex(self, vertex):
         self._validate_vertex(vertex)
-        num_vertex_to_delete = self._get_num_of_vertex(vertex)
-        self._vertex_list.pop(num_vertex_to_delete)
-        self._adjacency_lists.pop(num_vertex_to_delete)
-        for adjacent_of_vertex in self._adjacency_lists:
-            if num_vertex_to_delete in adjacent_of_vertex:
-                adjacent_of_vertex.remove(num_vertex_to_delete)
-            for i in range(len(adjacent_of_vertex)):
-                adjacency = adjacent_of_vertex[i]
-                if adjacency > num_vertex_to_delete:
-                    adjacent_of_vertex[i] = adjacency - 1
+        deleted = self._get_num_of_vertex(vertex)
+        shifted = {}
+        for (origin, destination), weight in self._weights.items():
+            if origin == deleted or destination == deleted:
+                continue
+            new_origin = origin - 1 if origin > deleted else origin
+            new_destination = destination - 1 if destination > deleted else destination
+            shifted[(new_origin, new_destination)] = weight
+        super().delete_vertex(vertex)
+        self._weights = shifted
 
-    def exist_adjacency(self, origin_vertex, destination_vertex):
-        self._validate_vertex(origin_vertex)
-        self._validate_vertex(destination_vertex)
-        num_origin_vertex = self._get_num_of_vertex(origin_vertex)
-        num_destination_vertex = self._get_num_of_vertex(destination_vertex)
-        adjacent_of_origin = self._adjacency_lists[num_origin_vertex]
-        return num_destination_vertex in adjacent_of_origin
-
-    def _validate_vertex(self, vertex):
-        if vertex is None:
-            raise ValueError("Vertex can't be None")
-        if self._get_num_of_vertex(vertex) == Graph.INVALID_VERTEX_NUM:
-            raise ValueError("Vertex not found")
-
-    def _get_num_of_vertex(self, vertex):
-        for i in range(len(self._vertex_list)):
-            if self._vertex_list[i] == vertex:
-                return i
-        return Graph.INVALID_VERTEX_NUM
-
-    def vertex_degree(self, vertex):
+    def adjacent_with_weight(self, vertex):
+        """List of AdjacentWithWeight(index_of_vertex, weight)."""
         self._validate_vertex(vertex)
-        num_of_vertex = self._get_num_of_vertex(vertex)
-        adjacent_of_vertex = self._adjacency_lists[num_of_vertex]
-        return len(adjacent_of_vertex)
-
-    def get_vertices(self):
-        return list(self._vertex_list)
-
-    def adjacent_of_vertex(self, vertex):
-        self._validate_vertex(vertex)
-        adjacent_vertices = []
-        num_of_vertex = self._get_num_of_vertex(vertex)
-        adjacent_of_vertex_list = self._adjacency_lists[num_of_vertex]
-        for pos_adj in adjacent_of_vertex_list:
-            adjacent_vertices.append(self._vertex_list[pos_adj])
-        return adjacent_vertices
-
-    def get_vertex_by_number(self, num_of_vertex):
-        if num_of_vertex < 0 or num_of_vertex >= len(self._vertex_list):
-            raise ValueError("Invalid number of Vertex")
-        return self._vertex_list[num_of_vertex]
-
-    def number_of_vertices(self):
-        return len(self._vertex_list)
+        origin = self._get_num_of_vertex(vertex)
+        return [
+            AdjacentWithWeight(destination, self._weights[(origin, destination)])
+            for destination in self._adjacency_lists[origin]
+        ]
 
     # ------------------------------------------------------------------
     # Edge methods
     # ------------------------------------------------------------------
-    def insert_edge(self, origin_vertex, destination_vertex):
-        if self.exist_adjacency(origin_vertex, destination_vertex):
-            raise ValueError("Edge already exists in the graph")
-        num_origin_vertex = self._get_num_of_vertex(origin_vertex)
-        num_destination_vertex = self._get_num_of_vertex(destination_vertex)
-        adjacent_of_origin = self._adjacency_lists[num_origin_vertex]
-        adjacent_of_origin.append(num_destination_vertex)
-        adjacent_of_origin.sort()
-        if num_origin_vertex != num_destination_vertex:
-            adjacent_of_destination = self._adjacency_lists[num_destination_vertex]
-            adjacent_of_destination.append(num_origin_vertex)
-            adjacent_of_destination.sort()
+    def insert_edge(self, origin_vertex, destination_vertex, weight):
+        if weight is None:
+            raise ValueError("Weight can't be None")
+        super().insert_edge(origin_vertex, destination_vertex)
+        origin = self._get_num_of_vertex(origin_vertex)
+        destination = self._get_num_of_vertex(destination_vertex)
+        self._weights[(origin, destination)] = weight
+        if not self._directed:
+            self._weights[(destination, origin)] = weight
 
     def delete_edge(self, origin_vertex, destination_vertex):
-        self._validate_vertex(origin_vertex)
-        self._validate_vertex(destination_vertex)
-        num_origin_vertex = self._get_num_of_vertex(origin_vertex)
-        num_destination_vertex = self._get_num_of_vertex(destination_vertex)
-        adjacent_of_origin = self._adjacency_lists[num_origin_vertex]
-        adjacent_of_destination = self._adjacency_lists[num_destination_vertex]
-        if num_destination_vertex in adjacent_of_origin:
-            adjacent_of_origin.remove(num_destination_vertex)
-        if num_origin_vertex in adjacent_of_destination:
-            adjacent_of_destination.remove(num_origin_vertex)
+        super().delete_edge(origin_vertex, destination_vertex)
+        origin = self._get_num_of_vertex(origin_vertex)
+        destination = self._get_num_of_vertex(destination_vertex)
+        self._weights.pop((origin, destination), None)
+        if not self._directed:
+            self._weights.pop((destination, origin), None)
 
-    def number_of_edges(self):
-        count = 0
-        for adjacency in self._adjacency_lists:
-            count += len(adjacency)
-        return count // 2
+    def get_edge_weight(self, origin_vertex, destination_vertex):
+        if not self.exist_adjacency(origin_vertex, destination_vertex):
+            raise ValueError("Edge not found")
+        origin = self._get_num_of_vertex(origin_vertex)
+        destination = self._get_num_of_vertex(destination_vertex)
+        return self._weights[(origin, destination)]
 
-    # ------------------------------------------------------------------
-    # Traversals
-    # ------------------------------------------------------------------
-    def dfs_rec(self, start_vertex):
-        self._validate_vertex(start_vertex)
-        visited = []
-        marked = [False] * len(self._vertex_list)
-        self._dfs_rec_helper(self._get_num_of_vertex(start_vertex), marked, visited)
-        return visited
-
-    def _dfs_rec_helper(self, vertex_num, marked, visited):
-        marked[vertex_num] = True
-        visited.append(self._vertex_list[vertex_num])
-        for adj in self._adjacency_lists[vertex_num]:
-            if not marked[adj]:
-                self._dfs_rec_helper(adj, marked, visited)
-
-    def dfs_iter(self, start_vertex):
-        self._validate_vertex(start_vertex)
-        visited = []
-        marked = [False] * len(self._vertex_list)
-        stack = [self._get_num_of_vertex(start_vertex)]
-        while stack:
-            vertex_num = stack.pop()
-            if not marked[vertex_num]:
-                marked[vertex_num] = True
-                visited.append(self._vertex_list[vertex_num])
-                # Keep a consistent order: push neighbors in reverse.
-                adjacents = self._adjacency_lists[vertex_num]
-                for i in range(len(adjacents) - 1, -1, -1):
-                    adj = adjacents[i]
-                    if not marked[adj]:
-                        stack.append(adj)
-        return visited
-
-    def bfs(self, start_vertex):
-        self._validate_vertex(start_vertex)
-        return self._bfs_iter(start_vertex)
-
-    def _bfs_iter(self, start_vertex):
-        visited = []
-        queue = deque()
-        marked = [False] * len(self._vertex_list)
-        start_num = self._get_num_of_vertex(start_vertex)
-        queue.append(start_num)
-        marked[start_num] = True
-        while queue:
-            vertex_num = queue.popleft()
-            visited.append(self._vertex_list[vertex_num])
-            for adj in self._adjacency_lists[vertex_num]:
-                if not marked[adj]:
-                    queue.append(adj)
-                    marked[adj] = True
-        return visited
-
-    def has_cycle(self):
-        visited = [False] * len(self._vertex_list)
-        for i in range(len(self._vertex_list)):
-            if not visited[i]:
-                if self._dfs_cycle_undirected(i, -1, visited):
-                    return True
-        return False
-
-    def _dfs_cycle_undirected(self, v, parent, visited):
-        visited[v] = True
-        for adj in self._adjacency_lists[v]:
-            if not visited[adj]:
-                if self._dfs_cycle_undirected(adj, v, visited):
-                    return True
-            elif adj != parent:
-                return True  # visited neighbor that is not the parent -> real cycle
-        return False
-
-    def count_islands(self):
-        visited = [False] * len(self._vertex_list)
-        island_count = 0
-        for i in range(len(self._vertex_list)):
-            if not visited[i]:
-                island_count += 1
-                self._dfs_mark_island(i, visited)
-        return island_count
-
-    def _dfs_mark_island(self, v, visited):
-        visited[v] = True
-        for adj in self._adjacency_lists[v]:
-            if not visited[adj]:
-                self._dfs_mark_island(adj, visited)
-
-    def is_reachable(self, origin, destination):
-        if not self.exist_vertex(origin) or not self.exist_vertex(destination):
-            raise ValueError("Vertex not found")
-        if origin == destination:
-            return True
-        visited = {v: False for v in self.get_vertices()}
-        queue = deque([origin])
-        visited[origin] = True
-        while queue:
-            current = queue.popleft()
-            for adj in self.adjacent_of_vertex(current):
-                if adj == destination:
-                    return True
-                if not visited[adj]:
-                    visited[adj] = True
-                    queue.append(adj)
-        return False
+    def set_edge_weight(self, origin_vertex, destination_vertex, weight):
+        if weight is None:
+            raise ValueError("Weight can't be None")
+        if not self.exist_adjacency(origin_vertex, destination_vertex):
+            raise ValueError("Edge not found")
+        origin = self._get_num_of_vertex(origin_vertex)
+        destination = self._get_num_of_vertex(destination_vertex)
+        self._weights[(origin, destination)] = weight
+        if not self._directed:
+            self._weights[(destination, origin)] = weight
