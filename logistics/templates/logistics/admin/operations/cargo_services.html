@@ -1,17 +1,474 @@
 {% extends "logistics/admin/base_admin.html" %}
+{% load static %}
 
 {% block title %}Servicios de Transporte{% endblock %}
 
+{% block extra_head %}
+<link href="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
-<div id="cargo-services-app">
-  <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Servicios de Transporte</h1>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h1 class="h3 mb-1 text-gray-800 font-weight-bold">Servicios de Transporte y Mudanzas</h1>
+    <p class="text-muted small mb-0">Programación, asignación de chofer/vehículo y seguimiento en tiempo real</p>
+  </div>
+  <div>
+    <button type="button" class="btn btn-primary btn-icon-split shadow-sm" data-toggle="modal" data-target="#modalNewService">
+      <span class="icon text-white-50">
+        <i class="fas fa-plus"></i>
+      </span>
+      <span class="text">Nuevo Servicio</span>
+    </button>
+  </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="row">
+
+  <!-- Total Fletes -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-primary shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Servicios (Mes)</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">128 Fletes</div>
+            <span class="text-xs text-success font-weight-bold"><i class="fas fa-arrow-up"></i> 14% vs mes pasado</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-truck-loading fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="card shadow mb-4">
-    <div class="card-body">
-      <p class="text-muted mb-0">Contenido en blanco para Servicios de Transporte.</p>
+  <!-- En Tránsito -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-info shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">En Tránsito</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">15 Activos</div>
+            <span class="text-xs text-info font-weight-bold">Monitoreo en curso</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-shipping-fast fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pendientes de Asignación -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-warning shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Pendientes / Por Asignar</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">6 Solicitudes</div>
+            <span class="text-xs text-danger font-weight-bold">Requieren chofer</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-clock fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Completados -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-success shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Entregados con Éxito</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">107 Fletes</div>
+            <span class="text-xs text-success font-weight-bold"><i class="fas fa-check-circle"></i> 98% satisfacción</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-check-double fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- DataTables Card -->
+<div class="card shadow mb-4">
+  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+    <h6 class="m-0 font-weight-bold text-primary">
+      <i class="fas fa-clipboard-list mr-1"></i> Listado General de Servicios
+    </h6>
+    <div class="dropdown no-arrow">
+      <a class="dropdown-toggle" href="#" role="button" id="dropdownServicesMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+      </a>
+      <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownServicesMenu">
+        <div class="dropdown-header">Filtros rápidos:</div>
+        <a class="dropdown-item" href="#">Ver solo "En Tránsito"</a>
+        <a class="dropdown-item" href="#">Ver solo "Pendientes"</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="#"><i class="fas fa-file-excel fa-sm mr-2 text-success"></i>Exportar Excel</a>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover" id="dataTableServices" width="100%" cellspacing="0">
+        <thead class="thead-light">
+          <tr>
+            <th># ID</th>
+            <th>Fecha / Hora</th>
+            <th>Cliente</th>
+            <th>Detalle de Carga</th>
+            <th>Origen $\rightarrow$ Destino</th>
+            <th>Conductor / Camión</th>
+            <th>Precio Acordado</th>
+            <th>Estado</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-weight-bold">#1024</td>
+            <td>20/11/2026 <small class="text-muted d-block">08:30 AM</small></td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Roberto Suárez</div>
+              <small class="text-muted"><i class="fas fa-phone-alt"></i> 77012345</small>
+            </td>
+            <td>Mudanza de dpto. 3 hab. (muebles y electrodomésticos)</td>
+            <td>
+              <span class="badge badge-light border d-block text-left mb-1"><i class="fas fa-map-marker-alt text-danger mr-1"></i>4to Anillo y San Martín</span>
+              <span class="badge badge-light border d-block text-left"><i class="fas fa-flag-checkered text-success mr-1"></i>Equipetrol Norte #120</span>
+            </td>
+            <td>
+              Carlos Mamani
+              <span class="badge badge-dark d-block mt-1">2345-TXZ (Volvo F12)</span>
+            </td>
+            <td class="font-weight-bold text-success">Bs. 350.00</td>
+            <td><span class="badge badge-success px-2 py-1">Entregado</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Detalle" data-toggle="modal" data-target="#modalServiceDetail">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Cancelar">
+                <i class="fas fa-times"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#1023</td>
+            <td>20/11/2026 <small class="text-muted d-block">10:00 AM</small></td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Distribuidora Oriental</div>
+              <small class="text-muted"><i class="fas fa-phone-alt"></i> 76098765</small>
+            </td>
+            <td>40 Cajas de insumos industriales (2.5 Toneladas)</td>
+            <td>
+              <span class="badge badge-light border d-block text-left mb-1"><i class="fas fa-map-marker-alt text-danger mr-1"></i>Parque Industrial Mz. 14</span>
+              <span class="badge badge-light border d-block text-left"><i class="fas fa-flag-checkered text-success mr-1"></i>Plan 3000, Av. Paurito</span>
+            </td>
+            <td>
+              Jorge Mendoza
+              <span class="badge badge-dark d-block mt-1">1890-BBD (Mercedes 1620)</span>
+            </td>
+            <td class="font-weight-bold text-success">Bs. 520.00</td>
+            <td><span class="badge badge-primary px-2 py-1">En Tránsito</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Detalle" data-toggle="modal" data-target="#modalServiceDetail">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Cancelar">
+                <i class="fas fa-times"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#1022</td>
+            <td>21/11/2026 <small class="text-muted d-block">07:00 AM</small></td>
+            <td>
+              <div class="font-weight-bold text-gray-800">María René Peña</div>
+              <small class="text-muted"><i class="fas fa-phone-alt"></i> 70089123</small>
+            </td>
+            <td>Traslado interurbano de muebles rústicos y cajas</td>
+            <td>
+              <span class="badge badge-light border d-block text-left mb-1"><i class="fas fa-map-marker-alt text-danger mr-1"></i>Santa Cruz (2do Anillo)</span>
+              <span class="badge badge-light border d-block text-left"><i class="fas fa-flag-checkered text-success mr-1"></i>Montero (Plaza Principal)</span>
+            </td>
+            <td>
+              Hugo Banegas
+              <span class="badge badge-dark d-block mt-1">3112-PLK (Isuzu Forward)</span>
+            </td>
+            <td class="font-weight-bold text-success">Bs. 800.00</td>
+            <td><span class="badge badge-warning text-white px-2 py-1">Asignado</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Detalle">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Cancelar">
+                <i class="fas fa-times"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#1021</td>
+            <td>21/11/2026 <small class="text-muted d-block">02:30 PM</small></td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Constructora del Este</div>
+              <small class="text-muted"><i class="fas fa-phone-alt"></i> 77345678</small>
+            </td>
+            <td>Bolsas de estuco y herramientas pesadas</td>
+            <td>
+              <span class="badge badge-light border d-block text-left mb-1"><i class="fas fa-map-marker-alt text-danger mr-1"></i>Km 9 Doble Vía La Guardia</span>
+              <span class="badge badge-light border d-block text-left"><i class="fas fa-flag-checkered text-success mr-1"></i>Warnes, Zona Satélite</span>
+            </td>
+            <td>
+              <span class="text-danger small font-weight-bold"><i class="fas fa-exclamation-circle mr-1"></i>Sin asignar</span>
+            </td>
+            <td class="font-weight-bold text-success">Bs. 650.00</td>
+            <td><span class="badge badge-secondary px-2 py-1">Pendiente</span></td>
+            <td class="text-center">
+              <button class="btn btn-primary btn-circle btn-sm mr-1" title="Asignar Conductor">
+                <i class="fas fa-user-check"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Cancelar">
+                <i class="fas fa-times"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#1020</td>
+            <td>19/11/2026 <small class="text-muted d-block">03:00 PM</small></td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Ferretería Central</div>
+              <small class="text-muted"><i class="fas fa-phone-alt"></i> 71034567</small>
+            </td>
+            <td>Tubos PVC, barras de fierro y perfiles metálicos</td>
+            <td>
+              <span class="badge badge-light border d-block text-left mb-1"><i class="fas fa-map-marker-alt text-danger mr-1"></i>Villa 1ro de Mayo</span>
+              <span class="badge badge-light border d-block text-left"><i class="fas fa-flag-checkered text-success mr-1"></i>2do Anillo y Av. Busch</span>
+            </td>
+            <td>
+              Carlos Mamani
+              <span class="badge badge-dark d-block mt-1">2345-TXZ (Volvo F12)</span>
+            </td>
+            <td class="font-weight-bold text-success">Bs. 280.00</td>
+            <td><span class="badge badge-success px-2 py-1">Entregado</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Detalle">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Cancelar">
+                <i class="fas fa-times"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
+
+<!-- Modal: Nuevo Servicio -->
+<div class="modal fade" id="modalNewService" tabindex="-1" role="dialog" aria-labelledby="modalNewServiceLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="modalNewServiceLabel"><i class="fas fa-truck-loading mr-2"></i>Registrar Nuevo Servicio de Flete</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Cliente Solicitante <span class="text-danger">*</span></label>
+              <select class="form-control" required>
+                <option value="">-- Seleccionar Cliente --</option>
+                <option value="1">Roberto Suárez Aguilera (CI: 4789214 SC)</option>
+                <option value="2">Distribuidora Oriental S.R.L.</option>
+                <option value="3">Ferretería Central</option>
+                <option value="4">María René Peña</option>
+                <option value="5">Constructora del Este S.A.</option>
+              </select>
+            </div>
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Zona Geográfica de Cobertura <span class="text-danger">*</span></label>
+              <select class="form-control" required>
+                <option value="1">Santa Cruz de la Sierra (Radio Urbano)</option>
+                <option value="2">Montero</option>
+                <option value="3">Warnes</option>
+                <option value="4">Ruta Interdepartamental (Cochabamba / La Paz / Sucre)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="font-weight-bold small text-gray-700">Detalle de la Carga / Mudanza <span class="text-danger">*</span></label>
+            <textarea class="form-control" rows="2" placeholder="Especificar tipo de carga, volumen aproximado, peso o inventario de muebles..." required></textarea>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Dirección de Origen (Recojo) <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Ej. 4to Anillo y Av. San Martín #230" required>
+            </div>
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Dirección de Destino (Entrega) <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Ej. Barrio Equipetrol Norte, Calle 8" required>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4 form-group">
+              <label class="font-weight-bold small text-gray-700">Fecha y Hora Programada <span class="text-danger">*</span></label>
+              <input type="datetime-local" class="form-control" required>
+            </div>
+            <div class="col-md-4 form-group">
+              <label class="font-weight-bold small text-gray-700">Precio Acordado (Bs.) <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text font-weight-bold">Bs.</span></div>
+                <input type="number" step="10" class="form-control font-weight-bold" placeholder="350.00" required>
+              </div>
+            </div>
+            <div class="col-md-4 form-group">
+              <label class="font-weight-bold small text-gray-700">Conductor & Camión Asignado</label>
+              <select class="form-control">
+                <option value="">(Dejar pendiente de asignación)</option>
+                <option value="1">Carlos Mamani — Camión Volvo 2345-TXZ</option>
+                <option value="2">Jorge Mendoza — Camión Mercedes 1890-BBD</option>
+                <option value="3">Hugo Banegas — Camión Isuzu 3112-PLK</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal">
+            <i class="fas fa-save mr-1"></i> Registrar Servicio
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Detalle de Servicio -->
+<div class="modal fade" id="modalServiceDetail" tabindex="-1" role="dialog" aria-labelledby="modalServiceDetailLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title" id="modalServiceDetailLabel"><i class="fas fa-info-circle mr-2"></i>Ficha del Servicio #1024</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-3">
+          <div class="col-md-8">
+            <h5 class="font-weight-bold text-gray-800">Mudanza de dpto. 3 hab.</h5>
+            <p class="text-muted small mb-0">Cliente: <strong class="text-dark">Roberto Suárez Aguilera</strong> (C.I. 4789214 SC)</p>
+            <p class="text-muted small">Celular: <strong class="text-dark">77012345</strong> | Zona: <strong class="text-dark">Santa Cruz Radio Urbano</strong></p>
+          </div>
+          <div class="col-md-4 text-md-right">
+            <span class="badge badge-success px-3 py-2 font-weight-bold h6">Estado: Entregado</span>
+            <div class="h5 font-weight-bold text-primary mt-1">Precio: Bs. 350.00</div>
+          </div>
+        </div>
+
+        <div class="card bg-light border-0 mb-3">
+          <div class="card-body py-2">
+            <div class="row small">
+              <div class="col-sm-6">
+                <strong><i class="fas fa-map-pin text-danger mr-1"></i>Origen:</strong> 4to Anillo y Av. San Martín #230
+              </div>
+              <div class="col-sm-6">
+                <strong><i class="fas fa-flag-checkered text-success mr-1"></i>Destino:</strong> Equipetrol Norte #120
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card border-left-primary shadow-sm h-100 py-2">
+              <div class="card-body py-1">
+                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Chofer y Camión Responsable</div>
+                <div class="font-weight-bold text-gray-800">Carlos Mamani Condori</div>
+                <div class="small text-muted">Licencia Cat. C: 4781290</div>
+                <div class="small text-muted">Placa: <strong>2345-TXZ</strong> (Volvo F12 - Capacidad: 8 Ton)</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card border-left-success shadow-sm h-100 py-2">
+              <div class="card-body py-1">
+                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Estado de Pago</div>
+                <div class="h5 font-weight-bold text-success mb-0">Cancelado al 100%</div>
+                <div class="small text-muted">Recibo #REC-2024-001 (Efectivo)</div>
+                <div class="small text-muted">Saldo adeudado: <strong>Bs. 0.00</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- DataTables Scripts -->
+<script src="{% static 'logistics/admin/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<script>
+  $(document).ready(function() {
+    $('#dataTableServices').DataTable({
+      order: [[0, "desc"]],
+      language: {
+        "sProcessing":     "Procesando...",
+        "sLengthMenu":     "Mostrar _MENU_ servicios",
+        "sZeroRecords":    "No se encontraron servicios",
+        "sEmptyTable":     "No hay servicios de carga registrados",
+        "sInfo":           "Mostrando _START_ a _END_ de _TOTAL_ servicios",
+        "sInfoEmpty":      "Mostrando 0 a 0 de 0 servicios",
+        "sInfoFiltered":   "(filtrado de _MAX_ registros totales)",
+        "sSearch":         "Buscar servicio:",
+        "oPaginate": {
+          "sFirst":    "Primero",
+          "sLast":     "Último",
+          "sNext":     "Siguiente",
+          "sPrevious": "Anterior"
+        }
+      }
+    });
+  });
+</script>
 {% endblock %}

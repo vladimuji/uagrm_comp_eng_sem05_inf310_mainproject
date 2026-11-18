@@ -1,17 +1,382 @@
 {% extends "logistics/admin/base_admin.html" %}
+{% load static %}
 
-{% block title %}Ciudades{% endblock %}
+{% block title %}Ciudades y Nodos{% endblock %}
+
+{% block extra_head %}
+<link href="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
-<div id="cities-app">
-  <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Ciudades</h1>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h1 class="h3 mb-1 text-gray-800 font-weight-bold">Ciudades y Nodos de Operación</h1>
+    <p class="text-muted small mb-0">Red nacional de ciudades (nodos del grafo), habilitación para solicitud de envíos y captación de choferes</p>
+  </div>
+  <div>
+    <button type="button" class="btn btn-primary btn-icon-split shadow-sm" data-toggle="modal" data-target="#modalNewCity">
+      <span class="icon text-white-50">
+        <i class="fas fa-city"></i>
+      </span>
+      <span class="text">Nueva Ciudad</span>
+    </button>
+  </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="row">
+
+  <!-- Total Ciudades -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-primary shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Nodos en Base de Datos</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">120 Ciudades</div>
+            <span class="text-xs text-muted">Red vial Bolivia completa</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-network-wired fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="card shadow mb-4">
-    <div class="card-body">
-      <p class="text-muted mb-0">Contenido en blanco para Ciudades.</p>
+  <!-- Ciudades Habilitadas (listed = 1) -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-success shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Habilitadas para Envíos (listed)</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">31 Ciudades</div>
+            <span class="text-xs text-success font-weight-bold"><i class="fas fa-check-circle"></i> Operando activamente</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-truck-loading fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nodos Inactivos / listed = 0 -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-warning shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Sin Habilitar / Reserva</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">89 Ciudades</div>
+            <span class="text-xs text-warning">En proceso de apertura</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-pause-circle fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Departamentos -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-info shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Departamentos Cubiertos</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">9 de 9</div>
+            <span class="text-xs text-info font-weight-bold">Alcance nacional</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-flag fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- DataTables Card -->
+<div class="card shadow mb-4">
+  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+    <h6 class="m-0 font-weight-bold text-primary">
+      <i class="fas fa-globe-americas mr-1"></i> Directorio de Nodos y Ciudades
+    </h6>
+    <div class="dropdown no-arrow">
+      <a class="dropdown-toggle" href="#" role="button" id="dropdownCitiesMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+      </a>
+      <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownCitiesMenu">
+        <div class="dropdown-header">Filtros:</div>
+        <a class="dropdown-item" href="#">Ver solo "Habilitadas" (listed = 1)</a>
+        <a class="dropdown-item" href="#">Ver solo "Sin habilitar" (listed = 0)</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="#"><i class="fas fa-file-excel fa-sm mr-2 text-success"></i>Exportar Excel</a>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover" id="dataTableCities" width="100%" cellspacing="0">
+        <thead class="thead-light">
+          <tr>
+            <th>ID Nodo</th>
+            <th>Ciudad</th>
+            <th>Departamento</th>
+            <th>Coordenadas GPS</th>
+            <th class="text-center">Habilitada (listed)</th>
+            <th class="text-center">Rutas Conectadas</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-weight-bold">#1</td>
+            <td class="font-weight-bold text-gray-800">La Paz</td>
+            <td>La Paz</td>
+            <td><code>-16.5000, -68.1193</code></td>
+            <td class="text-center">
+              <span class="badge badge-success px-2 py-1"><i class="fas fa-check-circle mr-1"></i>Habilitada</span>
+            </td>
+            <td class="text-center font-weight-bold text-primary">6 rutas</td>
+            <td class="text-center">
+              <button class="btn btn-danger btn-sm px-2 py-0" title="Deshabilitar para envíos">
+                <i class="fas fa-power-off mr-1"></i> Desactivar
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#2</td>
+            <td class="font-weight-bold text-gray-800">El Alto</td>
+            <td>La Paz</td>
+            <td><code>-16.5047, -68.1633</code></td>
+            <td class="text-center">
+              <span class="badge badge-success px-2 py-1"><i class="fas fa-check-circle mr-1"></i>Habilitada</span>
+            </td>
+            <td class="text-center font-weight-bold text-primary">4 rutas</td>
+            <td class="text-center">
+              <button class="btn btn-danger btn-sm px-2 py-0" title="Deshabilitar para envíos">
+                <i class="fas fa-power-off mr-1"></i> Desactivar
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#3</td>
+            <td class="font-weight-bold text-gray-800">Santa Cruz de la Sierra</td>
+            <td>Santa Cruz</td>
+            <td><code>-17.7833, -63.1821</code></td>
+            <td class="text-center">
+              <span class="badge badge-success px-2 py-1"><i class="fas fa-check-circle mr-1"></i>Habilitada (Sede)</span>
+            </td>
+            <td class="text-center font-weight-bold text-primary">8 rutas</td>
+            <td class="text-center">
+              <span class="badge badge-secondary px-2 py-1">Sede Principal</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#4</td>
+            <td class="font-weight-bold text-gray-800">Cochabamba</td>
+            <td>Cochabamba</td>
+            <td><code>-17.3895, -66.1568</code></td>
+            <td class="text-center">
+              <span class="badge badge-success px-2 py-1"><i class="fas fa-check-circle mr-1"></i>Habilitada</span>
+            </td>
+            <td class="text-center font-weight-bold text-primary">7 rutas</td>
+            <td class="text-center">
+              <button class="btn btn-danger btn-sm px-2 py-0" title="Deshabilitar para envíos">
+                <i class="fas fa-power-off mr-1"></i> Desactivar
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#5</td>
+            <td class="font-weight-bold text-gray-800">Sucre</td>
+            <td>Chuquisaca</td>
+            <td><code>-19.0333, -65.2627</code></td>
+            <td class="text-center">
+              <span class="badge badge-success px-2 py-1"><i class="fas fa-check-circle mr-1"></i>Habilitada</span>
+            </td>
+            <td class="text-center font-weight-bold text-primary">4 rutas</td>
+            <td class="text-center">
+              <button class="btn btn-danger btn-sm px-2 py-0" title="Deshabilitar para envíos">
+                <i class="fas fa-power-off mr-1"></i> Desactivar
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#6</td>
+            <td class="font-weight-bold text-gray-800">Oruro</td>
+            <td>Oruro</td>
+            <td><code>-17.9833, -67.1500</code></td>
+            <td class="text-center">
+              <span class="badge badge-success px-2 py-1"><i class="fas fa-check-circle mr-1"></i>Habilitada</span>
+            </td>
+            <td class="text-center font-weight-bold text-primary">5 rutas</td>
+            <td class="text-center">
+              <button class="btn btn-danger btn-sm px-2 py-0" title="Deshabilitar para envíos">
+                <i class="fas fa-power-off mr-1"></i> Desactivar
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#7</td>
+            <td class="font-weight-bold text-gray-800">Potosí</td>
+            <td>Potosí</td>
+            <td><code>-19.5836, -65.7531</code></td>
+            <td class="text-center">
+              <span class="badge badge-success px-2 py-1"><i class="fas fa-check-circle mr-1"></i>Habilitada</span>
+            </td>
+            <td class="text-center font-weight-bold text-primary">4 rutas</td>
+            <td class="text-center">
+              <button class="btn btn-danger btn-sm px-2 py-0" title="Deshabilitar para envíos">
+                <i class="fas fa-power-off mr-1"></i> Desactivar
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#15</td>
+            <td class="font-weight-bold text-gray-800">Montero</td>
+            <td>Santa Cruz</td>
+            <td><code>-17.3333, -63.2500</code></td>
+            <td class="text-center">
+              <span class="badge badge-success px-2 py-1"><i class="fas fa-check-circle mr-1"></i>Habilitada</span>
+            </td>
+            <td class="text-center font-weight-bold text-primary">3 rutas</td>
+            <td class="text-center">
+              <button class="btn btn-danger btn-sm px-2 py-0" title="Deshabilitar para envíos">
+                <i class="fas fa-power-off mr-1"></i> Desactivar
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#32</td>
+            <td class="font-weight-bold text-gray-800">Sica Sica</td>
+            <td>La Paz</td>
+            <td><code>-17.3333, -67.7167</code></td>
+            <td class="text-center">
+              <span class="badge badge-secondary px-2 py-1"><i class="fas fa-times-circle mr-1"></i>No Habilitada (listed=0)</span>
+            </td>
+            <td class="text-center text-muted">1 ruta</td>
+            <td class="text-center">
+              <button class="btn btn-success btn-sm px-2 py-0" title="Habilitar para envíos de carga">
+                <i class="fas fa-check mr-1"></i> Habilitar
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#33</td>
+            <td class="font-weight-bold text-gray-800">Charazani</td>
+            <td>La Paz</td>
+            <td><code>-15.1833, -68.9833</code></td>
+            <td class="text-center">
+              <span class="badge badge-secondary px-2 py-1"><i class="fas fa-times-circle mr-1"></i>No Habilitada (listed=0)</span>
+            </td>
+            <td class="text-center text-muted">1 ruta</td>
+            <td class="text-center">
+              <button class="btn btn-success btn-sm px-2 py-0" title="Habilitar para envíos de carga">
+                <i class="fas fa-check mr-1"></i> Habilitar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
+
+<!-- Modal: Registrar Ciudad -->
+<div class="modal fade" id="modalNewCity" tabindex="-1" role="dialog" aria-labelledby="modalNewCityLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="modalNewCityLabel"><i class="fas fa-city mr-2"></i>Registrar Nuevo Nodo de Ciudad</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Nombre de la Ciudad <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Ej. Yapacaní" required>
+            </div>
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Departamento (State) <span class="text-danger">*</span></label>
+              <select class="form-control" required>
+                <option value="Santa Cruz">Santa Cruz</option>
+                <option value="Cochabamba">Cochabamba</option>
+                <option value="La Paz">La Paz</option>
+                <option value="Chuquisaca">Chuquisaca</option>
+                <option value="Oruro">Oruro</option>
+                <option value="Potosí">Potosí</option>
+                <option value="Tarija">Tarija</option>
+                <option value="Beni">Beni</option>
+                <option value="Pando">Pando</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Latitud Decimal <span class="text-danger">*</span></label>
+              <input type="number" step="0.0001" class="form-control" placeholder="-17.4000" required>
+            </div>
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Longitud Decimal <span class="text-danger">*</span></label>
+              <input type="number" step="0.0001" class="form-control" placeholder="-63.8333" required>
+            </div>
+          </div>
+          <div class="form-group mb-0">
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" id="checkListed" checked>
+              <label class="custom-control-label font-weight-bold text-gray-800" for="checkListed">
+                Habilitar de inmediato para solicitar envíos de carga (<code>listed = 1</code>)
+              </label>
+              <small class="form-text text-muted">Don Freddy decide si una ciudad acepta fletes desde la plataforma.</small>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal">
+            <i class="fas fa-save mr-1"></i> Guardar Ciudad
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- DataTables Scripts -->
+<script src="{% static 'logistics/admin/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<script>
+  $(document).ready(function() {
+    $('#dataTableCities').DataTable({
+      language: {
+        "sProcessing":     "Procesando...",
+        "sLengthMenu":     "Mostrar _MENU_ ciudades",
+        "sZeroRecords":    "No se encontraron ciudades",
+        "sEmptyTable":     "No hay ciudades registradas",
+        "sInfo":           "Mostrando _START_ a _END_ de _TOTAL_ ciudades",
+        "sInfoEmpty":      "Mostrando 0 a 0 de 0 ciudades",
+        "sInfoFiltered":   "(filtrado de _MAX_ registros totales)",
+        "sSearch":         "Buscar ciudad o depto:",
+        "oPaginate": {
+          "sFirst":    "Primero",
+          "sLast":     "Último",
+          "sNext":     "Siguiente",
+          "sPrevious": "Anterior"
+        }
+      }
+    });
+  });
+</script>
 {% endblock %}

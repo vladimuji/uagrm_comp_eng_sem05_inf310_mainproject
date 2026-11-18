@@ -1,17 +1,408 @@
 {% extends "logistics/admin/base_admin.html" %}
+{% load static %}
 
-{% block title %}Estado de Servicio{% endblock %}
+{% block title %}Estados de Servicio{% endblock %}
+
+{% block extra_head %}
+<link href="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
-<div id="service-statuses-app">
-  <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Estado de Servicio</h1>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h1 class="h3 mb-1 text-gray-800 font-weight-bold">Estados de Servicio</h1>
+    <p class="text-muted small mb-0">Catálogo maestro de estados del ciclo de vida de fletes y mudanzas</p>
+  </div>
+  <div>
+    <button type="button" class="btn btn-primary btn-icon-split shadow-sm" data-toggle="modal" data-target="#modalNewStatus">
+      <span class="icon text-white-50">
+        <i class="fas fa-plus"></i>
+      </span>
+      <span class="text">Nuevo Estado</span>
+    </button>
+  </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="row">
+
+  <!-- Total Estados -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-primary shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Estados</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">6 Registrados</div>
+            <span class="text-xs text-muted font-weight-bold">Ciclo integral de carga</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-tasks fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="card shadow mb-4">
-    <div class="card-body">
-      <p class="text-muted mb-0">Contenido en blanco para Estado de Servicio.</p>
+  <!-- Estados Operativos -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-success shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Estados Activos</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">6 Habilitados</div>
+            <span class="text-xs text-success font-weight-bold"><i class="fas fa-check-circle"></i> 100% operativos</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-toggle-on fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado Frecuente -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-info shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Mayor Flujo</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">En Tránsito</div>
+            <span class="text-xs text-info font-weight-bold">52% de servicios activos</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-shipping-fast fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notificaciones Automáticas -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-warning shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Notificaciones</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">4 Estados</div>
+            <span class="text-xs text-warning font-weight-bold">Envían alerta WhatsApp/SMS</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-bell fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Flow Timeline Summary Card -->
+<div class="card shadow mb-4">
+  <div class="card-header py-3 bg-white d-flex align-items-center justify-content-between">
+    <h6 class="m-0 font-weight-bold text-primary">
+      <i class="fas fa-project-diagram mr-1"></i> Flujo Secuencial del Servicio
+    </h6>
+    <span class="badge badge-light border text-muted">Diagrama de Transición de Estados</span>
+  </div>
+  <div class="card-body">
+    <div class="row text-center align-items-center">
+      <div class="col-md-2 mb-2">
+        <div class="p-3 border rounded shadow-sm bg-light">
+          <span class="badge badge-warning mb-2 px-2 py-1">Paso 1</span>
+          <h6 class="font-weight-bold text-gray-800 mb-0">Solicitado</h6>
+          <small class="text-muted">Cotización inicial</small>
+        </div>
+      </div>
+      <div class="col-md-auto d-none d-md-block text-muted"><i class="fas fa-arrow-right fa-lg"></i></div>
+      <div class="col-md-2 mb-2">
+        <div class="p-3 border rounded shadow-sm bg-light">
+          <span class="badge badge-primary mb-2 px-2 py-1">Paso 2</span>
+          <h6 class="font-weight-bold text-gray-800 mb-0">Asignado</h6>
+          <small class="text-muted">Chofer y camión listos</small>
+        </div>
+      </div>
+      <div class="col-md-auto d-none d-md-block text-muted"><i class="fas fa-arrow-right fa-lg"></i></div>
+      <div class="col-md-2 mb-2">
+        <div class="p-3 border rounded shadow-sm bg-light">
+          <span class="badge badge-secondary mb-2 px-2 py-1">Paso 3</span>
+          <h6 class="font-weight-bold text-gray-800 mb-0">En Carga</h6>
+          <small class="text-muted">Estiba y pesaje</small>
+        </div>
+      </div>
+      <div class="col-md-auto d-none d-md-block text-muted"><i class="fas fa-arrow-right fa-lg"></i></div>
+      <div class="col-md-2 mb-2">
+        <div class="p-3 border rounded shadow-sm bg-light">
+          <span class="badge badge-info mb-2 px-2 py-1">Paso 4</span>
+          <h6 class="font-weight-bold text-gray-800 mb-0">En Tránsito</h6>
+          <small class="text-muted">Ruta y rastreo GPS</small>
+        </div>
+      </div>
+      <div class="col-md-auto d-none d-md-block text-muted"><i class="fas fa-arrow-right fa-lg"></i></div>
+      <div class="col-md-2 mb-2">
+        <div class="p-3 border rounded shadow-sm bg-light">
+          <span class="badge badge-success mb-2 px-2 py-1">Paso 5</span>
+          <h6 class="font-weight-bold text-gray-800 mb-0">Entregado</h6>
+          <small class="text-muted">Conformidad cliente</small>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
+<!-- Data Table Card -->
+<div class="card shadow mb-4">
+  <div class="card-header py-3 bg-white d-flex align-items-center justify-content-between">
+    <h6 class="m-0 font-weight-bold text-primary">
+      <i class="fas fa-list-ul mr-1"></i> Lista de Estados de Servicio
+    </h6>
+    <div class="btn-group btn-group-sm">
+      <button class="btn btn-outline-secondary"><i class="fas fa-print mr-1"></i> Imprimir</button>
+      <button class="btn btn-outline-secondary"><i class="fas fa-file-excel mr-1"></i> Exportar</button>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover align-middle" id="dataTableStatuses" width="100%" cellspacing="0">
+        <thead class="thead-light">
+          <tr>
+            <th style="width: 70px;">Orden</th>
+            <th>Código</th>
+            <th>Nombre del Estado</th>
+            <th>Badge Visual</th>
+            <th>Descripción / Regla de Negocio</th>
+            <th class="text-center">Notifica Cliente</th>
+            <th class="text-center">GPS Requerido</th>
+            <th class="text-center">Estado</th>
+            <th class="text-center" style="width: 100px;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-center font-weight-bold">1</td>
+            <td><code>EST-SOL</code></td>
+            <td class="font-weight-bold text-gray-800">Solicitado</td>
+            <td><span class="badge badge-warning px-2 py-1"><i class="fas fa-clock mr-1"></i> Solicitado</span></td>
+            <td>El cliente generó el requerimiento de carga. Pendiente de verificación de ruta y asignación de camión.</td>
+            <td class="text-center"><span class="badge badge-success"><i class="fas fa-check mr-1"></i> Sí</span></td>
+            <td class="text-center"><span class="badge badge-light border text-muted">No</span></td>
+            <td class="text-center"><span class="badge badge-success">Activo</span></td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-info btn-circle mr-1" title="Ver detalles" data-toggle="modal" data-target="#modalStatusDetail"><i class="fas fa-eye"></i></button>
+              <button class="btn btn-sm btn-primary btn-circle" title="Editar"><i class="fas fa-pen"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-center font-weight-bold">2</td>
+            <td><code>EST-ASG</code></td>
+            <td class="font-weight-bold text-gray-800">Asignado</td>
+            <td><span class="badge badge-primary px-2 py-1"><i class="fas fa-user-check mr-1"></i> Asignado</span></td>
+            <td>Vehículo y chofer vinculados al servicio. Hoja de ruta generada.</td>
+            <td class="text-center"><span class="badge badge-success"><i class="fas fa-check mr-1"></i> Sí</span></td>
+            <td class="text-center"><span class="badge badge-light border text-muted">No</span></td>
+            <td class="text-center"><span class="badge badge-success">Activo</span></td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-info btn-circle mr-1" title="Ver detalles" data-toggle="modal" data-target="#modalStatusDetail"><i class="fas fa-eye"></i></button>
+              <button class="btn btn-sm btn-primary btn-circle" title="Editar"><i class="fas fa-pen"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-center font-weight-bold">3</td>
+            <td><code>EST-CRG</code></td>
+            <td class="font-weight-bold text-gray-800">En Carga</td>
+            <td><span class="badge badge-secondary px-2 py-1"><i class="fas fa-boxes mr-1"></i> En Carga</span></td>
+            <td>El camión está en el punto de origen cargando la mercadería o mudanza.</td>
+            <td class="text-center"><span class="badge badge-light border text-muted">No</span></td>
+            <td class="text-center"><span class="badge badge-success"><i class="fas fa-check mr-1"></i> Sí</span></td>
+            <td class="text-center"><span class="badge badge-success">Activo</span></td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-info btn-circle mr-1" title="Ver detalles" data-toggle="modal" data-target="#modalStatusDetail"><i class="fas fa-eye"></i></button>
+              <button class="btn btn-sm btn-primary btn-circle" title="Editar"><i class="fas fa-pen"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-center font-weight-bold">4</td>
+            <td><code>EST-TRN</code></td>
+            <td class="font-weight-bold text-gray-800">En Tránsito</td>
+            <td><span class="badge badge-info px-2 py-1"><i class="fas fa-shipping-fast mr-1"></i> En Tránsito</span></td>
+            <td>El camión está viajando por carretera interdepartamental hacia el nodo destino.</td>
+            <td class="text-center"><span class="badge badge-success"><i class="fas fa-check mr-1"></i> Sí</span></td>
+            <td class="text-center"><span class="badge badge-success"><i class="fas fa-check mr-1"></i> Sí</span></td>
+            <td class="text-center"><span class="badge badge-success">Activo</span></td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-info btn-circle mr-1" title="Ver detalles" data-toggle="modal" data-target="#modalStatusDetail"><i class="fas fa-eye"></i></button>
+              <button class="btn btn-sm btn-primary btn-circle" title="Editar"><i class="fas fa-pen"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-center font-weight-bold">5</td>
+            <td><code>EST-ENT</code></td>
+            <td class="font-weight-bold text-gray-800">Entregado</td>
+            <td><span class="badge badge-success px-2 py-1"><i class="fas fa-check-double mr-1"></i> Entregado</span></td>
+            <td>Mercadería entregada en destino a satisfacción del consignatario con firma de remito.</td>
+            <td class="text-center"><span class="badge badge-success"><i class="fas fa-check mr-1"></i> Sí</span></td>
+            <td class="text-center"><span class="badge badge-light border text-muted">No</span></td>
+            <td class="text-center"><span class="badge badge-success">Activo</span></td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-info btn-circle mr-1" title="Ver detalles" data-toggle="modal" data-target="#modalStatusDetail"><i class="fas fa-eye"></i></button>
+              <button class="btn btn-sm btn-primary btn-circle" title="Editar"><i class="fas fa-pen"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-center font-weight-bold">-</td>
+            <td><code>EST-CNC</code></td>
+            <td class="font-weight-bold text-gray-800">Cancelado</td>
+            <td><span class="badge badge-danger px-2 py-1"><i class="fas fa-ban mr-1"></i> Cancelado</span></td>
+            <td>Servicio anulado por el cliente o problemas operacionales de ruta. Requiere motivo.</td>
+            <td class="text-center"><span class="badge badge-success"><i class="fas fa-check mr-1"></i> Sí</span></td>
+            <td class="text-center"><span class="badge badge-light border text-muted">No</span></td>
+            <td class="text-center"><span class="badge badge-success">Activo</span></td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-info btn-circle mr-1" title="Ver detalles" data-toggle="modal" data-target="#modalStatusDetail"><i class="fas fa-eye"></i></button>
+              <button class="btn btn-sm btn-primary btn-circle" title="Editar"><i class="fas fa-pen"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Nuevo Estado -->
+<div class="modal fade" id="modalNewStatus" tabindex="-1" role="dialog" aria-labelledby="modalNewStatusLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title font-weight-bold" id="modalNewStatusLabel">
+          <i class="fas fa-plus-circle mr-2"></i>Registrar Nuevo Estado de Servicio
+        </h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form>
+        <div class="modal-body p-4">
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label class="small font-weight-bold text-gray-700">Código</label>
+              <input type="text" class="form-control" placeholder="EST-XXX" required>
+            </div>
+            <div class="form-group col-md-5">
+              <label class="small font-weight-bold text-gray-700">Nombre</label>
+              <input type="text" class="form-control" placeholder="Ej: En Aduana" required>
+            </div>
+            <div class="form-group col-md-3">
+              <label class="small font-weight-bold text-gray-700">Orden</label>
+              <input type="number" class="form-control" placeholder="6" min="1">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="small font-weight-bold text-gray-700">Descripción / Regla de Negocio</label>
+            <textarea class="form-control" rows="2" placeholder="Explique qué ocurre cuando un servicio entra en este estado..."></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label class="small font-weight-bold text-gray-700">Color de Etiqueta (Badge)</label>
+              <select class="form-control">
+                <option value="primary">Azul (Primary)</option>
+                <option value="success">Verde (Success)</option>
+                <option value="info">Celeste (Info)</option>
+                <option value="warning">Amarillo (Warning)</option>
+                <option value="danger">Rojo (Danger)</option>
+                <option value="secondary">Gris (Secondary)</option>
+                <option value="dark">Negro (Dark)</option>
+              </select>
+            </div>
+            <div class="form-group col-md-6">
+              <label class="small font-weight-bold text-gray-700">Ícono FontAwesome</label>
+              <input type="text" class="form-control" placeholder="fas fa-check" value="fas fa-tag">
+            </div>
+          </div>
+
+          <div class="form-row border p-2 rounded bg-light">
+            <div class="col-md-6">
+              <div class="custom-control custom-checkbox mt-1">
+                <input type="checkbox" class="custom-control-input" id="checkNotifyClient" checked>
+                <label class="custom-control-label small font-weight-bold" for="checkNotifyClient">Notificar al Cliente</label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="custom-control custom-checkbox mt-1">
+                <input type="checkbox" class="custom-control-input" id="checkRequireGPS">
+                <label class="custom-control-label small font-weight-bold" for="checkRequireGPS">Requiere GPS Activo</label>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary"><i class="fas fa-save mr-1"></i> Guardar Estado</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Detalle de Estado -->
+<div class="modal fade" id="modalStatusDetail" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title font-weight-bold">
+          <i class="fas fa-info-circle mr-2"></i>Detalle de Transición de Estado
+        </h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body p-4">
+        <h5 class="font-weight-bold text-gray-800 mb-1">En Tránsito <span class="badge badge-info ml-2">EST-TRN</span></h5>
+        <p class="text-muted small">Estado activo durante el trayecto de carretera entre nodo origen y destino.</p>
+        <hr>
+        <div class="small">
+          <p class="mb-1"><strong>Estados previos permitidos:</strong> <span class="badge badge-secondary">En Carga</span>, <span class="badge badge-primary">Asignado</span></p>
+          <p class="mb-1"><strong>Estados siguientes posibles:</strong> <span class="badge badge-success">Entregado</span>, <span class="badge badge-danger">Cancelado</span>, <span class="badge badge-warning">Demorado</span></p>
+          <p class="mb-1"><strong>Disparador automático:</strong> Salida de geocerca del nodo origen con chofer asignado.</p>
+          <p class="mb-0"><strong>Stored Procedure asociado:</strong> <code>sp_CambiarEstadoServicio(id_servicio, nuevo_estado, observaciones)</code></p>
+        </div>
+      </div>
+      <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'logistics/admin/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<script>
+  $(document).ready(function() {
+    $('#dataTableStatuses').DataTable({
+      "language": {
+        "search": "Buscar estado:",
+        "lengthMenu": "Mostrar _MENU_ registros por página",
+        "zeroRecords": "No se encontraron estados",
+        "info": "Mostrando página _PAGE_ de _PAGES_",
+        "infoEmpty": "No hay registros disponibles",
+        "infoFiltered": "(filtrado de _MAX_ registros totales)",
+        "paginate": {
+          "first": "Primero",
+          "last": "Último",
+          "next": "Siguiente",
+          "previous": "Anterior"
+        }
+      },
+      "order": [[ 0, "asc" ]]
+    });
+  });
+</script>
 {% endblock %}

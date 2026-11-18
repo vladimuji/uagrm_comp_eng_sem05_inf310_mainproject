@@ -1,17 +1,353 @@
 {% extends "logistics/admin/base_admin.html" %}
+{% load static %}
 
 {% block title %}Métodos de Pago{% endblock %}
 
+{% block extra_head %}
+<link href="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
-<div id="payment-methods-app">
-  <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Métodos de Pago</h1>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h1 class="h3 mb-1 text-gray-800 font-weight-bold">Métodos de Pago</h1>
+    <p class="text-muted small mb-0">Configuración de canales de cobro, pasarelas QR y cuentas bancarias habilitadas</p>
+  </div>
+  <div>
+    <button type="button" class="btn btn-primary btn-icon-split shadow-sm" data-toggle="modal" data-target="#modalNewPaymentMethod">
+      <span class="icon text-white-50">
+        <i class="fas fa-plus"></i>
+      </span>
+      <span class="text">Nuevo Método de Pago</span>
+    </button>
+  </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="row">
+
+  <!-- Total Métodos -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-primary shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Métodos Habilitados</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">5 Canales</div>
+            <span class="text-xs text-muted font-weight-bold">Cobro nacional e interdepartamental</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-wallet fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="card shadow mb-4">
-    <div class="card-body">
-      <p class="text-muted mb-0">Contenido en blanco para Métodos de Pago.</p>
+  <!-- Métodos Digitales -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-success shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Canales Digitales</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">3 Activos</div>
+            <span class="text-xs text-success font-weight-bold"><i class="fas fa-qrcode"></i> QR Simple, Billetera, Transferencia</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-mobile-alt fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Método Preferido -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-info shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Más Utilizado</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">QR Simple</div>
+            <span class="text-xs text-info font-weight-bold">58% de las recaudaciones</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-chart-pie fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conciliación Inmediata -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-warning shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Conciliación</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">En Línea</div>
+            <span class="text-xs text-warning font-weight-bold">Verificación instantánea de vouchers</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-bolt fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Data Table Card -->
+<div class="card shadow mb-4">
+  <div class="card-header py-3 bg-white d-flex align-items-center justify-content-between">
+    <h6 class="m-0 font-weight-bold text-primary">
+      <i class="fas fa-money-check-alt mr-1"></i> Catálogo de Métodos de Cobro y Facturación
+    </h6>
+    <div class="btn-group btn-group-sm">
+      <button class="btn btn-outline-secondary"><i class="fas fa-print mr-1"></i> Imprimir</button>
+      <button class="btn btn-outline-secondary"><i class="fas fa-file-excel mr-1"></i> Exportar</button>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover align-middle" id="dataTablePaymentMethods" width="100%" cellspacing="0">
+        <thead class="thead-light">
+          <tr>
+            <th>Código</th>
+            <th>Nombre del Método</th>
+            <th>Tipo / Canal</th>
+            <th>Entidad / Pasarela</th>
+            <th class="text-center">Comisión</th>
+            <th class="text-center">Requiere Voucher</th>
+            <th class="text-center">Conciliación</th>
+            <th class="text-center">Estado</th>
+            <th class="text-center" style="width: 100px;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>MET-EFE</code></td>
+            <td class="font-weight-bold text-gray-800">
+              <i class="fas fa-money-bill-wave text-success mr-1"></i> Efectivo en Terminal / Destino
+            </td>
+            <td><span class="badge badge-light border">Presencial</span></td>
+            <td>Caja Oficina Central / Chofer en Ruta</td>
+            <td class="text-center">0.00%</td>
+            <td class="text-center"><span class="badge badge-light border text-muted">No</span></td>
+            <td class="text-center"><span class="badge badge-primary">Inmediata</span></td>
+            <td class="text-center"><span class="badge badge-success">Activo</span></td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-info btn-circle mr-1" title="Ver configuración" data-toggle="modal" data-target="#modalMethodDetail"><i class="fas fa-eye"></i></button>
+              <button class="btn btn-sm btn-primary btn-circle" title="Editar"><i class="fas fa-pen"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td><code>MET-QRS</code></td>
+            <td class="font-weight-bold text-gray-800">
+              <i class="fas fa-qrcode text-primary mr-1"></i> QR Simple Interbancario
+            </td>
+            <td><span class="badge badge-primary">Digital / Interbancario</span></td>
+            <td>Red Enlace / Banco Unión - BCP - Mercantil</td>
+            <td class="text-center">0.00%</td>
+            <td class="text-center"><span class="badge badge-success"><i class="fas fa-check mr-1"></i> Sí (Captura)</span></td>
+            <td class="text-center"><span class="badge badge-primary">Inmediata</span></td>
+            <td class="text-center"><span class="badge badge-success">Activo</span></td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-info btn-circle mr-1" title="Ver configuración" data-toggle="modal" data-target="#modalMethodDetail"><i class="fas fa-eye"></i></button>
+              <button class="btn btn-sm btn-primary btn-circle" title="Editar"><i class="fas fa-pen"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td><code>MET-TRF</code></td>
+            <td class="font-weight-bold text-gray-800">
+              <i class="fas fa-university text-info mr-1"></i> Transferencia Bancaria Directa
+            </td>
+            <td><span class="badge badge-info">Bancario</span></td>
+            <td>Cta Cte Banco Mercantil Santa Cruz #4010294812</td>
+            <td class="text-center">0.00%</td>
+            <td class="text-center"><span class="badge badge-success"><i class="fas fa-check mr-1"></i> Sí (Nro. Transacción)</span></td>
+            <td class="text-center"><span class="badge badge-warning text-dark">Verificación Manual</span></td>
+            <td class="text-center"><span class="badge badge-success">Activo</span></td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-info btn-circle mr-1" title="Ver configuración" data-toggle="modal" data-target="#modalMethodDetail"><i class="fas fa-eye"></i></button>
+              <button class="btn btn-sm btn-primary btn-circle" title="Editar"><i class="fas fa-pen"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td><code>MET-TIG</code></td>
+            <td class="font-weight-bold text-gray-800">
+              <i class="fas fa-mobile-alt text-warning mr-1"></i> Tigo Money
+            </td>
+            <td><span class="badge badge-warning text-dark">Billetera Móvil</span></td>
+            <td>Tigo Money Bolivia (+591 78512345)</td>
+            <td class="text-center">1.20%</td>
+            <td class="text-center"><span class="badge badge-success"><i class="fas fa-check mr-1"></i> Sí (Código SMS)</span></td>
+            <td class="text-center"><span class="badge badge-primary">Inmediata</span></td>
+            <td class="text-center"><span class="badge badge-success">Activo</span></td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-info btn-circle mr-1" title="Ver configuración" data-toggle="modal" data-target="#modalMethodDetail"><i class="fas fa-eye"></i></button>
+              <button class="btn btn-sm btn-primary btn-circle" title="Editar"><i class="fas fa-pen"></i></button>
+            </td>
+          </tr>
+          <tr>
+            <td><code>MET-TCB</code></td>
+            <td class="font-weight-bold text-gray-800">
+              <i class="fas fa-credit-card text-danger mr-1"></i> Tarjeta Débito / Crédito (POS)
+            </td>
+            <td><span class="badge badge-secondary">POS Terminal</span></td>
+            <td>Red Linkser / ATC Red Enlace</td>
+            <td class="text-center">2.10%</td>
+            <td class="text-center"><span class="badge badge-success"><i class="fas fa-check mr-1"></i> Sí (Ticket POS)</span></td>
+            <td class="text-center"><span class="badge badge-primary">Inmediata</span></td>
+            <td class="text-center"><span class="badge badge-success">Activo</span></td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-info btn-circle mr-1" title="Ver configuración" data-toggle="modal" data-target="#modalMethodDetail"><i class="fas fa-eye"></i></button>
+              <button class="btn btn-sm btn-primary btn-circle" title="Editar"><i class="fas fa-pen"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
+
+<!-- Modal: Nuevo Método de Pago -->
+<div class="modal fade" id="modalNewPaymentMethod" tabindex="-1" role="dialog" aria-labelledby="modalNewPaymentMethodLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title font-weight-bold" id="modalNewPaymentMethodLabel">
+          <i class="fas fa-plus-circle mr-2"></i>Registrar Método de Pago
+        </h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form>
+        <div class="modal-body p-4">
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label class="small font-weight-bold text-gray-700">Código</label>
+              <input type="text" class="form-control" placeholder="MET-XXX" required>
+            </div>
+            <div class="form-group col-md-8">
+              <label class="small font-weight-bold text-gray-700">Nombre del Método</label>
+              <input type="text" class="form-control" placeholder="Ej: PagoQR BCP" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label class="small font-weight-bold text-gray-700">Tipo / Canal</label>
+              <select class="form-control">
+                <option value="digital">Digital / QR</option>
+                <option value="presencial">Presencial (Efectivo)</option>
+                <option value="bancario">Transferencia Bancaria</option>
+                <option value="billetera">Billetera Móvil</option>
+                <option value="pos">POS Tarjeta</option>
+              </select>
+            </div>
+            <div class="form-group col-md-6">
+              <label class="small font-weight-bold text-gray-700">Comisión (%)</label>
+              <input type="number" step="0.01" class="form-control" placeholder="0.00">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="small font-weight-bold text-gray-700">Entidad / Banco / Pasarela</label>
+            <input type="text" class="form-control" placeholder="Ej: Banco Nacional de Bolivia - Cta 100-294829">
+          </div>
+
+          <div class="form-group">
+            <label class="small font-weight-bold text-gray-700">Instrucciones para el Cliente</label>
+            <textarea class="form-control" rows="2" placeholder="Instrucciones que aparecerán en la boleta de pago..."></textarea>
+          </div>
+
+          <div class="form-row border p-2 rounded bg-light">
+            <div class="col-md-6">
+              <div class="custom-control custom-checkbox mt-1">
+                <input type="checkbox" class="custom-control-input" id="checkRequireVoucher" checked>
+                <label class="custom-control-label small font-weight-bold" for="checkRequireVoucher">Requiere Voucher / Nro Transacción</label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="custom-control custom-checkbox mt-1">
+                <input type="checkbox" class="custom-control-input" id="checkActiveMethod" checked>
+                <label class="custom-control-label small font-weight-bold" for="checkActiveMethod">Habilitado para Facturación</label>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary"><i class="fas fa-save mr-1"></i> Guardar Método</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Detalle de Método -->
+<div class="modal fade" id="modalMethodDetail" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title font-weight-bold">
+          <i class="fas fa-info-circle mr-2"></i>Detalle de Configuración de Pago
+        </h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body p-4">
+        <h5 class="font-weight-bold text-gray-800 mb-1">
+          <i class="fas fa-qrcode text-primary mr-1"></i> QR Simple Interbancario
+          <span class="badge badge-primary ml-2">MET-QRS</span>
+        </h5>
+        <p class="text-muted small">Canal preferente para cobranzas de fletes y mudanzas con acreditación instantánea.</p>
+        <hr>
+        <div class="small">
+          <p class="mb-1"><strong>Pasarela:</strong> Red Enlace / Banco Unión</p>
+          <p class="mb-1"><strong>Titular de la Cuenta:</strong> Transportes Don Freddy S.R.L.</p>
+          <p class="mb-1"><strong>NIT de Facturación:</strong> 1029384029</p>
+          <p class="mb-1"><strong>Comisión cobrada al cliente:</strong> 0.00%</p>
+          <p class="mb-0"><strong>Stored Procedure asociado:</strong> <code>sp_RegistrarPagoFlete(id_servicio, id_metodo, monto, nro_voucher)</code></p>
+        </div>
+      </div>
+      <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'logistics/admin/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<script>
+  $(document).ready(function() {
+    $('#dataTablePaymentMethods').DataTable({
+      "language": {
+        "search": "Buscar método:",
+        "lengthMenu": "Mostrar _MENU_ registros por página",
+        "zeroRecords": "No se encontraron métodos de pago",
+        "info": "Mostrando página _PAGE_ de _PAGES_",
+        "infoEmpty": "No hay registros disponibles",
+        "infoFiltered": "(filtrado de _MAX_ registros totales)",
+        "paginate": {
+          "first": "Primero",
+          "last": "Último",
+          "next": "Siguiente",
+          "previous": "Anterior"
+        }
+      }
+    });
+  });
+</script>
 {% endblock %}

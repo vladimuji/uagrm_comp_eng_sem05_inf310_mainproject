@@ -1,17 +1,436 @@
 {% extends "logistics/admin/base_admin.html" %}
+{% load static %}
 
 {% block title %}Conductores{% endblock %}
 
+{% block extra_head %}
+<link href="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
-<div id="drivers-app">
-  <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Conductores</h1>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h1 class="h3 mb-1 text-gray-800 font-weight-bold">Gestión de Conductores</h1>
+    <p class="text-muted small mb-0">Padrón de choferes, categorías de licencia, asignación 1:1 de camión y disponibilidad</p>
+  </div>
+  <div>
+    <button type="button" class="btn btn-primary btn-icon-split shadow-sm" data-toggle="modal" data-target="#modalNewDriver">
+      <span class="icon text-white-50">
+        <i class="fas fa-id-card"></i>
+      </span>
+      <span class="text">Nuevo Conductor</span>
+    </button>
+  </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="row">
+
+  <!-- Total Choferes -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-primary shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Conductores Registrados</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">18 Choferes</div>
+            <span class="text-xs text-success font-weight-bold"><i class="fas fa-check"></i> Plantilla completa</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-user-check fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="card shadow mb-4">
-    <div class="card-body">
-      <p class="text-muted mb-0">Contenido en blanco para Conductores.</p>
+  <!-- Operativos (Con Camión Asignado) -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-success shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Con Camión Asignado (1:1)</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">15 Activos</div>
+            <span class="text-xs text-muted">Habilitados para servicios</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-truck fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- En Ruta Actualmente -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-info shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">En Ruta (Flete en curso)</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">8 Choferes</div>
+            <span class="text-xs text-info font-weight-bold">Viajes urbanos e interdep.</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-route fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Disponibles / Sin Asignación -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-warning shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Sin Camión / Reserva</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">3 Choferes</div>
+            <span class="text-xs text-warning">Disponibles para reemplazo</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-user-clock fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- DataTables Card -->
+<div class="card shadow mb-4">
+  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+    <h6 class="m-0 font-weight-bold text-primary">
+      <i class="fas fa-list-alt mr-1"></i> Nómina de Conductores
+    </h6>
+    <div class="dropdown no-arrow">
+      <a class="dropdown-toggle" href="#" role="button" id="dropdownDriversMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+      </a>
+      <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownDriversMenu">
+        <div class="dropdown-header">Exportar datos:</div>
+        <a class="dropdown-item" href="#"><i class="fas fa-file-excel fa-sm mr-2 text-success"></i>Exportar Excel</a>
+        <a class="dropdown-item" href="#"><i class="fas fa-print fa-sm mr-2 text-primary"></i>Imprimir Nómina</a>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover" id="dataTableDrivers" width="100%" cellspacing="0">
+        <thead class="thead-light">
+          <tr>
+            <th>ID</th>
+            <th>C.I.</th>
+            <th>Nombre Completo</th>
+            <th>Licencia / Cat.</th>
+            <th>Teléfonos</th>
+            <th>Vehículo Asignado (1:1)</th>
+            <th>Estado Operativo</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-weight-bold">#D-201</td>
+            <td>4781290 SC</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Carlos Mamani Condori</div>
+              <small class="text-muted">carlos.mamani@transfreddy.bo</small>
+            </td>
+            <td>
+              <span class="badge badge-primary px-2 py-1">Cat. C Profesional</span>
+              <small class="d-block text-muted">Lic. 4781290</small>
+            </td>
+            <td>
+              <span class="badge badge-light border text-dark p-1 d-inline-block"><i class="fas fa-mobile-alt text-primary mr-1"></i>71098451</span>
+            </td>
+            <td>
+              <strong class="text-dark">2345-TXZ</strong>
+              <small class="text-muted d-block">Volvo F12 (8 Ton)</small>
+            </td>
+            <td><span class="badge badge-primary px-2 py-1"><i class="fas fa-shipping-fast mr-1"></i>En Ruta</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Ficha" data-toggle="modal" data-target="#modalDriverDetail">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Dar de baja">
+                <i class="fas fa-user-slash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#D-202</td>
+            <td>3891045 SC</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Jorge Mendoza Hurtado</div>
+              <small class="text-muted">jorge.mendoza@transfreddy.bo</small>
+            </td>
+            <td>
+              <span class="badge badge-primary px-2 py-1">Cat. C Profesional</span>
+              <small class="d-block text-muted">Lic. 3891045</small>
+            </td>
+            <td>
+              <span class="badge badge-light border text-dark p-1 mb-1 d-inline-block"><i class="fas fa-mobile-alt text-primary mr-1"></i>76512390</span>
+              <span class="badge badge-light border text-dark p-1 d-inline-block"><i class="fas fa-phone-alt text-muted mr-1"></i>3-3445566</span>
+            </td>
+            <td>
+              <strong class="text-dark">1890-BBD</strong>
+              <small class="text-muted d-block">Mercedes Benz 1620 (10 Ton)</small>
+            </td>
+            <td><span class="badge badge-primary px-2 py-1"><i class="fas fa-shipping-fast mr-1"></i>En Ruta</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Ficha" data-toggle="modal" data-target="#modalDriverDetail">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Dar de baja">
+                <i class="fas fa-user-slash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#D-203</td>
+            <td>5123490 SC</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Hugo Banegas Justiniano</div>
+              <small class="text-muted">hugo.banegas@transfreddy.bo</small>
+            </td>
+            <td>
+              <span class="badge badge-primary px-2 py-1">Cat. C Profesional</span>
+              <small class="d-block text-muted">Lic. 5123490</small>
+            </td>
+            <td>
+              <span class="badge badge-light border text-dark p-1 d-inline-block"><i class="fas fa-mobile-alt text-primary mr-1"></i>78034512</span>
+            </td>
+            <td>
+              <strong class="text-dark">3112-PLK</strong>
+              <small class="text-muted d-block">Isuzu Forward (6 Ton)</small>
+            </td>
+            <td><span class="badge badge-success px-2 py-1"><i class="fas fa-check-circle mr-1"></i>Disponible</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Ficha">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Dar de baja">
+                <i class="fas fa-user-slash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#D-204</td>
+            <td>6781204 SC</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Álvaro Rojas Villagómez</div>
+              <small class="text-muted">alvaro.rojas@transfreddy.bo</small>
+            </td>
+            <td>
+              <span class="badge badge-info px-2 py-1">Cat. B Particular/Carga</span>
+              <small class="d-block text-muted">Lic. 6781204</small>
+            </td>
+            <td>
+              <span class="badge badge-light border text-dark p-1 d-inline-block"><i class="fas fa-mobile-alt text-primary mr-1"></i>69123450</span>
+            </td>
+            <td>
+              <strong class="text-dark">4055-MNO</strong>
+              <small class="text-muted d-block">Nissan Cóndor (4.5 Ton)</small>
+            </td>
+            <td><span class="badge badge-success px-2 py-1"><i class="fas fa-check-circle mr-1"></i>Disponible</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Ficha">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Dar de baja">
+                <i class="fas fa-user-slash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#D-205</td>
+            <td>7129034 SC</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Nelson Vaca Diez</div>
+              <small class="text-muted">nelson.vaca@transfreddy.bo</small>
+            </td>
+            <td>
+              <span class="badge badge-primary px-2 py-1">Cat. C Profesional</span>
+              <small class="d-block text-muted">Lic. 7129034</small>
+            </td>
+            <td>
+              <span class="badge badge-light border text-dark p-1 d-inline-block"><i class="fas fa-mobile-alt text-primary mr-1"></i>75011928</span>
+            </td>
+            <td>
+              <span class="badge badge-warning text-dark"><i class="fas fa-exclamation-triangle mr-1"></i>Sin vehículo asignado</span>
+            </td>
+            <td><span class="badge badge-secondary px-2 py-1">En Reserva</span></td>
+            <td class="text-center">
+              <button class="btn btn-primary btn-circle btn-sm mr-1" title="Asignar Camión">
+                <i class="fas fa-truck-pickup"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Dar de baja">
+                <i class="fas fa-user-slash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
+
+<!-- Modal: Registrar Conductor -->
+<div class="modal fade" id="modalNewDriver" tabindex="-1" role="dialog" aria-labelledby="modalNewDriverLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="modalNewDriverLabel"><i class="fas fa-id-card mr-2"></i>Registrar Nuevo Conductor</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Nombre Completo <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Ej. Carlos Mamani Condori" required>
+            </div>
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Carnet de Identidad (C.I.) <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Ej. 4781290 SC" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Licencia de Conducir (Categoría / Nro.) <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Ej. Cat. C Profesional - Lic. 4781290" required>
+            </div>
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Correo Electrónico</label>
+              <input type="email" class="form-control" placeholder="conductor@transfreddy.bo">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Celular de Contacto <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Ej. 71098451" required>
+            </div>
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Asignar Camión (Regla 1:1)</label>
+              <select class="form-control">
+                <option value="">-- Dejar sin asignar temporalmente --</option>
+                <option value="1">Volvo F12 (Placa: 2345-TXZ)</option>
+                <option value="2">Mercedes Benz 1620 (Placa: 1890-BBD)</option>
+                <option value="3">Isuzu Forward (Placa: 3112-PLK)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="font-weight-bold small text-gray-700">Dirección de Residencia <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" placeholder="Ej. Barrio Los Lotes, Calle 5 #14" required>
+          </div>
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal">
+            <i class="fas fa-save mr-1"></i> Registrar Conductor
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Ficha del Conductor -->
+<div class="modal fade" id="modalDriverDetail" tabindex="-1" role="dialog" aria-labelledby="modalDriverDetailLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title" id="modalDriverDetailLabel"><i class="fas fa-id-badge mr-2"></i>Ficha del Conductor</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="text-center mb-3">
+          <div class="icon-circle bg-primary text-white mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 100%;">
+            <i class="fas fa-user-tie fa-2x"></i>
+          </div>
+          <h5 class="font-weight-bold text-gray-800 mb-0">Carlos Mamani Condori</h5>
+          <span class="badge badge-primary">Cat. C Profesional - Lic. 4781290</span>
+        </div>
+        <ul class="list-group list-group-flush small">
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="font-weight-bold">Carnet de Identidad:</span>
+            <span>4781290 SC</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="font-weight-bold">Teléfono Celular:</span>
+            <span>71098451</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="font-weight-bold">Vehículo Vinculado (1:1):</span>
+            <span class="font-weight-bold text-primary">Volvo F12 (2345-TXZ)</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="font-weight-bold">Propietario del camión:</span>
+            <span>Don Freddy Rojas (Dueño de Flota)</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="font-weight-bold">Servicios completados:</span>
+            <span class="badge badge-success font-weight-bold">48 viajes con éxito</span>
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- DataTables Scripts -->
+<script src="{% static 'logistics/admin/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<script>
+  $(document).ready(function() {
+    $('#dataTableDrivers').DataTable({
+      language: {
+        "sProcessing":     "Procesando...",
+        "sLengthMenu":     "Mostrar _MENU_ choferes",
+        "sZeroRecords":    "No se encontraron conductores",
+        "sEmptyTable":     "No hay conductores registrados",
+        "sInfo":           "Mostrando _START_ a _END_ de _TOTAL_ conductores",
+        "sInfoEmpty":      "Mostrando 0 a 0 de 0 conductores",
+        "sInfoFiltered":   "(filtrado de _MAX_ registros totales)",
+        "sSearch":         "Buscar chofer:",
+        "oPaginate": {
+          "sFirst":    "Primero",
+          "sLast":     "Último",
+          "sNext":     "Siguiente",
+          "sPrevious": "Anterior"
+        }
+      }
+    });
+  });
+</script>
 {% endblock %}

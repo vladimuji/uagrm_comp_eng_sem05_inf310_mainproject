@@ -1,17 +1,396 @@
 {% extends "logistics/admin/base_admin.html" %}
+{% load static %}
 
-{% block title %}Staff{% endblock %}
+{% block title %}Personal Staff{% endblock %}
+
+{% block extra_head %}
+<link href="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
-<div id="staff-app">
-  <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Staff</h1>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h1 class="h3 mb-1 text-gray-800 font-weight-bold">Personal de Apoyo (Staff)</h1>
+    <p class="text-muted small mb-0">Gestión de administradores y encargados de verificar dueños, conductores y operaciones por ciudad</p>
+  </div>
+  <div>
+    <button type="button" class="btn btn-primary btn-icon-split shadow-sm" data-toggle="modal" data-target="#modalNewStaff">
+      <span class="icon text-white-50">
+        <i class="fas fa-user-shield"></i>
+      </span>
+      <span class="text">Nuevo Miembro Staff</span>
+    </button>
+  </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="row">
+
+  <!-- Total Staff -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-primary shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Personal Staff</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">8 Miembros</div>
+            <span class="text-xs text-muted">Gestión administrativa</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-users-cog fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="card shadow mb-4">
-    <div class="card-body">
-      <p class="text-muted mb-0">Contenido en blanco para Staff.</p>
+  <!-- Administradores -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-danger shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Administradores Generales</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">2 SuperAdmins</div>
+            <span class="text-xs text-danger font-weight-bold"><i class="fas fa-key"></i> Acceso total al sistema</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-user-shield fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Encargados Regionales -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-info shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Encargados Regionales</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">6 Encargados</div>
+            <span class="text-xs text-info">Verificación en ciudades</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-map-marker-alt fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ciudades Cubiertas -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-success shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Ciudades con Personal</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">5 Nodos</div>
+            <span class="text-xs text-success font-weight-bold"><i class="fas fa-check-circle"></i> Santa Cruz, CBBA, LPZ, Sucre, Montero</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-city fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- DataTables Card -->
+<div class="card shadow mb-4">
+  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+    <h6 class="m-0 font-weight-bold text-primary">
+      <i class="fas fa-user-lock mr-1"></i> Directorio de Personal Staff
+    </h6>
+    <div class="dropdown no-arrow">
+      <a class="dropdown-toggle" href="#" role="button" id="dropdownStaffMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+      </a>
+      <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownStaffMenu">
+        <div class="dropdown-header">Exportar nómina:</div>
+        <a class="dropdown-item" href="#"><i class="fas fa-file-excel fa-sm mr-2 text-success"></i>Descargar Excel</a>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover" id="dataTableStaff" width="100%" cellspacing="0">
+        <thead class="thead-light">
+          <tr>
+            <th>ID</th>
+            <th>C.I.</th>
+            <th>Nombre y Apellido</th>
+            <th>Correo Corporativo</th>
+            <th>Teléfono Celular</th>
+            <th>Rol / Permisos</th>
+            <th>Ciudad / Región Asignada</th>
+            <th>Estado</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-weight-bold">#S-001</td>
+            <td>3214567 SC</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Don Freddy Rojas Vargas</div>
+              <small class="text-muted">Director General</small>
+            </td>
+            <td>freddy.rojas@transfreddy.bo</td>
+            <td><i class="fas fa-mobile-alt text-primary mr-1"></i>77098123</td>
+            <td><span class="badge badge-danger px-2 py-1"><i class="fas fa-shield-alt mr-1"></i>Administrador General</span></td>
+            <td><span class="badge badge-dark">Sede Central (Santa Cruz)</span></td>
+            <td><span class="badge badge-success">Activo</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Perfil" data-toggle="modal" data-target="#modalStaffDetail">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#S-002</td>
+            <td>5412987 SC</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Lic. Roberto Paz Soldán</div>
+              <small class="text-muted">Jefe de Operaciones</small>
+            </td>
+            <td>roberto.paz@transfreddy.bo</td>
+            <td><i class="fas fa-mobile-alt text-primary mr-1"></i>76044551</td>
+            <td><span class="badge badge-danger px-2 py-1"><i class="fas fa-shield-alt mr-1"></i>Administrador General</span></td>
+            <td><span class="badge badge-dark">Sede Central (Santa Cruz)</span></td>
+            <td><span class="badge badge-success">Activo</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Perfil" data-toggle="modal" data-target="#modalStaffDetail">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#S-003</td>
+            <td>6129840 CB</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Gonzalo Albarracín</div>
+              <small class="text-muted">Encargado de Verificación CBBA</small>
+            </td>
+            <td>gonzalo.cbba@transfreddy.bo</td>
+            <td><i class="fas fa-mobile-alt text-primary mr-1"></i>72019283</td>
+            <td><span class="badge badge-primary px-2 py-1"><i class="fas fa-user-check mr-1"></i>Personal de Apoyo</span></td>
+            <td><span class="badge badge-info">Cochabamba</span></td>
+            <td><span class="badge badge-success">Activo</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Perfil">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#S-004</td>
+            <td>4981203 LP</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Sonia Quispe Ticona</div>
+              <small class="text-muted">Encargada de Verificación La Paz</small>
+            </td>
+            <td>sonia.lpz@transfreddy.bo</td>
+            <td><i class="fas fa-mobile-alt text-primary mr-1"></i>71543210</td>
+            <td><span class="badge badge-primary px-2 py-1"><i class="fas fa-user-check mr-1"></i>Personal de Apoyo</span></td>
+            <td><span class="badge badge-info">La Paz / El Alto</span></td>
+            <td><span class="badge badge-success">Activo</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Perfil">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#S-005</td>
+            <td>7120934 SC</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Javier Montero Roca</div>
+              <small class="text-muted">Encargado Sub-sede Montero</small>
+            </td>
+            <td>javier.montero@transfreddy.bo</td>
+            <td><i class="fas fa-mobile-alt text-primary mr-1"></i>78012903</td>
+            <td><span class="badge badge-primary px-2 py-1"><i class="fas fa-user-check mr-1"></i>Personal de Apoyo</span></td>
+            <td><span class="badge badge-info">Montero / Warnes</span></td>
+            <td><span class="badge badge-success">Activo</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Perfil">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
+
+<!-- Modal: Registrar Staff -->
+<div class="modal fade" id="modalNewStaff" tabindex="-1" role="dialog" aria-labelledby="modalNewStaffLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="modalNewStaffLabel"><i class="fas fa-user-shield mr-2"></i>Registrar Miembro del Staff</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Nombre Completo <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Ej. Gonzalo Albarracín" required>
+            </div>
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Carnet de Identidad (C.I.) <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Ej. 6129840 CB" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Correo Electrónico (Usuario de Acceso) <span class="text-danger">*</span></label>
+              <input type="email" class="form-control" placeholder="usuario@transfreddy.bo" required>
+            </div>
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Contraseña Provisional <span class="text-danger">*</span></label>
+              <input type="password" class="form-control" placeholder="••••••••" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 form-group">
+              <label class="font-weight-bold small text-gray-700">Teléfono Celular <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Ej. 72019283" required>
+            </div>
+            <div class="col-md-4 form-group">
+              <label class="font-weight-bold small text-gray-700">Rol Administrativo <span class="text-danger">*</span></label>
+              <select class="form-control" required>
+                <option value="0">Personal de Apoyo (Encargado Regional)</option>
+                <option value="1">Administrador General (is_admin = 1)</option>
+              </select>
+            </div>
+            <div class="col-md-4 form-group">
+              <label class="font-weight-bold small text-gray-700">Ciudad / Nodo Asignado <span class="text-danger">*</span></label>
+              <select class="form-control" required>
+                <option value="1">Santa Cruz de la Sierra</option>
+                <option value="4">Cochabamba</option>
+                <option value="1">La Paz / El Alto</option>
+                <option value="5">Sucre</option>
+                <option value="15">Montero</option>
+                <option value="6">Oruro</option>
+                <option value="8">Tarija</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="font-weight-bold small text-gray-700">Dirección de Oficina o Residencia</label>
+            <input type="text" class="form-control" placeholder="Ej. Calle España #340, Zona Central, Cochabamba">
+          </div>
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal">
+            <i class="fas fa-save mr-1"></i> Registrar Staff
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Ficha del Staff -->
+<div class="modal fade" id="modalStaffDetail" tabindex="-1" role="dialog" aria-labelledby="modalStaffDetailLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title" id="modalStaffDetailLabel"><i class="fas fa-user-tie mr-2"></i>Perfil del Personal</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="text-center mb-3">
+          <div class="icon-circle bg-danger text-white mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 100%;">
+            <i class="fas fa-user-shield fa-2x"></i>
+          </div>
+          <h5 class="font-weight-bold text-gray-800 mb-0">Don Freddy Rojas Vargas</h5>
+          <span class="badge badge-danger">Administrador General (is_admin = True)</span>
+        </div>
+        <ul class="list-group list-group-flush small">
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="font-weight-bold">Carnet de Identidad:</span>
+            <span>3214567 SC</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="font-weight-bold">Usuario / Email:</span>
+            <span>freddy.rojas@transfreddy.bo</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="font-weight-bold">Teléfono de Contacto:</span>
+            <span>77098123</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="font-weight-bold">Jurisdicción:</span>
+            <span>Sede Central Santa Cruz / Cobertura Nacional</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="font-weight-bold">Funciones principales:</span>
+            <span class="text-right">Verificación de nuevos choferes, altas de camiones y fijación de tarifas</span>
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- DataTables Scripts -->
+<script src="{% static 'logistics/admin/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<script>
+  $(document).ready(function() {
+    $('#dataTableStaff').DataTable({
+      language: {
+        "sProcessing":     "Procesando...",
+        "sLengthMenu":     "Mostrar _MENU_ miembros",
+        "sZeroRecords":    "No se encontró personal",
+        "sEmptyTable":     "No hay miembros de staff registrados",
+        "sInfo":           "Mostrando _START_ a _END_ de _TOTAL_ miembros",
+        "sInfoEmpty":      "Mostrando 0 a 0 de 0 miembros",
+        "sInfoFiltered":   "(filtrado de _MAX_ registros totales)",
+        "sSearch":         "Buscar personal:",
+        "oPaginate": {
+          "sFirst":    "Primero",
+          "sLast":     "Último",
+          "sNext":     "Siguiente",
+          "sPrevious": "Anterior"
+        }
+      }
+    });
+  });
+</script>
 {% endblock %}

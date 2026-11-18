@@ -1,17 +1,446 @@
 {% extends "logistics/admin/base_admin.html" %}
+{% load static %}
 
 {% block title %}Clientes{% endblock %}
 
+{% block extra_head %}
+<link href="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
-<div id="customers-app">
-  <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Clientes</h1>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h1 class="h3 mb-1 text-gray-800 font-weight-bold">Gestión de Clientes</h1>
+    <p class="text-muted small mb-0">Directorio de clientes particulares y corporativos, direcciones y puntos de fidelidad</p>
+  </div>
+  <div>
+    <button type="button" class="btn btn-primary btn-icon-split shadow-sm" data-toggle="modal" data-target="#modalNewCustomer">
+      <span class="icon text-white-50">
+        <i class="fas fa-user-plus"></i>
+      </span>
+      <span class="text">Nuevo Cliente</span>
+    </button>
+  </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="row">
+
+  <!-- Total Clientes -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-primary shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Clientes</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">86</div>
+            <span class="text-xs text-success font-weight-bold"><i class="fas fa-arrow-up"></i> +8 este mes</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-users fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="card shadow mb-4">
-    <div class="card-body">
-      <p class="text-muted mb-0">Contenido en blanco para Clientes.</p>
+  <!-- Puntos Emitidos -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-success shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Puntos de Fidelidad</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">1,480 pts</div>
+            <span class="text-xs text-muted">Canjeables por descuentos</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-medal fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Servicios Activos -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-info shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Con Servicios en Curso</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">12 Clientes</div>
+            <span class="text-xs text-info">Fletes y mudanzas activas</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-shipping-fast fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Clientes Frecuentes -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-warning shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Clientes Frecuentes</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">24 VIP</div>
+            <span class="text-xs text-warning">&gt; 5 servicios completados</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-star fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- DataTables Card -->
+<div class="card shadow mb-4">
+  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+    <h6 class="m-0 font-weight-bold text-primary">
+      <i class="fas fa-table mr-1"></i> Directorio de Clientes
+    </h6>
+    <div class="dropdown no-arrow">
+      <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuCustomers" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+      </a>
+      <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuCustomers">
+        <div class="dropdown-header">Exportar datos:</div>
+        <a class="dropdown-item" href="#"><i class="fas fa-file-excel fa-sm mr-2 text-success"></i>Exportar a Excel</a>
+        <a class="dropdown-item" href="#"><i class="fas fa-file-pdf fa-sm mr-2 text-danger"></i>Exportar a PDF</a>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover" id="dataTableCustomers" width="100%" cellspacing="0">
+        <thead class="thead-light">
+          <tr>
+            <th>ID</th>
+            <th>C.I. / NIT</th>
+            <th>Nombre o Razón Social</th>
+            <th>Teléfonos</th>
+            <th>Dirección Principal</th>
+            <th class="text-center">Puntos</th>
+            <th class="text-center">Servicios</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>#C-101</td>
+            <td>4789214 SC</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Roberto Suárez Aguilera</div>
+              <small class="text-muted">roberto.suarez@email.com</small>
+            </td>
+            <td>
+              <span class="badge badge-light border text-dark p-1 mb-1 d-inline-block"><i class="fas fa-mobile-alt text-primary mr-1"></i>77012345</span>
+              <span class="badge badge-light border text-dark p-1 d-inline-block"><i class="fas fa-phone-alt text-muted mr-1"></i>3-3456789</span>
+            </td>
+            <td>Av. San Martín #450, Barrio Equipetrol</td>
+            <td class="text-center">
+              <span class="badge badge-warning text-dark font-weight-bold px-2 py-1"><i class="fas fa-medal mr-1"></i>120 pts</span>
+            </td>
+            <td class="text-center font-weight-bold">7</td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver detalle" data-toggle="modal" data-target="#modalViewCustomer">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Eliminar">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>#C-102</td>
+            <td>1029384 SC</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Distribuidora Oriental S.R.L.</div>
+              <small class="text-muted">ventas@oriental.bo</small>
+            </td>
+            <td>
+              <span class="badge badge-light border text-dark p-1 d-inline-block"><i class="fas fa-mobile-alt text-primary mr-1"></i>76098765</span>
+            </td>
+            <td>Parque Industrial, Mz. 14, Galpón B</td>
+            <td class="text-center">
+              <span class="badge badge-warning text-dark font-weight-bold px-2 py-1"><i class="fas fa-medal mr-1"></i>340 pts</span>
+            </td>
+            <td class="text-center font-weight-bold">18</td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver detalle">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Eliminar">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>#C-103</td>
+            <td>3891024 SC</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Ferretería Central</div>
+              <small class="text-muted">contacto@ferreteriacentral.com</small>
+            </td>
+            <td>
+              <span class="badge badge-light border text-dark p-1 mb-1 d-inline-block"><i class="fas fa-mobile-alt text-primary mr-1"></i>71034567</span>
+              <span class="badge badge-light border text-dark p-1 d-inline-block"><i class="fas fa-mobile-alt text-secondary mr-1"></i>68912344</span>
+            </td>
+            <td>Av. Grigotá, 2do Anillo #180</td>
+            <td class="text-center">
+              <span class="badge badge-warning text-dark font-weight-bold px-2 py-1"><i class="fas fa-medal mr-1"></i>85 pts</span>
+            </td>
+            <td class="text-center font-weight-bold">5</td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver detalle">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Eliminar">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>#C-104</td>
+            <td>5612349 SC</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">María René Peña Justiniano</div>
+              <small class="text-muted">mrene.pena@hotmail.com</small>
+            </td>
+            <td>
+              <span class="badge badge-light border text-dark p-1 d-inline-block"><i class="fas fa-mobile-alt text-primary mr-1"></i>70089123</span>
+            </td>
+            <td>Av. Monseñor Rivero, Edif. El Prado 4B</td>
+            <td class="text-center">
+              <span class="badge badge-warning text-dark font-weight-bold px-2 py-1"><i class="fas fa-medal mr-1"></i>45 pts</span>
+            </td>
+            <td class="text-center font-weight-bold">3</td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver detalle">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Eliminar">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>#C-105</td>
+            <td>8912304 SC</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Constructora del Este S.A.</div>
+              <small class="text-muted">logistica@constructoraeste.bo</small>
+            </td>
+            <td>
+              <span class="badge badge-light border text-dark p-1 mb-1 d-inline-block"><i class="fas fa-mobile-alt text-primary mr-1"></i>77345678</span>
+              <span class="badge badge-light border text-dark p-1 d-inline-block"><i class="fas fa-phone-alt text-muted mr-1"></i>3-3221144</span>
+            </td>
+            <td>Km 8 Doble Vía a La Guardia</td>
+            <td class="text-center">
+              <span class="badge badge-warning text-dark font-weight-bold px-2 py-1"><i class="fas fa-medal mr-1"></i>210 pts</span>
+            </td>
+            <td class="text-center font-weight-bold">12</td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver detalle">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Eliminar">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>#C-106</td>
+            <td>6129845 SC</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Comercial Los Pozos</div>
+              <small class="text-muted">pedidos@lospozos.bo</small>
+            </td>
+            <td>
+              <span class="badge badge-light border text-dark p-1 d-inline-block"><i class="fas fa-mobile-alt text-primary mr-1"></i>69011223</span>
+            </td>
+            <td>Calle Charcas esq. 6 de Agosto #310</td>
+            <td class="text-center">
+              <span class="badge badge-warning text-dark font-weight-bold px-2 py-1"><i class="fas fa-medal mr-1"></i>60 pts</span>
+            </td>
+            <td class="text-center font-weight-bold">4</td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver detalle">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Eliminar">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
+
+<!-- Modal: Nuevo Cliente -->
+<div class="modal fade" id="modalNewCustomer" tabindex="-1" role="dialog" aria-labelledby="modalNewCustomerLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="modalNewCustomerLabel"><i class="fas fa-user-plus mr-2"></i>Registrar Nuevo Cliente</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Nombre Completo o Razón Social <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Ej. Roberto Suárez Aguilera" required>
+            </div>
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">C.I. / NIT <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Ej. 4789214 SC" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Correo Electrónico</label>
+              <input type="email" class="form-control" placeholder="cliente@ejemplo.com">
+            </div>
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Teléfono Celular Principal <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Ej. 77012345" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Teléfono Secundario / Fijo (Opcional)</label>
+              <input type="text" class="form-control" placeholder="Ej. 3-3456789">
+            </div>
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Zona / Ciudad <span class="text-danger">*</span></label>
+              <select class="form-control">
+                <option value="1">Santa Cruz de la Sierra (Radio Urbano)</option>
+                <option value="2">Montero</option>
+                <option value="3">Warnes</option>
+                <option value="4">La Guardia</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="font-weight-bold small text-gray-700">Dirección de Residencia / Carga <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" placeholder="Ej. Barrio Equipetrol, Calle 8 Este #12" required>
+          </div>
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal">
+            <i class="fas fa-save mr-1"></i> Guardar Cliente
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Ver Detalle Cliente -->
+<div class="modal fade" id="modalViewCustomer" tabindex="-1" role="dialog" aria-labelledby="modalViewCustomerLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title" id="modalViewCustomerLabel"><i class="fas fa-id-card mr-2"></i>Ficha del Cliente</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="text-center mb-3">
+          <div class="icon-circle bg-primary text-white mx-auto mb-2 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 100%;">
+            <i class="fas fa-user fa-2x"></i>
+          </div>
+          <h5 class="font-weight-bold text-gray-800 mb-0">Roberto Suárez Aguilera</h5>
+          <span class="badge badge-warning text-dark"><i class="fas fa-star mr-1"></i>Cliente Frecuente (120 pts)</span>
+        </div>
+        <ul class="list-group list-group-flush small">
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="font-weight-bold">C.I.:</span>
+            <span>4789214 SC</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="font-weight-bold">Email:</span>
+            <span>roberto.suarez@email.com</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="font-weight-bold">Teléfonos registrados:</span>
+            <span>77012345 / 3-3456789</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="font-weight-bold">Dirección:</span>
+            <span>Av. San Martín #450, Equipetrol</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="font-weight-bold">Servicios contratados:</span>
+            <span class="badge badge-primary">7 viajes</span>
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- DataTables Scripts -->
+<script src="{% static 'logistics/admin/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<script>
+  $(document).ready(function() {
+    $('#dataTableCustomers').DataTable({
+      language: {
+        "sProcessing":     "Procesando...",
+        "sLengthMenu":     "Mostrar _MENU_ clientes",
+        "sZeroRecords":    "No se encontraron resultados",
+        "sEmptyTable":     "Ningún dato disponible en esta tabla",
+        "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ clientes",
+        "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+        "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+        "sSearch":         "Buscar cliente:",
+        "oPaginate": {
+          "sFirst":    "Primero",
+          "sLast":     "Último",
+          "sNext":     "Siguiente",
+          "sPrevious": "Anterior"
+        }
+      }
+    });
+  });
+</script>
 {% endblock %}

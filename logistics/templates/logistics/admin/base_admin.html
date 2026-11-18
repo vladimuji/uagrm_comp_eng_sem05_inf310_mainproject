@@ -8,6 +8,7 @@
   <link href="{% static 'logistics/admin/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet">
   <link href="{% static 'logistics/admin/css/sb-admin-2.min.css' %}" rel="stylesheet">
+  {% block extra_head %}{% endblock %}
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 </head>
 <body id="page-top">
@@ -18,7 +19,7 @@
   <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'dashboard' %}">
       <div class="sidebar-brand-icon"><i class="fas fa-truck"></i></div>
-      <div class="sidebar-brand-text mx-3">Logistics</div>
+      <div class="sidebar-brand-text mx-3">DROP MY KARGO</div>
     </a>
     <hr class="sidebar-divider my-0">
     <li class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">

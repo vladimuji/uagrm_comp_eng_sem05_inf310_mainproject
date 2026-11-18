@@ -1,17 +1,370 @@
 {% extends "logistics/admin/base_admin.html" %}
+{% load static %}
 
-{% block title %}Zonas{% endblock %}
+{% block title %}Zonas Geográficas{% endblock %}
+
+{% block extra_head %}
+<link href="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
-<div id="zones-app">
-  <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Zonas</h1>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h1 class="h3 mb-1 text-gray-800 font-weight-bold">Zonas Geográficas de Cobertura</h1>
+    <p class="text-muted small mb-0">Delimitación de áreas de recojo, anillos urbanos y tarifas de fletes metropolitanos</p>
+  </div>
+  <div>
+    <button type="button" class="btn btn-primary btn-icon-split shadow-sm" data-toggle="modal" data-target="#modalNewZone">
+      <span class="icon text-white-50">
+        <i class="fas fa-map-pin"></i>
+      </span>
+      <span class="text">Nueva Zona</span>
+    </button>
+  </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="row">
+
+  <!-- Total Zonas -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-primary shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Zonas Registradas</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">14 Zonas</div>
+            <span class="text-xs text-muted">Radio urbano y satélites</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-map-marked-alt fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="card shadow mb-4">
-    <div class="card-body">
-      <p class="text-muted mb-0">Contenido en blanco para Zonas.</p>
+  <!-- Santa Cruz Urbano -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-success shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Santa Cruz (Anillos)</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">8 Distritos</div>
+            <span class="text-xs text-success font-weight-bold"><i class="fas fa-check"></i> 1er al 8vo Anillo</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-bullseye fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ciudades Satélites -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-info shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Municipios Satélites</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">6 Sub-regiones</div>
+            <span class="text-xs text-info">Warnes, Montero, La Guardia, Cotoca</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-city fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Servicios en Zonas -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-warning shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Zona con Mayor Demanda</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">Equipetrol / Norte</div>
+            <span class="text-xs text-warning font-weight-bold">42% de los viajes</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-chart-line fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- DataTables Card -->
+<div class="card shadow mb-4">
+  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+    <h6 class="m-0 font-weight-bold text-primary">
+      <i class="fas fa-map mr-1"></i> Listado de Zonas de Cobertura
+    </h6>
+    <div class="dropdown no-arrow">
+      <a class="dropdown-toggle" href="#" role="button" id="dropdownZonesMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+      </a>
+      <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownZonesMenu">
+        <div class="dropdown-header">Opciones:</div>
+        <a class="dropdown-item" href="#"><i class="fas fa-file-excel fa-sm mr-2 text-success"></i>Exportar Excel</a>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover" id="dataTableZones" width="100%" cellspacing="0">
+        <thead class="thead-light">
+          <tr>
+            <th>ID</th>
+            <th>Nombre de la Zona</th>
+            <th>Descripción / Cobertura</th>
+            <th>Coordenadas (Lat / Lng)</th>
+            <th>Tarifa Base Sugerida</th>
+            <th>Servicios Activos</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-weight-bold">#Z-01</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Zona Norte / Equipetrol</div>
+              <small class="badge badge-primary">Santa Cruz Central</small>
+            </td>
+            <td>Comprende del 1er al 4to Anillo (Av. San Martín, Busch, Monseñor Rivero)</td>
+            <td><code>-17.7681, -63.1902</code></td>
+            <td class="font-weight-bold text-success">Bs. 250.00</td>
+            <td><span class="badge badge-success px-2 py-1">28 fletes</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Detalle" data-toggle="modal" data-target="#modalZoneDetail">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Eliminar">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#Z-02</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Parque Industrial</div>
+              <small class="badge badge-primary">Santa Cruz Este</small>
+            </td>
+            <td>Galpones industriales, Mz. 1 a 40, Pampa de la Isla, Av. Virgen de Cotoca</td>
+            <td><code>-17.7650, -63.1410</code></td>
+            <td class="font-weight-bold text-success">Bs. 350.00</td>
+            <td><span class="badge badge-success px-2 py-1">19 fletes</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Detalle">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Eliminar">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#Z-03</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Plan 3000 / Ciudadela</div>
+              <small class="badge badge-primary">Santa Cruz Sur-Este</small>
+            </td>
+            <td>Rotonda del Plan 3000, El Quior, Av. Paurito hasta 8vo Anillo</td>
+            <td><code>-17.8285, -63.1365</code></td>
+            <td class="font-weight-bold text-success">Bs. 280.00</td>
+            <td><span class="badge badge-success px-2 py-1">14 fletes</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Detalle">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Eliminar">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#Z-04</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Montero Metropolitano</div>
+              <small class="badge badge-info">Satélite Norte</small>
+            </td>
+            <td>Conexión Carretera al Norte, Guabirá, Plaza Principal y área comercial</td>
+            <td><code>-17.3333, -63.2500</code></td>
+            <td class="font-weight-bold text-success">Bs. 550.00</td>
+            <td><span class="badge badge-success px-2 py-1">11 fletes</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Detalle">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Eliminar">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#Z-05</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Warnes Industrial</div>
+              <small class="badge badge-info">Satélite Norte</small>
+            </td>
+            <td>Zona Satélite Norte, Fábrica PIL, Cervecería y Planta de Cemento</td>
+            <td><code>-17.5142, -63.1667</code></td>
+            <td class="font-weight-bold text-success">Bs. 480.00</td>
+            <td><span class="badge badge-success px-2 py-1">9 fletes</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Detalle">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Eliminar">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
+
+<!-- Modal: Registrar Zona -->
+<div class="modal fade" id="modalNewZone" tabindex="-1" role="dialog" aria-labelledby="modalNewZoneLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="modalNewZoneLabel"><i class="fas fa-map-pin mr-2"></i>Registrar Nueva Zona Geográfica</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Nombre de la Zona <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Ej. Doble Vía La Guardia (Km 1 al 12)" required>
+            </div>
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Tarifa Base Sugerida (Bs.) <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text">Bs.</span></div>
+                <input type="number" step="10" class="form-control" placeholder="300.00" required>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="font-weight-bold small text-gray-700">Descripción y Puntos de Referencia <span class="text-danger">*</span></label>
+            <textarea class="form-control" rows="2" placeholder="Detallar anillos que abarca, avenidas principales y restricciones horarias..." required></textarea>
+          </div>
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Latitud Central</label>
+              <input type="text" class="form-control" placeholder="Ej. -17.7833">
+            </div>
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Longitud Central</label>
+              <input type="text" class="form-control" placeholder="Ej. -63.1821">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal">
+            <i class="fas fa-save mr-1"></i> Registrar Zona
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Detalle de Zona -->
+<div class="modal fade" id="modalZoneDetail" tabindex="-1" role="dialog" aria-labelledby="modalZoneDetailLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title font-weight-bold" id="modalZoneDetailLabel"><i class="fas fa-map-marked-alt mr-2"></i>Zona Norte / Equipetrol</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group list-group-flush small">
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="font-weight-bold">Código de Zona:</span>
+            <span>#Z-01</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="font-weight-bold">Tarifa Base Sugerida:</span>
+            <span class="font-weight-bold text-success">Bs. 250.00</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="font-weight-bold">Coordenadas GPS:</span>
+            <span><code>-17.7681, -63.1902</code></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="font-weight-bold">Volumen de fletes (Mes):</span>
+            <span class="badge badge-primary">28 servicios</span>
+          </li>
+          <li class="list-group-item">
+            <strong>Detalle de cobertura:</strong>
+            <p class="text-muted mt-1 mb-0">Comprende desde el 1er Anillo hasta el 4to Anillo sobre los cuadrantes Norte y Nor-Oeste. Apto para camiones de hasta 10 Toneladas fuera de horario bancario restringido.</p>
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- DataTables Scripts -->
+<script src="{% static 'logistics/admin/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<script>
+  $(document).ready(function() {
+    $('#dataTableZones').DataTable({
+      language: {
+        "sProcessing":     "Procesando...",
+        "sLengthMenu":     "Mostrar _MENU_ zonas",
+        "sZeroRecords":    "No se encontraron zonas",
+        "sEmptyTable":     "No hay zonas registradas",
+        "sInfo":           "Mostrando _START_ a _END_ de _TOTAL_ zonas",
+        "sInfoEmpty":      "Mostrando 0 a 0 de 0 zonas",
+        "sInfoFiltered":   "(filtrado de _MAX_ registros totales)",
+        "sSearch":         "Buscar zona:",
+        "oPaginate": {
+          "sFirst":    "Primero",
+          "sLast":     "Último",
+          "sNext":     "Siguiente",
+          "sPrevious": "Anterior"
+        }
+      }
+    });
+  });
+</script>
 {% endblock %}

@@ -1,17 +1,812 @@
 {% extends "logistics/admin/base_admin.html" %}
+{% load static %}
 
-{% block title %}Log Auditoría{% endblock %}
+{% block title %}Log de Auditoría{% endblock %}
+
+{% block extra_head %}
+<link href="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+<style>
+  .timeline-item {
+    border-left: 3px solid #dee2e6;
+    padding-left: 1.25rem;
+    margin-left: 1rem;
+    position: relative;
+    padding-bottom: 1rem;
+  }
+  .timeline-item:last-child { border-left-color: transparent; }
+  .timeline-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    position: absolute; left: -8.5px; top: 3px;
+    border: 2px solid #fff;
+  }
+  .timeline-item:hover { background: #f8f9fc; border-radius: 0 .35rem .35rem 0; }
+  .log-action-badge { font-size: 0.72rem; letter-spacing: 0.03em; }
+  .filter-pill.active { background: #4e73df; color: #fff !important; border-color: #4e73df; }
+  #liveIndicator { animation: blink 1.4s infinite; }
+  @keyframes blink { 0%,100%{ opacity:1 } 50%{ opacity:.3 } }
+</style>
+{% endblock %}
 
 {% block content %}
-<div id="audit-log-app">
-  <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Log Auditoría</h1>
+
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h1 class="h3 mb-1 text-gray-800 font-weight-bold">Log de Auditoría del Sistema</h1>
+    <p class="text-muted small mb-0">Registro de todas las operaciones críticas: Stored Procedures, Triggers, cambios de datos y accesos de usuarios</p>
+  </div>
+  <div class="d-flex align-items-center">
+    <span class="badge badge-success px-3 py-2 mr-2">
+      <i class="fas fa-circle fa-xs mr-1" id="liveIndicator"></i> En Vivo
+    </span>
+    <button class="btn btn-sm btn-outline-secondary mr-2" id="btnRefresh" title="Actualizar log">
+      <i class="fas fa-sync-alt mr-1"></i> Refrescar
+    </button>
+    <button class="btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#modalExportAudit">
+      <i class="fas fa-file-export mr-1"></i> Exportar
+    </button>
+  </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="row">
+
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-primary shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Eventos Hoy</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">1,248</div>
+            <span class="text-xs text-success font-weight-bold"><i class="fas fa-arrow-up"></i> 12% vs ayer</span>
+          </div>
+          <div class="col-auto"><i class="fas fa-database fa-2x text-gray-300"></i></div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="card shadow mb-4">
-    <div class="card-body">
-      <p class="text-muted mb-0">Contenido en blanco para Log Auditoría.</p>
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-danger shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Alertas Críticas</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">3 Eventos</div>
+            <span class="text-xs text-danger font-weight-bold">Accesos no autorizados / errores SP</span>
+          </div>
+          <div class="col-auto"><i class="fas fa-shield-alt fa-2x text-gray-300"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-warning shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Triggers Disparados</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">382</div>
+            <span class="text-xs text-warning font-weight-bold">INSERT / UPDATE / DELETE</span>
+          </div>
+          <div class="col-auto"><i class="fas fa-bolt fa-2x text-gray-300"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-success shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Usuarios Activos</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">4 Sesiones</div>
+            <span class="text-xs text-success font-weight-bold">Sesiones abiertas ahora</span>
+          </div>
+          <div class="col-auto"><i class="fas fa-users fa-2x text-gray-300"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Filter Bar -->
+<div class="card shadow mb-4">
+  <div class="card-body py-3">
+    <div class="row align-items-center">
+      <div class="col-auto">
+        <span class="small font-weight-bold text-gray-700 mr-2">Filtrar por:</span>
+      </div>
+      <!-- Action type pills -->
+      <div class="col">
+        <div class="d-flex flex-wrap gap-1" style="gap:.35rem;">
+          <button class="btn btn-sm btn-outline-secondary filter-pill active" data-filter="all">Todos</button>
+          <button class="btn btn-sm btn-outline-primary filter-pill"   data-filter="SP"><i class="fas fa-cog mr-1"></i>Stored Proc.</button>
+          <button class="btn btn-sm btn-outline-warning filter-pill"   data-filter="TRIGGER"><i class="fas fa-bolt mr-1"></i>Trigger</button>
+          <button class="btn btn-sm btn-outline-success filter-pill"   data-filter="INSERT"><i class="fas fa-plus-circle mr-1"></i>INSERT</button>
+          <button class="btn btn-sm btn-outline-info filter-pill"      data-filter="UPDATE"><i class="fas fa-pen mr-1"></i>UPDATE</button>
+          <button class="btn btn-sm btn-outline-danger filter-pill"    data-filter="DELETE"><i class="fas fa-trash mr-1"></i>DELETE</button>
+          <button class="btn btn-sm btn-outline-dark filter-pill"      data-filter="LOGIN"><i class="fas fa-sign-in-alt mr-1"></i>Login/Logout</button>
+          <button class="btn btn-sm btn-outline-danger filter-pill"    data-filter="ERROR"><i class="fas fa-exclamation-circle mr-1"></i>Error</button>
+        </div>
+      </div>
+      <!-- Date range -->
+      <div class="col-auto">
+        <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+          </div>
+          <input type="date" class="form-control" id="filterDateFrom" value="2026-11-18">
+          <div class="input-group-prepend input-group-append">
+            <span class="input-group-text">→</span>
+          </div>
+          <input type="date" class="form-control" id="filterDateTo" value="2026-11-18">
+          <div class="input-group-append">
+            <button class="btn btn-primary btn-sm" id="btnApplyDate">
+              <i class="fas fa-filter"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- User filter -->
+      <div class="col-auto">
+        <select class="form-control form-control-sm" id="filterUser" style="min-width:140px;">
+          <option value="">— Todos los usuarios —</option>
+          <option value="vladimuji">vladimuji (Admin)</option>
+          <option value="staff_cbba">staff_cbba</option>
+          <option value="staff_lpz">staff_lpz</option>
+          <option value="sys_trigger">sys_trigger</option>
+        </select>
+      </div>
     </div>
   </div>
 </div>
+
+<!-- Main content: Table + Timeline side by side -->
+<div class="row">
+
+  <!-- DataTable Log -->
+  <div class="col-xl-8 mb-4">
+    <div class="card shadow">
+      <div class="card-header py-3 bg-white d-flex align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">
+          <i class="fas fa-list-alt mr-1"></i> Registro Detallado de Eventos
+        </h6>
+        <span class="badge badge-light border text-muted small" id="recordCount">Mostrando 20 de 1,248 registros</span>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-sm table-bordered table-hover mb-0" id="auditTable" width="100%" cellspacing="0">
+            <thead class="thead-light">
+              <tr>
+                <th style="width:50px;" class="text-center">#</th>
+                <th style="width:145px;">Fecha / Hora</th>
+                <th style="width:90px;" class="text-center">Tipo</th>
+                <th>Operación / SP / Trigger</th>
+                <th style="width:110px;">Usuario</th>
+                <th style="width:100px;">Tabla Afectada</th>
+                <th style="width:70px;" class="text-center">Resultado</th>
+                <th style="width:50px;" class="text-center">Detalle</th>
+              </tr>
+            </thead>
+            <tbody>
+
+              <!-- Errors / Alerts -->
+              <tr class="table-danger">
+                <td class="text-center small text-muted">1</td>
+                <td class="small text-nowrap">18/11/2026 10:58:12</td>
+                <td class="text-center"><span class="badge badge-danger log-action-badge">ERROR</span></td>
+                <td class="small font-weight-bold">sp_AsignarVehiculo — FK violation: vehículo ya asignado a otro chofer</td>
+                <td class="small">vladimuji</td>
+                <td class="small"><code>asignaciones</code></td>
+                <td class="text-center"><span class="badge badge-danger">FAIL</span></td>
+                <td class="text-center">
+                  <button class="btn btn-xs btn-outline-danger py-0 px-1" data-toggle="modal" data-target="#modalLogDetail" data-id="1" title="Ver detalle"><i class="fas fa-eye fa-xs"></i></button>
+                </td>
+              </tr>
+              <tr class="table-danger">
+                <td class="text-center small text-muted">2</td>
+                <td class="small text-nowrap">18/11/2026 10:45:03</td>
+                <td class="text-center"><span class="badge badge-dark log-action-badge">LOGIN</span></td>
+                <td class="small font-weight-bold">Intento de login fallido — usuario: "admin" (contraseña incorrecta)</td>
+                <td class="small text-danger">anónimo</td>
+                <td class="small"><code>auth_user</code></td>
+                <td class="text-center"><span class="badge badge-danger">FAIL</span></td>
+                <td class="text-center">
+                  <button class="btn btn-xs btn-outline-danger py-0 px-1" data-toggle="modal" data-target="#modalLogDetail" data-id="2" title="Ver detalle"><i class="fas fa-eye fa-xs"></i></button>
+                </td>
+              </tr>
+              <tr class="table-danger">
+                <td class="text-center small text-muted">3</td>
+                <td class="small text-nowrap">18/11/2026 09:12:47</td>
+                <td class="text-center"><span class="badge badge-warning text-dark log-action-badge">TRIGGER</span></td>
+                <td class="small font-weight-bold">trg_ValidarEstadoServicio — transición de estado no permitida (Entregado → Asignado)</td>
+                <td class="small">staff_cbba</td>
+                <td class="small"><code>servicios</code></td>
+                <td class="text-center"><span class="badge badge-warning text-dark">REJECT</span></td>
+                <td class="text-center">
+                  <button class="btn btn-xs btn-outline-danger py-0 px-1" data-toggle="modal" data-target="#modalLogDetail" data-id="3" title="Ver detalle"><i class="fas fa-eye fa-xs"></i></button>
+                </td>
+              </tr>
+
+              <!-- SP Operations -->
+              <tr>
+                <td class="text-center small text-muted">4</td>
+                <td class="small text-nowrap">18/11/2026 10:52:08</td>
+                <td class="text-center"><span class="badge badge-primary log-action-badge">SP</span></td>
+                <td class="small">sp_RegistrarPagoFlete(id_serv=482, id_metodo=2, monto=1850.00, voucher='QR20261118-882')</td>
+                <td class="small">vladimuji</td>
+                <td class="small"><code>pagos</code></td>
+                <td class="text-center"><span class="badge badge-success">OK</span></td>
+                <td class="text-center">
+                  <button class="btn btn-xs btn-outline-info py-0 px-1" data-toggle="modal" data-target="#modalLogDetail" data-id="4" title="Ver detalle"><i class="fas fa-eye fa-xs"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-center small text-muted">5</td>
+                <td class="small text-nowrap">18/11/2026 10:48:33</td>
+                <td class="text-center"><span class="badge badge-primary log-action-badge">SP</span></td>
+                <td class="small">sp_CambiarEstadoServicio(id=482, nuevo_estado='En Tránsito', obs='Salida terminal SCZ')</td>
+                <td class="small">vladimuji</td>
+                <td class="small"><code>servicios</code></td>
+                <td class="text-center"><span class="badge badge-success">OK</span></td>
+                <td class="text-center">
+                  <button class="btn btn-xs btn-outline-info py-0 px-1" data-toggle="modal" data-target="#modalLogDetail" data-id="5" title="Ver detalle"><i class="fas fa-eye fa-xs"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-center small text-muted">6</td>
+                <td class="small text-nowrap">18/11/2026 10:30:11</td>
+                <td class="text-center"><span class="badge badge-primary log-action-badge">SP</span></td>
+                <td class="small">sp_NuevoServicioCarga(cliente=301, origen='SCZ', destino='LPZ', kg=2400, tipo='MUDANZA')</td>
+                <td class="small">staff_lpz</td>
+                <td class="small"><code>servicios</code></td>
+                <td class="text-center"><span class="badge badge-success">OK</span></td>
+                <td class="text-center">
+                  <button class="btn btn-xs btn-outline-info py-0 px-1" data-toggle="modal" data-target="#modalLogDetail" data-id="6" title="Ver detalle"><i class="fas fa-eye fa-xs"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-center small text-muted">7</td>
+                <td class="small text-nowrap">18/11/2026 10:15:44</td>
+                <td class="text-center"><span class="badge badge-primary log-action-badge">SP</span></td>
+                <td class="small">sp_AsignarVehiculo(id_serv=481, id_chofer=14, id_vehiculo=7)</td>
+                <td class="small">vladimuji</td>
+                <td class="small"><code>asignaciones</code></td>
+                <td class="text-center"><span class="badge badge-success">OK</span></td>
+                <td class="text-center">
+                  <button class="btn btn-xs btn-outline-info py-0 px-1" data-toggle="modal" data-target="#modalLogDetail" data-id="7" title="Ver detalle"><i class="fas fa-eye fa-xs"></i></button>
+                </td>
+              </tr>
+
+              <!-- Triggers -->
+              <tr>
+                <td class="text-center small text-muted">8</td>
+                <td class="small text-nowrap">18/11/2026 10:30:12</td>
+                <td class="text-center"><span class="badge badge-warning text-dark log-action-badge">TRIGGER</span></td>
+                <td class="small">trg_AuditarNuevoServicio — AFTER INSERT on servicios (id_new=483)</td>
+                <td class="small text-muted">sys_trigger</td>
+                <td class="small"><code>audit_log</code></td>
+                <td class="text-center"><span class="badge badge-success">OK</span></td>
+                <td class="text-center">
+                  <button class="btn btn-xs btn-outline-info py-0 px-1" data-toggle="modal" data-target="#modalLogDetail" data-id="8" title="Ver detalle"><i class="fas fa-eye fa-xs"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-center small text-muted">9</td>
+                <td class="small text-nowrap">18/11/2026 10:15:45</td>
+                <td class="text-center"><span class="badge badge-warning text-dark log-action-badge">TRIGGER</span></td>
+                <td class="small">trg_ValidarChoferDisponible — BEFORE INSERT on asignaciones (chofer_id=14)</td>
+                <td class="small text-muted">sys_trigger</td>
+                <td class="small"><code>choferes</code></td>
+                <td class="text-center"><span class="badge badge-success">OK</span></td>
+                <td class="text-center">
+                  <button class="btn btn-xs btn-outline-info py-0 px-1" data-toggle="modal" data-target="#modalLogDetail" data-id="9" title="Ver detalle"><i class="fas fa-eye fa-xs"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-center small text-muted">10</td>
+                <td class="small text-nowrap">18/11/2026 09:55:22</td>
+                <td class="text-center"><span class="badge badge-warning text-dark log-action-badge">TRIGGER</span></td>
+                <td class="small">trg_RecalcularCostoRuta — AFTER UPDATE on rutas (edge_id=12, locked_road: 0→1)</td>
+                <td class="small text-muted">sys_trigger</td>
+                <td class="small"><code>rutas</code></td>
+                <td class="text-center"><span class="badge badge-success">OK</span></td>
+                <td class="text-center">
+                  <button class="btn btn-xs btn-outline-info py-0 px-1" data-toggle="modal" data-target="#modalLogDetail" data-id="10" title="Ver detalle"><i class="fas fa-eye fa-xs"></i></button>
+                </td>
+              </tr>
+
+              <!-- DML -->
+              <tr>
+                <td class="text-center small text-muted">11</td>
+                <td class="small text-nowrap">18/11/2026 09:42:17</td>
+                <td class="text-center"><span class="badge badge-success log-action-badge">INSERT</span></td>
+                <td class="small">INSERT nodos — nueva ciudad: "Villa Montes" (zona_id=4, listed=0)</td>
+                <td class="small">vladimuji</td>
+                <td class="small"><code>nodos</code></td>
+                <td class="text-center"><span class="badge badge-success">OK</span></td>
+                <td class="text-center">
+                  <button class="btn btn-xs btn-outline-info py-0 px-1" data-toggle="modal" data-target="#modalLogDetail" data-id="11" title="Ver detalle"><i class="fas fa-eye fa-xs"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-center small text-muted">12</td>
+                <td class="small text-nowrap">18/11/2026 09:38:04</td>
+                <td class="text-center"><span class="badge badge-info log-action-badge">UPDATE</span></td>
+                <td class="small">UPDATE rutas SET locked_road=1 WHERE id=12 (Cbba→Oruro)</td>
+                <td class="small">vladimuji</td>
+                <td class="small"><code>rutas</code></td>
+                <td class="text-center"><span class="badge badge-success">OK</span></td>
+                <td class="text-center">
+                  <button class="btn btn-xs btn-outline-info py-0 px-1" data-toggle="modal" data-target="#modalLogDetail" data-id="12" title="Ver detalle"><i class="fas fa-eye fa-xs"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-center small text-muted">13</td>
+                <td class="small text-nowrap">18/11/2026 09:20:50</td>
+                <td class="text-center"><span class="badge badge-info log-action-badge">UPDATE</span></td>
+                <td class="small">UPDATE clientes SET telefono='78291023' WHERE id=301 (Carlos Vidal)</td>
+                <td class="small">staff_cbba</td>
+                <td class="small"><code>clientes</code></td>
+                <td class="text-center"><span class="badge badge-success">OK</span></td>
+                <td class="text-center">
+                  <button class="btn btn-xs btn-outline-info py-0 px-1" data-toggle="modal" data-target="#modalLogDetail" data-id="13" title="Ver detalle"><i class="fas fa-eye fa-xs"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-center small text-muted">14</td>
+                <td class="small text-nowrap">18/11/2026 08:58:33</td>
+                <td class="text-center"><span class="badge badge-danger log-action-badge">DELETE</span></td>
+                <td class="small">DELETE métodos_pago WHERE id=6 (método "Western Union" — descontinuado)</td>
+                <td class="small">vladimuji</td>
+                <td class="small"><code>metodos_pago</code></td>
+                <td class="text-center"><span class="badge badge-success">OK</span></td>
+                <td class="text-center">
+                  <button class="btn btn-xs btn-outline-info py-0 px-1" data-toggle="modal" data-target="#modalLogDetail" data-id="14" title="Ver detalle"><i class="fas fa-eye fa-xs"></i></button>
+                </td>
+              </tr>
+
+              <!-- Login events -->
+              <tr>
+                <td class="text-center small text-muted">15</td>
+                <td class="small text-nowrap">18/11/2026 08:03:11</td>
+                <td class="text-center"><span class="badge badge-dark log-action-badge">LOGIN</span></td>
+                <td class="small">Inicio de sesión exitoso — IP: 192.168.1.14 · Navegador: Chrome 130</td>
+                <td class="small">vladimuji</td>
+                <td class="small"><code>auth_user</code></td>
+                <td class="text-center"><span class="badge badge-success">OK</span></td>
+                <td class="text-center">
+                  <button class="btn btn-xs btn-outline-info py-0 px-1" data-toggle="modal" data-target="#modalLogDetail" data-id="15" title="Ver detalle"><i class="fas fa-eye fa-xs"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-center small text-muted">16</td>
+                <td class="small text-nowrap">17/11/2026 18:42:05</td>
+                <td class="text-center"><span class="badge badge-dark log-action-badge">LOGIN</span></td>
+                <td class="small">Cierre de sesión — duración activa: 7h 38min</td>
+                <td class="small">staff_lpz</td>
+                <td class="small"><code>auth_user</code></td>
+                <td class="text-center"><span class="badge badge-success">OK</span></td>
+                <td class="text-center">
+                  <button class="btn btn-xs btn-outline-info py-0 px-1" data-toggle="modal" data-target="#modalLogDetail" data-id="16" title="Ver detalle"><i class="fas fa-eye fa-xs"></i></button>
+                </td>
+              </tr>
+
+              <!-- More SPs -->
+              <tr>
+                <td class="text-center small text-muted">17</td>
+                <td class="small text-nowrap">17/11/2026 17:30:08</td>
+                <td class="text-center"><span class="badge badge-primary log-action-badge">SP</span></td>
+                <td class="small">fn_CostoFlete(origen='SRE', destino='SCZ', peso=3200) → Bs. 2,180.00</td>
+                <td class="small">staff_lpz</td>
+                <td class="small"><code>func. escalar</code></td>
+                <td class="text-center"><span class="badge badge-success">OK</span></td>
+                <td class="text-center">
+                  <button class="btn btn-xs btn-outline-info py-0 px-1" data-toggle="modal" data-target="#modalLogDetail" data-id="17" title="Ver detalle"><i class="fas fa-eye fa-xs"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-center small text-muted">18</td>
+                <td class="small text-nowrap">17/11/2026 15:12:44</td>
+                <td class="text-center"><span class="badge badge-primary log-action-badge">SP</span></td>
+                <td class="small">sp_ReporteMensual(mes=11, anio=2026) — 128 servicios, Bs. 54,820.00</td>
+                <td class="small">vladimuji</td>
+                <td class="small"><code>func. tabla</code></td>
+                <td class="text-center"><span class="badge badge-success">OK</span></td>
+                <td class="text-center">
+                  <button class="btn btn-xs btn-outline-info py-0 px-1" data-toggle="modal" data-target="#modalLogDetail" data-id="18" title="Ver detalle"><i class="fas fa-eye fa-xs"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-center small text-muted">19</td>
+                <td class="small text-nowrap">17/11/2026 11:08:19</td>
+                <td class="text-center"><span class="badge badge-success log-action-badge">INSERT</span></td>
+                <td class="small">INSERT choferes — nuevo: "Pedro Alvarado" CI=8291044, lic=PROF-B, ciudad=CBB</td>
+                <td class="small">vladimuji</td>
+                <td class="small"><code>choferes</code></td>
+                <td class="text-center"><span class="badge badge-success">OK</span></td>
+                <td class="text-center">
+                  <button class="btn btn-xs btn-outline-info py-0 px-1" data-toggle="modal" data-target="#modalLogDetail" data-id="19" title="Ver detalle"><i class="fas fa-eye fa-xs"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-center small text-muted">20</td>
+                <td class="small text-nowrap">17/11/2026 08:14:52</td>
+                <td class="text-center"><span class="badge badge-warning text-dark log-action-badge">TRIGGER</span></td>
+                <td class="small">trg_AuditarCambioEstado — AFTER UPDATE servicios.estado (480: Asignado→En Carga)</td>
+                <td class="small text-muted">sys_trigger</td>
+                <td class="small"><code>audit_log</code></td>
+                <td class="text-center"><span class="badge badge-success">OK</span></td>
+                <td class="text-center">
+                  <button class="btn btn-xs btn-outline-info py-0 px-1" data-toggle="modal" data-target="#modalLogDetail" data-id="20" title="Ver detalle"><i class="fas fa-eye fa-xs"></i></button>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Activity Timeline + Stats -->
+  <div class="col-xl-4 mb-4">
+
+    <!-- Activity Timeline -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3 bg-white d-flex align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary">
+          <i class="fas fa-history mr-1"></i> Actividad Reciente (Timeline)
+        </h6>
+      </div>
+      <div class="card-body">
+
+        <div class="timeline-item">
+          <div class="timeline-dot bg-danger"></div>
+          <div class="d-flex justify-content-between">
+            <strong class="small text-gray-800">Error SP: AsignarVehiculo</strong>
+            <small class="text-muted">10:58</small>
+          </div>
+          <p class="text-muted mb-0" style="font-size:.78rem;">FK violation — vehículo ya asignado · <strong>vladimuji</strong></p>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot bg-primary"></div>
+          <div class="d-flex justify-content-between">
+            <strong class="small text-gray-800">sp_RegistrarPagoFlete</strong>
+            <small class="text-muted">10:52</small>
+          </div>
+          <p class="text-muted mb-0" style="font-size:.78rem;">Pago Bs. 1,850 registrado · QR Simple · <strong>vladimuji</strong></p>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot bg-dark"></div>
+          <div class="d-flex justify-content-between">
+            <strong class="small text-gray-800">Login fallido — IP 192.168.1.99</strong>
+            <small class="text-muted">10:45</small>
+          </div>
+          <p class="text-muted mb-0" style="font-size:.78rem;">Usuario "admin" — 3 intentos · anónimo</p>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot bg-primary"></div>
+          <div class="d-flex justify-content-between">
+            <strong class="small text-gray-800">sp_CambiarEstadoServicio</strong>
+            <small class="text-muted">10:48</small>
+          </div>
+          <p class="text-muted mb-0" style="font-size:.78rem;">Serv #482 → En Tránsito · <strong>vladimuji</strong></p>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot bg-primary"></div>
+          <div class="d-flex justify-content-between">
+            <strong class="small text-gray-800">sp_NuevoServicioCarga</strong>
+            <small class="text-muted">10:30</small>
+          </div>
+          <p class="text-muted mb-0" style="font-size:.78rem;">Serv #483 creado SCZ→LPZ · 2400 kg · <strong>staff_lpz</strong></p>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot bg-warning"></div>
+          <div class="d-flex justify-content-between">
+            <strong class="small text-gray-800">Trigger: trg_AuditarNuevoServicio</strong>
+            <small class="text-muted">10:30</small>
+          </div>
+          <p class="text-muted mb-0" style="font-size:.78rem;">AFTER INSERT → audit_log · sys_trigger</p>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot bg-info"></div>
+          <div class="d-flex justify-content-between">
+            <strong class="small text-gray-800">UPDATE rutas locked_road=1</strong>
+            <small class="text-muted">09:38</small>
+          </div>
+          <p class="text-muted mb-0" style="font-size:.78rem;">Ruta 12 Cbba→Oruro bloqueada · <strong>vladimuji</strong></p>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot bg-success"></div>
+          <div class="d-flex justify-content-between">
+            <strong class="small text-gray-800">INSERT nodos: Villa Montes</strong>
+            <small class="text-muted">09:42</small>
+          </div>
+          <p class="text-muted mb-0" style="font-size:.78rem;">Nuevo nodo zona_id=4, listed=0 · <strong>vladimuji</strong></p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Event type distribution -->
+    <div class="card shadow">
+      <div class="card-header py-3 bg-white">
+        <h6 class="m-0 font-weight-bold text-primary">
+          <i class="fas fa-chart-pie mr-1"></i> Distribución de Eventos (Hoy)
+        </h6>
+      </div>
+      <div class="card-body">
+        <div style="position:relative; height:180px;">
+          <canvas id="auditPieChart"></canvas>
+        </div>
+        <div class="mt-3">
+          <div class="d-flex justify-content-between small mb-1">
+            <span><i class="fas fa-circle text-primary mr-1"></i> Stored Procedures</span>
+            <strong>482 (38.6%)</strong>
+          </div>
+          <div class="d-flex justify-content-between small mb-1">
+            <span><i class="fas fa-circle text-warning mr-1"></i> Triggers</span>
+            <strong>382 (30.6%)</strong>
+          </div>
+          <div class="d-flex justify-content-between small mb-1">
+            <span><i class="fas fa-circle text-success mr-1"></i> INSERT/UPDATE/DELETE</span>
+            <strong>278 (22.3%)</strong>
+          </div>
+          <div class="d-flex justify-content-between small mb-1">
+            <span><i class="fas fa-circle text-dark mr-1"></i> Login / Logout</span>
+            <strong>103 (8.3%)</strong>
+          </div>
+          <div class="d-flex justify-content-between small">
+            <span><i class="fas fa-circle text-danger mr-1"></i> Errores</span>
+            <strong>3 (0.2%)</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL: Event Detail
+     ══════════════════════════════════════════ -->
+<div class="modal fade" id="modalLogDetail" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title font-weight-bold">
+          <i class="fas fa-terminal mr-2"></i> Detalle de Evento de Auditoría
+        </h5>
+        <button type="button" class="close text-white" data-dismiss="modal"><span>&times;</span></button>
+      </div>
+      <div class="modal-body p-4">
+
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label class="text-xs font-weight-bold text-uppercase text-gray-500 d-block">ID Evento</label>
+            <span class="font-weight-bold text-gray-800">#AUD-20261118-004</span>
+          </div>
+          <div class="col-md-4">
+            <label class="text-xs font-weight-bold text-uppercase text-gray-500 d-block">Fecha / Hora</label>
+            <span class="font-weight-bold">18/11/2026 10:52:08.413</span>
+          </div>
+          <div class="col-md-4">
+            <label class="text-xs font-weight-bold text-uppercase text-gray-500 d-block">Resultado</label>
+            <span class="badge badge-success px-2 py-1">ÉXITO</span>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-3">
+            <label class="text-xs font-weight-bold text-uppercase text-gray-500 d-block">Tipo</label>
+            <span class="badge badge-primary log-action-badge px-2 py-1">STORED PROCEDURE</span>
+          </div>
+          <div class="col-md-3">
+            <label class="text-xs font-weight-bold text-uppercase text-gray-500 d-block">Usuario</label>
+            <span class="font-weight-bold">vladimuji</span>
+          </div>
+          <div class="col-md-3">
+            <label class="text-xs font-weight-bold text-uppercase text-gray-500 d-block">IP Origen</label>
+            <span class="font-weight-bold">192.168.1.14</span>
+          </div>
+          <div class="col-md-3">
+            <label class="text-xs font-weight-bold text-uppercase text-gray-500 d-block">Tabla Afectada</label>
+            <code>pagos</code>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="text-xs font-weight-bold text-uppercase text-gray-500 d-block">SP / Sentencia ejecutada</label>
+          <pre class="bg-dark text-success p-3 rounded small mb-0" style="font-size:.8rem; overflow-x:auto;">EXEC sp_RegistrarPagoFlete
+    @id_servicio  = 482,
+    @id_metodo    = 2,     -- QR Simple
+    @monto        = 1850.00,
+    @nro_voucher  = 'QR20261118-882',
+    @observaciones = 'Pago completo en origen SCZ'</pre>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <label class="text-xs font-weight-bold text-uppercase text-gray-500 d-block">Datos ANTES (OLD)</label>
+            <pre class="bg-light border p-2 rounded small mb-0" style="font-size:.78rem;">{
+  "pagos": [] -- (ningún pago previo
+               --  para servicio 482)
+}</pre>
+          </div>
+          <div class="col-md-6">
+            <label class="text-xs font-weight-bold text-uppercase text-gray-500 d-block">Datos DESPUÉS (NEW)</label>
+            <pre class="bg-light border p-2 rounded small mb-0" style="font-size:.78rem;">{
+  "id_pago":    829,
+  "id_serv":    482,
+  "monto":      1850.00,
+  "id_metodo":  2,
+  "voucher":    "QR20261118-882",
+  "fecha":      "2026-11-18"
+}</pre>
+          </div>
+        </div>
+
+        <div class="mt-3">
+          <label class="text-xs font-weight-bold text-uppercase text-gray-500 d-block">Triggers disparados en cadena</label>
+          <div class="d-flex flex-wrap" style="gap:.4rem;">
+            <span class="badge badge-warning text-dark py-1 px-2">trg_AuditarNuevoPago</span>
+            <span class="badge badge-warning text-dark py-1 px-2">trg_ActualizarSaldoPendiente</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">
+          <i class="fas fa-times mr-1"></i> Cerrar
+        </button>
+        <button type="button" class="btn btn-dark btn-sm">
+          <i class="fas fa-file-code mr-1"></i> Exportar JSON
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL: Export Audit
+     ══════════════════════════════════════════ -->
+<div class="modal fade" id="modalExportAudit" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header bg-secondary text-white">
+        <h5 class="modal-title font-weight-bold">
+          <i class="fas fa-file-export mr-2"></i> Exportar Log de Auditoría
+        </h5>
+        <button type="button" class="close text-white" data-dismiss="modal"><span>&times;</span></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label class="small font-weight-bold text-gray-700">Desde</label>
+            <input type="date" class="form-control" value="2026-11-01">
+          </div>
+          <div class="form-group col-md-6">
+            <label class="small font-weight-bold text-gray-700">Hasta</label>
+            <input type="date" class="form-control" value="2026-11-18">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="small font-weight-bold text-gray-700">Formato de exportación</label>
+          <select class="form-control">
+            <option>Excel (.xlsx)</option>
+            <option>CSV (.csv)</option>
+            <option>JSON (.json)</option>
+            <option>PDF — Informe de Auditoría</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="small font-weight-bold text-gray-700">Filtrar por tipo de evento</label>
+          <div class="row">
+            <div class="col-6">
+              <div class="custom-control custom-checkbox mb-1"><input type="checkbox" class="custom-control-input" id="expSP" checked><label class="custom-control-label small" for="expSP">Stored Procedures</label></div>
+              <div class="custom-control custom-checkbox mb-1"><input type="checkbox" class="custom-control-input" id="expTRG" checked><label class="custom-control-label small" for="expTRG">Triggers</label></div>
+              <div class="custom-control custom-checkbox mb-1"><input type="checkbox" class="custom-control-input" id="expDML" checked><label class="custom-control-label small" for="expDML">INSERT / UPDATE / DELETE</label></div>
+            </div>
+            <div class="col-6">
+              <div class="custom-control custom-checkbox mb-1"><input type="checkbox" class="custom-control-input" id="expLOG" checked><label class="custom-control-label small" for="expLOG">Login / Logout</label></div>
+              <div class="custom-control custom-checkbox mb-1"><input type="checkbox" class="custom-control-input" id="expERR" checked><label class="custom-control-label small" for="expERR">Errores</label></div>
+            </div>
+          </div>
+        </div>
+        <p class="text-muted small mb-0"><i class="fas fa-info-circle mr-1"></i> El reporte será generado por <code>fn_ExportarAuditLog</code> y descargado automáticamente.</p>
+      </div>
+      <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary"><i class="fas fa-download mr-1"></i> Descargar Reporte</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'logistics/admin/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'logistics/admin/vendor/chart.js/Chart.min.js' %}"></script>
+<script>
+$(document).ready(function() {
+
+  // ── DataTable ──
+  var dt = $('#auditTable').DataTable({
+    "pageLength": 20,
+    "order": [[ 1, "desc" ]],
+    "language": {
+      "search":        "Buscar:",
+      "lengthMenu":    "Mostrar _MENU_ registros",
+      "zeroRecords":   "No se encontraron eventos",
+      "info":          "Mostrando _START_ a _END_ de _TOTAL_ eventos",
+      "infoFiltered":  "(filtrado de _MAX_ totales)",
+      "paginate": { "first":"Primero", "last":"Último", "next":"Siguiente", "previous":"Anterior" }
+    },
+    "columnDefs": [{ "orderable": false, "targets": [7] }]
+  });
+
+  // ── Filter pills ──
+  $('.filter-pill').on('click', function() {
+    $('.filter-pill').removeClass('active');
+    $(this).addClass('active');
+    var filter = $(this).data('filter');
+    if (filter === 'all') {
+      dt.search('').draw();
+    } else {
+      dt.search(filter).draw();
+    }
+  });
+
+  // ── Refresh button spin ──
+  $('#btnRefresh').on('click', function() {
+    var $icon = $(this).find('i');
+    $icon.addClass('fa-spin');
+    setTimeout(function() { $icon.removeClass('fa-spin'); }, 1200);
+  });
+
+  // ── Pie Chart ──
+  var ctx = document.getElementById('auditPieChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Stored Proc.', 'Triggers', 'DML (I/U/D)', 'Login/Logout', 'Errores'],
+      datasets:[{
+        data: [482, 382, 278, 103, 3],
+        backgroundColor: ['#4e73df','#f6c23e','#1cc88a','#343a40','#e74a3b'],
+        borderWidth: 2,
+        borderColor: '#fff'
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      legend: { display: false },
+      cutoutPercentage: 70,
+      tooltips: {
+        callbacks: {
+          label: function(item, data) {
+            var total = data.datasets[0].data.reduce(function(a,b){return a+b;},0);
+            var val = data.datasets[0].data[item.index];
+            return ' ' + data.labels[item.index] + ': ' + val + ' (' + Math.round(val/total*100) + '%)';
+          }
+        }
+      }
+    }
+  });
+
+});
+</script>
 {% endblock %}

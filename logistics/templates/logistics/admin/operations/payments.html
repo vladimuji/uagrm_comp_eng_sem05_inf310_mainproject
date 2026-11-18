@@ -1,17 +1,410 @@
 {% extends "logistics/admin/base_admin.html" %}
+{% load static %}
 
-{% block title %}Pagos{% endblock %}
+{% block title %}Pagos y Recibos{% endblock %}
+
+{% block extra_head %}
+<link href="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
-<div id="payments-app">
-  <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Pagos</h1>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h1 class="h3 mb-1 text-gray-800 font-weight-bold">Registro de Pagos y Recibos</h1>
+    <p class="text-muted small mb-0">Gestión de cobranzas por fletes, liquidaciones en efectivo y transferencias QR</p>
+  </div>
+  <div>
+    <button type="button" class="btn btn-success btn-icon-split shadow-sm" data-toggle="modal" data-target="#modalNewPayment">
+      <span class="icon text-white-50">
+        <i class="fas fa-cash-register"></i>
+      </span>
+      <span class="text">Registrar Pago</span>
+    </button>
+  </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="row">
+
+  <!-- Total Recaudado -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-success shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Recaudación (Mes)</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">Bs. 54,820</div>
+            <span class="text-xs text-success font-weight-bold"><i class="fas fa-arrow-up"></i> +9% vs mes previo</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-hand-holding-usd fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="card shadow mb-4">
-    <div class="card-body">
-      <p class="text-muted mb-0">Contenido en blanco para Pagos.</p>
+  <!-- Pagos por QR -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-primary shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Cobros vía QR / Banco</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">Bs. 32,400</div>
+            <span class="text-xs text-muted">59% del total recaudado</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-qrcode fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagos en Efectivo -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-info shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Cobros en Efectivo</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">Bs. 22,420</div>
+            <span class="text-xs text-muted">Contra entrega al chofer</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-money-bill-wave fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Saldos Pendientes -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-warning shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Saldos Pendientes</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">Bs. 4,350</div>
+            <span class="text-xs text-danger font-weight-bold"><i class="fas fa-clock mr-1"></i>6 fletes por liquidar</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-file-invoice fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- DataTables Card -->
+<div class="card shadow mb-4">
+  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+    <h6 class="m-0 font-weight-bold text-primary">
+      <i class="fas fa-receipt mr-1"></i> Historial de Recibos de Pago Emitidos
+    </h6>
+    <div class="dropdown no-arrow">
+      <a class="dropdown-toggle" href="#" role="button" id="dropdownPaymentsMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+      </a>
+      <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownPaymentsMenu">
+        <div class="dropdown-header">Exportar libro de ingresos:</div>
+        <a class="dropdown-item" href="#"><i class="fas fa-file-excel fa-sm mr-2 text-success"></i>Descargar Excel</a>
+        <a class="dropdown-item" href="#"><i class="fas fa-print fa-sm mr-2 text-primary"></i>Imprimir Arqueo Diario</a>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover" id="dataTablePayments" width="100%" cellspacing="0">
+        <thead class="thead-light">
+          <tr>
+            <th>Recibo #</th>
+            <th>Fecha / Hora</th>
+            <th>Servicio Ref.</th>
+            <th>Cliente</th>
+            <th>Método de Pago</th>
+            <th>Monto Pagado</th>
+            <th>Liquidación</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-weight-bold text-primary">#REC-2024-001</td>
+            <td>20/11/2026 <small class="text-muted d-block">09:15 AM</small></td>
+            <td>
+              <strong class="text-gray-800">#1024</strong>
+              <small class="text-muted d-block">Mudanza dpto. Equipetrol</small>
+            </td>
+            <td>Roberto Suárez Aguilera</td>
+            <td>
+              <span class="badge badge-success px-2 py-1"><i class="fas fa-money-bill-wave mr-1"></i>Efectivo</span>
+            </td>
+            <td class="font-weight-bold text-success h6 mb-0">Bs. 350.00</td>
+            <td><span class="badge badge-success px-2 py-1">Cancelado 100%</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Recibo Digital" data-toggle="modal" data-target="#modalReceiptDetail">
+                <i class="fas fa-receipt"></i>
+              </button>
+              <button class="btn btn-secondary btn-circle btn-sm mr-1" title="Imprimir Comprobante">
+                <i class="fas fa-print"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold text-primary">#REC-2024-002</td>
+            <td>20/11/2026 <small class="text-muted d-block">11:40 AM</small></td>
+            <td>
+              <strong class="text-gray-800">#1023</strong>
+              <small class="text-muted d-block">40 Cajas Insumos Industriales</small>
+            </td>
+            <td>Distribuidora Oriental S.R.L.</td>
+            <td>
+              <span class="badge badge-primary px-2 py-1"><i class="fas fa-qrcode mr-1"></i>QR Simple</span>
+            </td>
+            <td class="font-weight-bold text-success h6 mb-0">Bs. 520.00</td>
+            <td><span class="badge badge-success px-2 py-1">Cancelado 100%</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Recibo Digital" data-toggle="modal" data-target="#modalReceiptDetail">
+                <i class="fas fa-receipt"></i>
+              </button>
+              <button class="btn btn-secondary btn-circle btn-sm mr-1" title="Imprimir Comprobante">
+                <i class="fas fa-print"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold text-primary">#REC-2024-003</td>
+            <td>19/11/2026 <small class="text-muted d-block">04:10 PM</small></td>
+            <td>
+              <strong class="text-gray-800">#1022</strong>
+              <small class="text-muted d-block">Muebles Rústicos a Montero</small>
+            </td>
+            <td>María René Peña</td>
+            <td>
+              <span class="badge badge-primary px-2 py-1"><i class="fas fa-qrcode mr-1"></i>QR Banco</span>
+            </td>
+            <td class="font-weight-bold text-primary h6 mb-0">Bs. 400.00</td>
+            <td><span class="badge badge-warning text-white px-2 py-1">Anticipo 50%</span> <small class="text-danger d-block font-weight-bold">Resta Bs. 400</small></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Recibo Digital">
+                <i class="fas fa-receipt"></i>
+              </button>
+              <button class="btn btn-secondary btn-circle btn-sm mr-1" title="Imprimir Comprobante">
+                <i class="fas fa-print"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold text-primary">#REC-2024-004</td>
+            <td>19/11/2026 <small class="text-muted d-block">03:30 PM</small></td>
+            <td>
+              <strong class="text-gray-800">#1020</strong>
+              <small class="text-muted d-block">Tubos PVC y barras de fierro</small>
+            </td>
+            <td>Ferretería Central</td>
+            <td>
+              <span class="badge badge-success px-2 py-1"><i class="fas fa-money-bill-wave mr-1"></i>Efectivo</span>
+            </td>
+            <td class="font-weight-bold text-success h6 mb-0">Bs. 280.00</td>
+            <td><span class="badge badge-success px-2 py-1">Cancelado 100%</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Recibo Digital">
+                <i class="fas fa-receipt"></i>
+              </button>
+              <button class="btn btn-secondary btn-circle btn-sm mr-1" title="Imprimir Comprobante">
+                <i class="fas fa-print"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold text-primary">#REC-2024-005</td>
+            <td>18/11/2026 <small class="text-muted d-block">05:20 PM</small></td>
+            <td>
+              <strong class="text-gray-800">#1019</strong>
+              <small class="text-muted d-block">Carga Pesada a Warnes</small>
+            </td>
+            <td>Constructora del Este</td>
+            <td>
+              <span class="badge badge-info px-2 py-1"><i class="fas fa-university mr-1"></i>Transferencia</span>
+            </td>
+            <td class="font-weight-bold text-success h6 mb-0">Bs. 950.00</td>
+            <td><span class="badge badge-success px-2 py-1">Cancelado 100%</span></td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Recibo Digital">
+                <i class="fas fa-receipt"></i>
+              </button>
+              <button class="btn btn-secondary btn-circle btn-sm mr-1" title="Imprimir Comprobante">
+                <i class="fas fa-print"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
+
+<!-- Modal: Registrar Pago -->
+<div class="modal fade" id="modalNewPayment" tabindex="-1" role="dialog" aria-labelledby="modalNewPaymentLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="modalNewPaymentLabel"><i class="fas fa-cash-register mr-2"></i>Registrar Cobro / Recibo de Pago</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-8 form-group">
+              <label class="font-weight-bold small text-gray-700">Servicio de Flete Asociado <span class="text-danger">*</span></label>
+              <select class="form-control" required>
+                <option value="">-- Seleccionar Servicio con Saldo Pendiente --</option>
+                <option value="1022">#1022 - María René Peña (Precio: Bs. 800 | Resta pagar: Bs. 400.00)</option>
+                <option value="1021">#1021 - Constructora del Este (Precio: Bs. 650 | Resta pagar: Bs. 650.00)</option>
+                <option value="1018">#1018 - Comercial Los Pozos (Precio: Bs. 420 | Resta pagar: Bs. 420.00)</option>
+              </select>
+            </div>
+            <div class="col-md-4 form-group">
+              <label class="font-weight-bold small text-gray-700">Método de Pago <span class="text-danger">*</span></label>
+              <select class="form-control" required>
+                <option value="1">Efectivo</option>
+                <option value="2">QR Simple / Transferencia Móvil</option>
+                <option value="3">Transferencia Bancaria</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Monto del Pago (Bs.) <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <div class="input-group-prepend"><span class="input-group-text font-weight-bold">Bs.</span></div>
+                <input type="number" step="10" class="form-control font-weight-bold" placeholder="400.00" required>
+              </div>
+              <small class="text-muted">No puede superar el saldo pendiente del flete.</small>
+            </div>
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Fecha y Hora del Cobro <span class="text-danger">*</span></label>
+              <input type="datetime-local" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="font-weight-bold small text-gray-700">Observación / Nro. de Comprobante Bancario</label>
+            <input type="text" class="form-control" placeholder="Ej. Pago QR Banco Unión #OP-89212 o Entregado a chofer Don Carlos">
+          </div>
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-success" data-dismiss="modal">
+            <i class="fas fa-check-circle mr-1"></i> Guardar y Emitir Recibo
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Recibo Digital -->
+<div class="modal fade" id="modalReceiptDetail" tabindex="-1" role="dialog" aria-labelledby="modalReceiptDetailLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content border-left-success shadow-lg">
+      <div class="modal-header bg-light">
+        <h5 class="modal-title font-weight-bold text-gray-800" id="modalReceiptDetailLabel">
+          <i class="fas fa-receipt text-success mr-2"></i>Recibo de Pago Oficial
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body p-4">
+        <!-- Receipt Header -->
+        <div class="text-center pb-3 border-bottom mb-3">
+          <h5 class="font-weight-bold text-primary mb-1">TRANSPORTES DON FREDDY</h5>
+          <p class="small text-muted mb-0">Fletes Urbanos & Mudanzas Interdepartamentales</p>
+          <p class="small text-muted mb-0">Santa Cruz de la Sierra - Bolivia</p>
+          <div class="badge badge-dark px-3 py-1 mt-2 font-weight-bold">RECIBO N° REC-2024-001</div>
+        </div>
+
+        <!-- Receipt Body -->
+        <table class="table table-borderless table-sm small mb-3">
+          <tr>
+            <td class="font-weight-bold text-muted">Fecha y Hora:</td>
+            <td class="text-right">20/11/2026 - 09:15 AM</td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold text-muted">Cliente:</td>
+            <td class="text-right font-weight-bold">Roberto Suárez Aguilera</td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold text-muted">C.I. / NIT:</td>
+            <td class="text-right">4789214 SC</td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold text-muted">Servicio:</td>
+            <td class="text-right">Flete #1024 (Mudanza dpto. Equipetrol)</td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold text-muted">Método de Pago:</td>
+            <td class="text-right"><span class="badge badge-success">Efectivo</span></td>
+          </tr>
+        </table>
+
+        <!-- Amount Box -->
+        <div class="p-3 bg-light rounded text-center mb-3 border">
+          <div class="small text-muted font-weight-bold text-uppercase">Total Abonado</div>
+          <div class="h3 font-weight-bold text-success mb-0">Bs. 350.00</div>
+          <div class="small text-muted font-italic">(Trescientos Cincuenta 00/100 Bolivianos)</div>
+        </div>
+
+        <div class="text-center small text-muted">
+          <i class="fas fa-check-circle text-success mr-1"></i> Estado del servicio: <strong>Cancelado en su totalidad</strong>
+        </div>
+      </div>
+      <div class="modal-footer bg-light justify-content-between">
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="window.print()">
+          <i class="fas fa-print mr-1"></i> Imprimir Recibo
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- DataTables Scripts -->
+<script src="{% static 'logistics/admin/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<script>
+  $(document).ready(function() {
+    $('#dataTablePayments').DataTable({
+      order: [[0, "desc"]],
+      language: {
+        "sProcessing":     "Procesando...",
+        "sLengthMenu":     "Mostrar _MENU_ recibos",
+        "sZeroRecords":    "No se encontraron recibos de pago",
+        "sEmptyTable":     "No hay recibos de pago registrados",
+        "sInfo":           "Mostrando _START_ a _END_ de _TOTAL_ recibos",
+        "sInfoEmpty":      "Mostrando 0 a 0 de 0 recibos",
+        "sInfoFiltered":   "(filtrado de _MAX_ registros totales)",
+        "sSearch":         "Buscar pago:",
+        "oPaginate": {
+          "sFirst":    "Primero",
+          "sLast":     "Último",
+          "sNext":     "Siguiente",
+          "sPrevious": "Anterior"
+        }
+      }
+    });
+  });
+</script>
 {% endblock %}

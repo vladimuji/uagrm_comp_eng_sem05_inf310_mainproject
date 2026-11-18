@@ -1,17 +1,687 @@
 {% extends "logistics/admin/base_admin.html" %}
+{% load static %}
 
-{% block title %}Mapa de Ruta{% endblock %}
+{% block title %}Mapa de Rutas{% endblock %}
+
+{% block extra_head %}
+<style>
+  #routeCanvas {
+    width: 100%;
+    height: 480px;
+    background: #f0f4f8;
+    border-radius: 0.35rem;
+    cursor: grab;
+  }
+  #routeCanvas:active { cursor: grabbing; }
+  .node-legend { width: 14px; height: 14px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+  .route-step-row td { vertical-align: middle; }
+  .locked-road-banner { background: repeating-linear-gradient(45deg, #fff3cd, #fff3cd 10px, #ffeaa0 10px, #ffeaa0 20px); }
+  .result-card-animated { transition: all .3s ease; }
+  #resultSection { transition: opacity .4s ease; }
+</style>
+{% endblock %}
 
 {% block content %}
-<div id="route-map-app">
-  <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Mapa de Ruta</h1>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h1 class="h3 mb-1 text-gray-800 font-weight-bold">Mapa de Rutas Interdepartamentales</h1>
+    <p class="text-muted small mb-0">Visualización del grafo vial de Bolivia · Calculadora de ruta óptima con costos de flete</p>
   </div>
+  <div class="d-flex align-items-center">
+    <span class="badge badge-pill badge-light border mr-2 px-3 py-2 text-muted small">
+      <i class="fas fa-project-diagram mr-1 text-primary"></i> 120 Nodos · 46 Aristas
+    </span>
+    <a href="{% url 'routes' %}" class="btn btn-sm btn-outline-primary shadow-sm">
+      <i class="fas fa-table mr-1"></i> Ver Tabla de Rutas
+    </a>
+  </div>
+</div>
 
-  <div class="card shadow mb-4">
-    <div class="card-body">
-      <p class="text-muted mb-0">Contenido en blanco para Mapa de Ruta.</p>
+<!-- Route Calculator Card -->
+<div class="card shadow mb-4 border-left-primary">
+  <div class="card-header py-3 bg-white d-flex align-items-center">
+    <i class="fas fa-calculator fa-fw text-primary mr-2"></i>
+    <h6 class="m-0 font-weight-bold text-primary">Calculadora de Ruta Óptima</h6>
+    <span class="ml-auto badge badge-light border text-muted small">Dijkstra · Menor Costo</span>
+  </div>
+  <div class="card-body">
+    <div class="row align-items-end">
+      <div class="col-md-4 mb-3">
+        <label class="small font-weight-bold text-gray-700 mb-1">
+          <i class="fas fa-map-pin text-success mr-1"></i> Nodo Origen
+        </label>
+        <select class="form-control" id="selectOrigen">
+          <option value="">— Seleccionar ciudad origen —</option>
+          <option value="SCZ" data-x="380" data-y="230">Santa Cruz de la Sierra</option>
+          <option value="LPZ" data-x="130" data-y="140">La Paz</option>
+          <option value="CBB" data-x="210" data-y="210">Cochabamba</option>
+          <option value="ORU" data-x="145" data-y="240">Oruro</option>
+          <option value="PTI" data-x="170" data-y="310">Potosí</option>
+          <option value="SRE" data-x="230" data-y="300">Sucre</option>
+          <option value="TJA" data-x="210" data-y="380">Tarija</option>
+          <option value="TRI" data-x="390" data-y="140">Trinidad</option>
+          <option value="COB" data-x="100" data-y="110">Cobija</option>
+          <option value="GUA" data-x="430" data-y="310">Yacuiba</option>
+          <option value="MON" data-x="290" data-y="150">Montero</option>
+          <option value="WAR" data-x="310" data-y="260">Warnes</option>
+          <option value="COT" data-x="250" data-y="170">Cotagaita</option>
+          <option value="VGR" data-x="350" data-y="175">Vallegrande</option>
+          <option value="PAD" data-x="295" data-y="315">Padilla</option>
+        </select>
+      </div>
+      <div class="col-md-auto mb-3 text-center">
+        <button class="btn btn-light border rounded-circle" id="btnSwap" title="Intercambiar origen/destino" style="width:42px;height:42px;">
+          <i class="fas fa-exchange-alt text-primary"></i>
+        </button>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label class="small font-weight-bold text-gray-700 mb-1">
+          <i class="fas fa-flag-checkered text-danger mr-1"></i> Nodo Destino
+        </label>
+        <select class="form-control" id="selectDestino">
+          <option value="">— Seleccionar ciudad destino —</option>
+          <option value="SCZ" data-x="380" data-y="230">Santa Cruz de la Sierra</option>
+          <option value="LPZ" data-x="130" data-y="140">La Paz</option>
+          <option value="CBB" data-x="210" data-y="210">Cochabamba</option>
+          <option value="ORU" data-x="145" data-y="240">Oruro</option>
+          <option value="PTI" data-x="170" data-y="310">Potosí</option>
+          <option value="SRE" data-x="230" data-y="300">Sucre</option>
+          <option value="TJA" data-x="210" data-y="380">Tarija</option>
+          <option value="TRI" data-x="390" data-y="140">Trinidad</option>
+          <option value="COB" data-x="100" data-y="110">Cobija</option>
+          <option value="GUA" data-x="430" data-y="310">Yacuiba</option>
+          <option value="MON" data-x="290" data-y="150">Montero</option>
+          <option value="WAR" data-x="310" data-y="260">Warnes</option>
+          <option value="COT" data-x="250" data-y="170">Cotagaita</option>
+          <option value="VGR" data-x="350" data-y="175">Vallegrande</option>
+          <option value="PAD" data-x="295" data-y="315">Padilla</option>
+        </select>
+      </div>
+      <div class="col-md mb-3">
+        <div class="form-group mb-0">
+          <label class="small font-weight-bold text-gray-700 mb-1">
+            <i class="fas fa-weight-hanging text-warning mr-1"></i> Peso de Carga (kg)
+          </label>
+          <input type="number" class="form-control" id="inputPeso" placeholder="1000" min="1" max="30000" value="1500">
+        </div>
+      </div>
+      <div class="col-md-auto mb-3">
+        <button class="btn btn-primary btn-icon-split" id="btnCalcular">
+          <span class="icon text-white-50"><i class="fas fa-route"></i></span>
+          <span class="text">Calcular Ruta</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Road Alert Banner (shown when blocked route) -->
+    <div class="alert alert-warning d-none mb-0 py-2" id="alertLockedRoad">
+      <i class="fas fa-exclamation-triangle mr-2"></i>
+      <strong>Alerta Vial:</strong> <span id="alertLockedText">Un tramo en la ruta seleccionada tiene bloqueo activo. Se recomienda ruta alternativa.</span>
+      <button type="button" class="close py-1" data-dismiss="alert"><span>&times;</span></button>
     </div>
   </div>
 </div>
+
+<!-- Result KPI Cards (hidden until calculated) -->
+<div id="resultSection" style="display:none;">
+  <div class="row" id="resultKpis">
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-primary shadow h-100 py-2 result-card-animated">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Distancia Total</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800" id="kpiDistancia">— km</div>
+              <span class="text-xs text-muted font-weight-bold" id="kpiTramos">— tramos</span>
+            </div>
+            <div class="col-auto"><i class="fas fa-road fa-2x text-gray-300"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-warning shadow h-100 py-2 result-card-animated">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Costo Combustible</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800" id="kpiGasCost">Bs. —</div>
+              <span class="text-xs text-muted font-weight-bold" id="kpiLitros">— litros estimados</span>
+            </div>
+            <div class="col-auto"><i class="fas fa-gas-pump fa-2x text-gray-300"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-success shadow h-100 py-2 result-card-animated">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Costo Total al Cliente</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800" id="kpiCashCost">Bs. —</div>
+              <span class="text-xs text-muted font-weight-bold" id="kpiPeajes">Incl. peajes y viáticos</span>
+            </div>
+            <div class="col-auto"><i class="fas fa-money-bill-wave fa-2x text-gray-300"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-info shadow h-100 py-2 result-card-animated">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tiempo Estimado</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800" id="kpiTiempo">— h</div>
+              <span class="text-xs text-muted font-weight-bold" id="kpiVelocidad">Velocidad promedio 65 km/h</span>
+            </div>
+            <div class="col-auto"><i class="fas fa-clock fa-2x text-gray-300"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Map + Breakdown row -->
+<div class="row">
+
+  <!-- Bolivia Route Map Canvas -->
+  <div class="col-xl-8 mb-4">
+    <div class="card shadow h-100">
+      <div class="card-header py-3 bg-white d-flex align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">
+          <i class="fas fa-map mr-1"></i> Red Vial Interdepartamental — Bolivia
+        </h6>
+        <div class="d-flex align-items-center">
+          <span class="node-legend bg-primary"></span><small class="mr-3 text-muted">Nodo Ciudad</small>
+          <span class="node-legend" style="background:#1cc88a;"></span><small class="mr-3 text-muted">Origen</small>
+          <span class="node-legend bg-danger"></span><small class="mr-3 text-muted">Destino</small>
+          <span class="node-legend bg-warning"></span><small class="text-muted">Ruta Seleccionada</small>
+        </div>
+      </div>
+      <div class="card-body p-2">
+        <canvas id="routeCanvas"></canvas>
+      </div>
+      <div class="card-footer small text-muted text-center py-2">
+        <i class="fas fa-info-circle mr-1"></i> Las distancias son aproximadas para fines de demostración. Escala: 1px ≈ 3.5 km
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Cost Breakdown + Waypoints -->
+  <div class="col-xl-4 mb-4">
+
+    <!-- Cost Breakdown Chart -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3 bg-white">
+        <h6 class="m-0 font-weight-bold text-primary">
+          <i class="fas fa-chart-bar mr-1"></i> Desglose de Costos de Flete
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="chart-bar" style="position:relative; height:180px;">
+          <canvas id="costBreakdownChart"></canvas>
+        </div>
+        <div class="mt-2 small text-center text-muted" id="chartHint">
+          <i class="fas fa-route mr-1"></i> Selecciona origen y destino para ver el desglose
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Road Alerts Card -->
+    <div class="card shadow">
+      <div class="card-header py-3 bg-white d-flex align-items-center">
+        <h6 class="m-0 font-weight-bold text-warning">
+          <i class="fas fa-exclamation-triangle mr-1 text-warning"></i> Alertas de Carretera Activas
+        </h6>
+        <span class="badge badge-danger ml-auto">2 Bloqueos</span>
+      </div>
+      <div class="card-body p-0">
+        <div class="list-group list-group-flush">
+          <div class="list-group-item border-left-danger border-left-4 py-2">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <p class="font-weight-bold text-gray-800 mb-0 small">Cochabamba → Oruro (R-1 Altiplánica)</p>
+                <p class="text-muted mb-0" style="font-size:0.75rem;">Bloqueo sindical de transportistas · Desde: 15/11/2026</p>
+              </div>
+              <span class="badge badge-danger ml-2">BLOQUEADO</span>
+            </div>
+          </div>
+          <div class="list-group-item border-left-warning border-left-4 py-2">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <p class="font-weight-bold text-gray-800 mb-0 small">Sucre → Potosí (Ruta 1 Sud)</p>
+                <p class="text-muted mb-0" style="font-size:0.75rem;">Derrumbe parcial en km 94 · Paso restringido</p>
+              </div>
+              <span class="badge badge-warning text-dark ml-2">RESTRICCIÓN</span>
+            </div>
+          </div>
+          <div class="list-group-item py-2">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <p class="font-weight-bold text-gray-800 mb-0 small">Santa Cruz → Montero (Doble Vía Norte)</p>
+                <p class="text-muted mb-0" style="font-size:0.75rem;">Obras de ampliación · Señalización nocturna activa</p>
+              </div>
+              <span class="badge badge-info ml-2">OBRAS</span>
+            </div>
+          </div>
+          <a href="{% url 'routes' %}" class="list-group-item list-group-item-action text-center small text-primary py-2">
+            <i class="fas fa-external-link-alt mr-1"></i> Ver todas las rutas y estado de carreteras
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Waypoints / Step-by-step breakdown table (hidden until calculated) -->
+<div class="card shadow mb-4" id="waypointsCard" style="display:none;">
+  <div class="card-header py-3 bg-white d-flex align-items-center">
+    <h6 class="m-0 font-weight-bold text-primary">
+      <i class="fas fa-list-ol mr-1"></i> Desglose de Tramos por Waypoint
+    </h6>
+    <span class="ml-auto badge badge-light border text-muted small" id="wpRouteSummary"></span>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered table-hover" id="waypointsTable">
+        <thead class="thead-light">
+          <tr>
+            <th style="width:50px;" class="text-center">#</th>
+            <th>Tramo (Arista)</th>
+            <th class="text-center">Distancia</th>
+            <th class="text-center">Costo Gas (Ida)</th>
+            <th class="text-center">Costo Cash (Ida)</th>
+            <th class="text-center">Peajes / Trancas</th>
+            <th class="text-center">Estado</th>
+          </tr>
+        </thead>
+        <tbody id="waypointsTbody">
+          <!-- filled by JS -->
+        </tbody>
+        <tfoot class="font-weight-bold bg-light">
+          <tr>
+            <td colspan="2" class="text-right">TOTALES</td>
+            <td class="text-center" id="wpTotalDist">—</td>
+            <td class="text-center" id="wpTotalGas">—</td>
+            <td class="text-center" id="wpTotalCash">—</td>
+            <td class="text-center" id="wpTotalPeajes">—</td>
+            <td class="text-center"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// ═══════════════════════════════════════════════════════
+//  ROUTE MAP DATA — Bolivia's main road network (sample)
+// ═══════════════════════════════════════════════════════
+const NODES = [
+  { id:'SCZ', name:'Santa Cruz',    x:380, y:230, dep:'Santa Cruz',    listed:true  },
+  { id:'LPZ', name:'La Paz',        x:130, y:140, dep:'La Paz',        listed:true  },
+  { id:'CBB', name:'Cochabamba',    x:215, y:205, dep:'Cochabamba',    listed:true  },
+  { id:'ORU', name:'Oruro',         x:148, y:238, dep:'Oruro',         listed:true  },
+  { id:'PTI', name:'Potosí',        x:175, y:305, dep:'Potosí',        listed:true  },
+  { id:'SRE', name:'Sucre',         x:235, y:295, dep:'Chuquisaca',    listed:true  },
+  { id:'TJA', name:'Tarija',        x:215, y:375, dep:'Tarija',        listed:true  },
+  { id:'TRI', name:'Trinidad',      x:390, y:138, dep:'Beni',          listed:false },
+  { id:'COB', name:'Cobija',        x:100, y:108, dep:'Pando',         listed:false },
+  { id:'GUA', name:'Yacuiba',       x:430, y:308, dep:'Tarija',        listed:true  },
+  { id:'MON', name:'Montero',       x:293, y:150, dep:'Santa Cruz',    listed:true  },
+  { id:'WAR', name:'Warnes',        x:325, y:195, dep:'Santa Cruz',    listed:true  },
+  { id:'VGR', name:'Vallegrande',   x:348, y:272, dep:'Santa Cruz',    listed:true  },
+  { id:'PAD', name:'Padilla',       x:295, y:312, dep:'Chuquisaca',    listed:false },
+  { id:'CAM', name:'Camiri',        x:395, y:302, dep:'Santa Cruz',    listed:true  },
+];
+
+const EDGES = [
+  { from:'SCZ', to:'CBB', dist:467, gas:385, cash:950, peajes:3, locked:false },
+  { from:'SCZ', to:'MON', dist: 56, gas: 42, cash:120, peajes:0, locked:false },
+  { from:'SCZ', to:'WAR', dist: 38, gas: 28, cash: 85, peajes:0, locked:false },
+  { from:'SCZ', to:'TRI', dist:502, gas:415, cash:980, peajes:1, locked:false },
+  { from:'SCZ', to:'VGR', dist:270, gas:220, cash:580, peajes:2, locked:false },
+  { from:'SCZ', to:'CAM', dist:308, gas:258, cash:640, peajes:2, locked:false },
+  { from:'LPZ', name:'La Paz → Oruro', from:'LPZ', to:'ORU', dist:230, gas:185, cash:430, peajes:2, locked:false },
+  { from:'LPZ', to:'CBB', dist:393, gas:325, cash:780, peajes:3, locked:false },
+  { from:'LPZ', to:'COB', dist:1200,gas:980, cash:2800,peajes:1, locked:false },
+  { from:'CBB', to:'ORU', dist:210, gas:170, cash:400, peajes:2, locked:true  },
+  { from:'CBB', to:'SRE', dist:330, gas:275, cash:680, peajes:2, locked:false },
+  { from:'CBB', to:'PTI', dist:356, gas:300, cash:720, peajes:3, locked:false },
+  { from:'ORU', to:'PTI', dist:195, gas:158, cash:380, peajes:2, locked:false },
+  { from:'PTI', to:'SRE', dist:160, gas:128, cash:310, peajes:1, locked:true  },
+  { from:'SRE', to:'TJA', dist:396, gas:330, cash:820, peajes:3, locked:false },
+  { from:'SRE', to:'PAD', dist:143, gas:115, cash:280, peajes:0, locked:false },
+  { from:'TJA', to:'GUA', dist:214, gas:175, cash:430, peajes:2, locked:false },
+  { from:'CAM', to:'GUA', dist:230, gas:188, cash:460, peajes:1, locked:false },
+  { from:'MON', to:'TRI', dist:490, gas:402, cash:960, peajes:1, locked:false },
+  { from:'WAR', to:'VGR', dist:255, gas:208, cash:520, peajes:2, locked:false },
+];
+
+// ───────────────────────────────
+//  CANVAS DRAWING
+// ───────────────────────────────
+const canvas  = document.getElementById('routeCanvas');
+const ctx     = canvas.getContext('2d');
+let originId  = null, destId = null, routePath = [];
+
+function resizeCanvas() {
+  canvas.width  = canvas.offsetWidth;
+  canvas.height = 480;
+  drawMap();
+}
+
+function drawMap() {
+  if (!ctx) return;
+  const W = canvas.width, H = canvas.height;
+
+  // Background (soft Bolivia map tone)
+  ctx.fillStyle = '#eaf4fb';
+  ctx.fillRect(0,0,W,H);
+
+  // Bolivia outline (simplified polygon)
+  ctx.beginPath();
+  ctx.moveTo(W*.18, H*.12);
+  ctx.lineTo(W*.72, H*.12);
+  ctx.lineTo(W*.90, H*.40);
+  ctx.lineTo(W*.88, H*.72);
+  ctx.lineTo(W*.62, H*.92);
+  ctx.lineTo(W*.30, H*.92);
+  ctx.lineTo(W*.14, H*.68);
+  ctx.lineTo(W*.10, H*.38);
+  ctx.closePath();
+  ctx.fillStyle = '#ddeeff';
+  ctx.fill();
+  ctx.strokeStyle = '#a8c8e8';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Scale nodes
+  const sx = W / 540, sy = H / 490;
+
+  // Draw edges
+  EDGES.forEach(e => {
+    const nf = NODES.find(n=>n.id===e.from);
+    const nt = NODES.find(n=>n.id===e.to);
+    if (!nf||!nt) return;
+    const isRouteEdge = routePath.length>1 && routePath.some((r,i)=> i>0 &&
+      ((r===e.from&&routePath[i-1]===e.to)||(r===e.to&&routePath[i-1]===e.from)));
+
+    ctx.beginPath();
+    ctx.moveTo(nf.x*sx, nf.y*sy);
+    ctx.lineTo(nt.x*sx, nt.y*sy);
+    if (e.locked) {
+      ctx.setLineDash([6,4]);
+      ctx.strokeStyle = isRouteEdge ? '#e74a3b' : '#e0a800';
+      ctx.lineWidth   = isRouteEdge ? 4 : 2;
+    } else if (isRouteEdge) {
+      ctx.setLineDash([]);
+      ctx.strokeStyle = '#f6c23e';
+      ctx.lineWidth = 5;
+    } else {
+      ctx.setLineDash([]);
+      ctx.strokeStyle = '#b3c7d6';
+      ctx.lineWidth = 1.5;
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Distance label on route edges
+    if (isRouteEdge) {
+      const mx = (nf.x*sx + nt.x*sx)/2;
+      const my = (nf.y*sy + nt.y*sy)/2;
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(mx,my,14,0,Math.PI*2);
+      ctx.fill();
+      ctx.fillStyle = '#4e73df';
+      ctx.font = 'bold 10px Nunito,Arial';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(e.dist+'km', mx, my);
+    }
+  });
+
+  // Draw nodes
+  NODES.forEach(n => {
+    const nx = n.x*sx, ny = n.y*sy;
+    let color = n.listed ? '#4e73df' : '#858796';
+    let radius = n.listed ? 9 : 6;
+    if (n.id===originId) { color='#1cc88a'; radius=12; }
+    if (n.id===destId)   { color='#e74a3b'; radius=12; }
+    if (routePath.includes(n.id) && n.id!==originId && n.id!==destId) {
+      color='#f6c23e'; radius=10;
+    }
+
+    // Shadow
+    ctx.shadowColor='rgba(0,0,0,.2)'; ctx.shadowBlur=4;
+    ctx.beginPath();
+    ctx.arc(nx, ny, radius, 0, Math.PI*2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle='#fff'; ctx.lineWidth=2;
+    ctx.stroke();
+    ctx.shadowBlur=0;
+
+    // Label
+    ctx.fillStyle = '#2d3748';
+    ctx.font = n.listed ? 'bold 10px Nunito,Arial' : '9px Nunito,Arial';
+    ctx.textAlign='center'; ctx.textBaseline='top';
+    const label = n.name.length>12 ? n.name.substring(0,10)+'…' : n.name;
+    ctx.fillText(label, nx, ny+radius+2);
+  });
+
+  // Legend overlay
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.fillRect(10, H-50, 185, 42);
+  ctx.strokeStyle='#dee2e6'; ctx.lineWidth=1;
+  ctx.strokeRect(10, H-50, 185, 42);
+  ctx.fillStyle='#858796'; ctx.font='9px Nunito,Arial'; ctx.textAlign='left';
+  ctx.fillText('🟢 Origen  🔴 Destino  🟡 Ruta óptima  ⚡ Bloqueado', 16, H-38);
+  ctx.fillText('· · ·  Carretera con restricción activa', 16, H-24);
+}
+
+window.addEventListener('resize', resizeCanvas);
+setTimeout(resizeCanvas, 50);
+
+// ───────────────────────────────
+//  ROUTE GRAPH (simple adjacency)
+// ───────────────────────────────
+function buildGraph() {
+  const g = {};
+  NODES.forEach(n => g[n.id] = []);
+  EDGES.forEach(e => {
+    if(e.from && e.to) {
+      g[e.from].push({ to:e.to, edge:e });
+      g[e.to].push({ to:e.from, edge:e });
+    }
+  });
+  return g;
+}
+
+// Dijkstra by cash cost
+function dijkstra(src, dst) {
+  const graph = buildGraph();
+  const dist  = {}, prev = {}, visited = new Set();
+  NODES.forEach(n => dist[n.id] = Infinity);
+  dist[src] = 0;
+  const pq = [{ id:src, cost:0 }];
+
+  while (pq.length) {
+    pq.sort((a,b)=>a.cost-b.cost);
+    const { id: u } = pq.shift();
+    if (visited.has(u)) continue;
+    visited.add(u);
+    if (u===dst) break;
+    (graph[u]||[]).forEach(({ to:v, edge }) => {
+      const alt = dist[u] + edge.cash;
+      if (alt < dist[v]) { dist[v]=alt; prev[v]=u; pq.push({id:v,cost:alt}); }
+    });
+  }
+
+  if (dist[dst]===Infinity) return null;
+  const path=[];
+  for(let cur=dst; cur; cur=prev[cur]) path.unshift(cur);
+  return path;
+}
+
+function getEdgeBetween(a,b) {
+  return EDGES.find(e=>(e.from===a&&e.to===b)||(e.from===b&&e.to===a));
+}
+
+// ───────────────────────────────
+//  COST BREAKDOWN CHART
+// ───────────────────────────────
+let costChart = null;
+function renderCostChart(labels, gasVals, peajesVals, viaticosVals) {
+  if (costChart) costChart.destroy();
+  costChart = new Chart(document.getElementById('costBreakdownChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label:'Gas (Bs.)',     data:gasVals,     backgroundColor:'#f6c23e88', borderColor:'#f6c23e', borderWidth:1.5 },
+        { label:'Peajes (Bs.)', data:peajesVals,  backgroundColor:'#e74a3b66', borderColor:'#e74a3b', borderWidth:1.5 },
+        { label:'Viáticos (Bs.)',data:viaticosVals,backgroundColor:'#4e73df66', borderColor:'#4e73df', borderWidth:1.5 },
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      scales: {
+        xAxes:[{ stacked:false, ticks:{ fontSize:9, maxRotation:30 } }],
+        yAxes:[{ ticks:{ beginAtZero:true, fontSize:9 } }]
+      },
+      legend:{ position:'bottom', labels:{ fontSize:10, boxWidth:12 } },
+      tooltips:{ mode:'index', intersect:false }
+    }
+  });
+  document.getElementById('chartHint').style.display='none';
+}
+
+// ───────────────────────────────
+//  CALCULATE ROUTE
+// ───────────────────────────────
+document.getElementById('btnCalcular').addEventListener('click', function() {
+  const ov = document.getElementById('selectOrigen').value;
+  const dv = document.getElementById('selectDestino').value;
+  const peso= parseInt(document.getElementById('inputPeso').value)||1500;
+
+  if (!ov||!dv) { alert('Por favor selecciona origen y destino.'); return; }
+  if (ov===dv)  { alert('El origen y destino deben ser ciudades distintas.'); return; }
+
+  const path = dijkstra(ov, dv);
+  if (!path) { alert('No existe ruta entre las ciudades seleccionadas.'); return; }
+
+  originId = ov; destId = dv; routePath = path;
+  drawMap();
+
+  // Gather edge data
+  let totalDist=0, totalGas=0, totalCash=0, totalPeajes=0;
+  let hasLocked=false;
+  const rows=[], chartLabels=[], chartGas=[], chartPeajes=[], chartViat=[];
+
+  for(let i=1;i<path.length;i++){
+    const a=path[i-1], b=path[i];
+    const e=getEdgeBetween(a,b);
+    if(!e) continue;
+    totalDist   += e.dist;
+    totalGas    += e.gas;
+    totalCash   += e.cash;
+    totalPeajes += e.peajes*12;
+    if(e.locked) hasLocked=true;
+    const na=NODES.find(n=>n.id===a), nb=NODES.find(n=>n.id===b);
+    const viatico = Math.round(e.cash - e.gas - e.peajes*12);
+    rows.push({ step:i, from:na?na.name:a, to:nb?nb.name:b, dist:e.dist, gas:e.gas, cash:e.cash, peajes:e.peajes, locked:e.locked, viatico });
+    chartLabels.push((na?na.name.substring(0,6):a)+'→'+(nb?nb.name.substring(0,6):b));
+    chartGas.push(e.gas);
+    chartPeajes.push(e.peajes*12);
+    chartViat.push(viatico);
+  }
+
+  // Adjust by weight factor
+  const weightFactor = peso <= 1000 ? 0.85 : peso<=5000 ? 1.0 : peso<=10000 ? 1.3 : 1.6;
+  const adjCash = Math.round(totalCash * weightFactor);
+  const adjGas  = Math.round(totalGas  * weightFactor);
+  const litros  = Math.round(adjGas / 7.44);
+  const horas   = (totalDist / 65).toFixed(1);
+
+  // Show result section
+  document.getElementById('resultSection').style.display='block';
+  document.getElementById('kpiDistancia').textContent = totalDist.toLocaleString() + ' km';
+  document.getElementById('kpiTramos').textContent    = (path.length-1) + ' tramos directos';
+  document.getElementById('kpiGasCost').textContent   = 'Bs. ' + adjGas.toLocaleString();
+  document.getElementById('kpiLitros').textContent    = '≈ ' + litros + ' litros (diesel)';
+  document.getElementById('kpiCashCost').textContent  = 'Bs. ' + adjCash.toLocaleString();
+  document.getElementById('kpiPeajes').textContent    = 'Incl. ' + totalPeajes + ' Bs. en peajes';
+  document.getElementById('kpiTiempo').textContent    = horas + ' h';
+
+  // Alert locked road
+  const alertEl = document.getElementById('alertLockedRoad');
+  if (hasLocked) {
+    alertEl.classList.remove('d-none');
+    document.getElementById('alertLockedText').textContent =
+      'Un tramo en la ruta seleccionada tiene bloqueo o restricción activa. Se recomienda ruta alternativa o contactar a operaciones.';
+  } else {
+    alertEl.classList.add('d-none');
+  }
+
+  // Chart
+  renderCostChart(chartLabels, chartGas, chartPeajes.map((_,i)=>chartPeajes[i]), chartViat);
+
+  // Waypoints table
+  const tbody = document.getElementById('waypointsTbody');
+  tbody.innerHTML = '';
+  rows.forEach(r => {
+    const badgeClass = r.locked ? 'badge-warning text-dark' : 'badge-success';
+    const badgeText  = r.locked ? '⚠ Restricción' : '✔ Libre';
+    const trClass    = r.locked ? 'table-warning' : '';
+    tbody.innerHTML += `
+      <tr class="${trClass} route-step-row">
+        <td class="text-center font-weight-bold">${r.step}</td>
+        <td><i class="fas fa-long-arrow-alt-right text-primary mr-1"></i> <strong>${r.from}</strong> → ${r.to}</td>
+        <td class="text-center">${r.dist} km</td>
+        <td class="text-center">Bs. ${r.gas}</td>
+        <td class="text-center">Bs. ${r.cash}</td>
+        <td class="text-center">${r.peajes} trancas · Bs. ${r.peajes*12}</td>
+        <td class="text-center"><span class="badge ${badgeClass}">${badgeText}</span></td>
+      </tr>`;
+  });
+
+  document.getElementById('wpTotalDist').textContent  = totalDist+' km';
+  document.getElementById('wpTotalGas').textContent   = 'Bs. '+adjGas;
+  document.getElementById('wpTotalCash').textContent  = 'Bs. '+adjCash;
+  document.getElementById('wpTotalPeajes').textContent= 'Bs. '+totalPeajes;
+
+  const oName = NODES.find(n=>n.id===ov)?.name||ov;
+  const dName = NODES.find(n=>n.id===dv)?.name||dv;
+  document.getElementById('wpRouteSummary').textContent = oName+' → '+dName+' · '+path.length-1+' tramos';
+  document.getElementById('waypointsCard').style.display='block';
+  document.getElementById('waypointsCard').scrollIntoView({behavior:'smooth', block:'nearest'});
+});
+
+// Swap button
+document.getElementById('btnSwap').addEventListener('click', function() {
+  const selO = document.getElementById('selectOrigen');
+  const selD = document.getElementById('selectDestino');
+  const tmp = selO.value;
+  selO.value = selD.value;
+  selD.value = tmp;
+});
+
+// Pre-select sample route for demo
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('selectOrigen').value = 'SCZ';
+  document.getElementById('selectDestino').value = 'LPZ';
+  // Auto-draw without calculate
+  originId='SCZ'; destId='LPZ';
+  setTimeout(drawMap, 100);
+});
+</script>
 {% endblock %}

@@ -1,17 +1,401 @@
 {% extends "logistics/admin/base_admin.html" %}
+{% load static %}
 
 {% block title %}Propietarios de Camión{% endblock %}
 
+{% block extra_head %}
+<link href="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
-<div id="car-owners-app">
-  <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Propietarios de Camión</h1>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h1 class="h3 mb-1 text-gray-800 font-weight-bold">Propietarios de Camión</h1>
+    <p class="text-muted small mb-0">Gestión de dueños de vehículos, CRPVA (RUAT) y asignación 1:N de camiones</p>
+  </div>
+  <div>
+    <button type="button" class="btn btn-primary btn-icon-split shadow-sm" data-toggle="modal" data-target="#modalNewOwner">
+      <span class="icon text-white-50">
+        <i class="fas fa-key"></i>
+      </span>
+      <span class="text">Nuevo Propietario</span>
+    </button>
+  </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="row">
+
+  <!-- Total Propietarios -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-primary shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Dueños Registrados</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">12 Propietarios</div>
+            <span class="text-xs text-muted">Particulares y Socios</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-user-tie fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="card shadow mb-4">
-    <div class="card-body">
-      <p class="text-muted mb-0">Contenido en blanco para Propietarios de Camión.</p>
+  <!-- Total Flota -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-success shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Camiones (Flota)</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">20 Vehículos</div>
+            <span class="text-xs text-success font-weight-bold"><i class="fas fa-check"></i> 100% con CRPVA al día</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-truck-moving fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Con Chofer Asignado -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-info shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Vehículos con Chofer</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">15 Operativos</div>
+            <span class="text-xs text-info">Relación 1:1 chofer activo</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-clipboard-check fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dueños Multi-Camión -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-warning shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Dueños Multi-Vehículo (1:*)</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">4 Propietarios</div>
+            <span class="text-xs text-warning font-weight-bold">Poseen 2 o más camiones</span>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-layer-group fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- DataTables Card -->
+<div class="card shadow mb-4">
+  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+    <h6 class="m-0 font-weight-bold text-primary">
+      <i class="fas fa-id-card-alt mr-1"></i> Listado de Propietarios
+    </h6>
+    <div class="dropdown no-arrow">
+      <a class="dropdown-toggle" href="#" role="button" id="dropdownOwnersMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+      </a>
+      <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownOwnersMenu">
+        <div class="dropdown-header">Exportar:</div>
+        <a class="dropdown-item" href="#"><i class="fas fa-file-excel fa-sm mr-2 text-success"></i>Exportar Excel</a>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover" id="dataTableOwners" width="100%" cellspacing="0">
+        <thead class="thead-light">
+          <tr>
+            <th>ID</th>
+            <th>C.I.</th>
+            <th>Propietario</th>
+            <th>CRPVA (RUAT)</th>
+            <th>Teléfonos</th>
+            <th>Camiones a su Nombre (1:*)</th>
+            <th class="text-center">Total Camiones</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-weight-bold">#O-301</td>
+            <td>3214567 SC</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Don Freddy Rojas Vargas</div>
+              <small class="badge badge-primary">Fundador / Dueño Principal</small>
+            </td>
+            <td><code class="font-weight-bold">CRPVA-7821-SCZ</code></td>
+            <td>
+              <span class="badge badge-light border text-dark p-1 mb-1 d-inline-block"><i class="fas fa-mobile-alt text-primary mr-1"></i>77098123</span>
+              <span class="badge badge-light border text-dark p-1 d-inline-block"><i class="fas fa-phone-alt text-muted mr-1"></i>3-3224455</span>
+            </td>
+            <td>
+              <span class="badge badge-dark p-1 mr-1">2345-TXZ (Volvo F12)</span>
+              <span class="badge badge-dark p-1 mr-1">1890-BBD (Mercedes 1620)</span>
+              <span class="badge badge-dark p-1">5012-KLP (Volvo FH)</span>
+            </td>
+            <td class="text-center font-weight-bold h6 mb-0 text-primary">5</td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Flota del Dueño" data-toggle="modal" data-target="#modalOwnerFleet">
+                <i class="fas fa-truck"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Eliminar">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#O-302</td>
+            <td>4512980 SC</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Efraín Choquehuanca</div>
+              <small class="text-muted">efrain.choque@email.com</small>
+            </td>
+            <td><code class="font-weight-bold">CRPVA-4091-SCZ</code></td>
+            <td>
+              <span class="badge badge-light border text-dark p-1 d-inline-block"><i class="fas fa-mobile-alt text-primary mr-1"></i>76012399</span>
+            </td>
+            <td>
+              <span class="badge badge-dark p-1 mr-1">3112-PLK (Isuzu Forward)</span>
+              <span class="badge badge-dark p-1">4055-MNO (Nissan Cóndor)</span>
+            </td>
+            <td class="text-center font-weight-bold h6 mb-0 text-primary">2</td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Flota del Dueño" data-toggle="modal" data-target="#modalOwnerFleet">
+                <i class="fas fa-truck"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Eliminar">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#O-303</td>
+            <td>5891230 SC</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Julio César Baldivieso</div>
+              <small class="text-muted">julio.baldi@email.com</small>
+            </td>
+            <td><code class="font-weight-bold">CRPVA-9102-SCZ</code></td>
+            <td>
+              <span class="badge badge-light border text-dark p-1 d-inline-block"><i class="fas fa-mobile-alt text-primary mr-1"></i>71345678</span>
+            </td>
+            <td>
+              <span class="badge badge-dark p-1">2981-RTY (Hino Dutro)</span>
+            </td>
+            <td class="text-center font-weight-bold h6 mb-0 text-primary">1</td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Flota del Dueño">
+                <i class="fas fa-truck"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Eliminar">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="font-weight-bold">#O-304</td>
+            <td>6123490 SC</td>
+            <td>
+              <div class="font-weight-bold text-gray-800">Transportes Montero S.R.L.</div>
+              <small class="text-muted">admin@transportesmontero.bo</small>
+            </td>
+            <td><code class="font-weight-bold">CRPVA-6500-SCZ</code></td>
+            <td>
+              <span class="badge badge-light border text-dark p-1 d-inline-block"><i class="fas fa-mobile-alt text-primary mr-1"></i>78901234</span>
+            </td>
+            <td>
+              <span class="badge badge-dark p-1 mr-1">3311-MNB (Volvo VM)</span>
+              <span class="badge badge-dark p-1 mr-1">4422-VBN (Mercedes Axor)</span>
+              <span class="badge badge-dark p-1">5533-ZXC (Scania P310)</span>
+            </td>
+            <td class="text-center font-weight-bold h6 mb-0 text-primary">3</td>
+            <td class="text-center">
+              <button class="btn btn-info btn-circle btn-sm mr-1" title="Ver Flota del Dueño">
+                <i class="fas fa-truck"></i>
+              </button>
+              <button class="btn btn-warning btn-circle btn-sm mr-1" title="Editar">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button class="btn btn-danger btn-circle btn-sm" title="Eliminar">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
+
+<!-- Modal: Registrar Propietario -->
+<div class="modal fade" id="modalNewOwner" tabindex="-1" role="dialog" aria-labelledby="modalNewOwnerLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="modalNewOwnerLabel"><i class="fas fa-key mr-2"></i>Registrar Propietario de Camión</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Nombre Completo o Razón Social <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Ej. Freddy Rojas Vargas" required>
+            </div>
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Carnet de Identidad (C.I.) / NIT <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Ej. 3214567 SC" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Nro. de CRPVA (RUAT Principal) <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Ej. CRPVA-7821-SCZ" required>
+            </div>
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Correo Electrónico</label>
+              <input type="email" class="form-control" placeholder="propietario@email.com">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Teléfono Celular <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Ej. 77098123" required>
+            </div>
+            <div class="col-md-6 form-group">
+              <label class="font-weight-bold small text-gray-700">Teléfono Fijo / Secundario</label>
+              <input type="text" class="form-control" placeholder="Ej. 3-3224455">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="font-weight-bold small text-gray-700">Dirección de Domicilio o Empresa <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" placeholder="Ej. Av. Cristo Redentor, Km 6.5 #102" required>
+          </div>
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal">
+            <i class="fas fa-save mr-1"></i> Registrar Propietario
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Flota del Propietario -->
+<div class="modal fade" id="modalOwnerFleet" tabindex="-1" role="dialog" aria-labelledby="modalOwnerFleetLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title" id="modalOwnerFleetLabel"><i class="fas fa-truck mr-2"></i>Flota Perteneciente a Don Freddy Rojas</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="small text-muted mb-3">Relación 1:* (Un propietario puede tener registrados múltiples camiones y fletes en el sistema):</p>
+        <div class="table-responsive">
+          <table class="table table-bordered table-sm small">
+            <thead class="thead-light">
+              <tr>
+                <th>Placa</th>
+                <th>Marca / Modelo</th>
+                <th>Color</th>
+                <th>Capacidad</th>
+                <th>Chofer Asignado (1:1)</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="font-weight-bold">2345-TXZ</td>
+                <td>Volvo F12 (2018)</td>
+                <td>Blanco</td>
+                <td>8 Toneladas</td>
+                <td>Carlos Mamani Condori</td>
+                <td><span class="badge badge-success">Operativo</span></td>
+              </tr>
+              <tr>
+                <td class="font-weight-bold">1890-BBD</td>
+                <td>Mercedes Benz 1620 (2019)</td>
+                <td>Azul</td>
+                <td>10 Toneladas</td>
+                <td>Jorge Mendoza Hurtado</td>
+                <td><span class="badge badge-success">Operativo</span></td>
+              </tr>
+              <tr>
+                <td class="font-weight-bold">5012-KLP</td>
+                <td>Volvo FH Globetrotter</td>
+                <td>Rojo</td>
+                <td>15 Toneladas</td>
+                <td><span class="text-danger">Sin chofer asignado</span></td>
+                <td><span class="badge badge-warning text-white">En Mantenimiento</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- DataTables Scripts -->
+<script src="{% static 'logistics/admin/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'logistics/admin/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<script>
+  $(document).ready(function() {
+    $('#dataTableOwners').DataTable({
+      language: {
+        "sProcessing":     "Procesando...",
+        "sLengthMenu":     "Mostrar _MENU_ propietarios",
+        "sZeroRecords":    "No se encontraron propietarios",
+        "sEmptyTable":     "No hay propietarios registrados",
+        "sInfo":           "Mostrando _START_ a _END_ de _TOTAL_ propietarios",
+        "sInfoEmpty":      "Mostrando 0 a 0 de 0 propietarios",
+        "sInfoFiltered":   "(filtrado de _MAX_ registros totales)",
+        "sSearch":         "Buscar propietario:",
+        "oPaginate": {
+          "sFirst":    "Primero",
+          "sLast":     "Último",
+          "sNext":     "Siguiente",
+          "sPrevious": "Anterior"
+        }
+      }
+    });
+  });
+</script>
 {% endblock %}
