@@ -24,7 +24,23 @@ from logistics.views.api_views import (
 )
 from logistics.views.system_views import RestoreDatabaseView
 from django.contrib.auth import views as auth_views
-from logistics.views.dashboard_views import DashboardView
+from logistics.views.dashboard_views import (
+    DashboardView,
+    CargoServicesView,
+    PaymentsView,
+    CustomersView,
+    DriversView,
+    CarOwnersView,
+    StaffView,
+    VehiclesView,
+    ZonesView,
+    CitiesView,
+    RoutesView,
+    RouteMapView,
+    ServiceStatusesView,
+    PaymentMethodsView,
+    AuditLogView,
+)
 from logistics.views.api_views import (
     TreeOperationView, ExpressionTreeView, GraphDataView,
     GameCreateView, GameDetailView, GameMoveView, GraphDemoView,
@@ -61,4 +77,18 @@ urlpatterns = [
         template_name='logistics/admin/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('dashboard/', DashboardView.as_view(), name='dashboard'),
+    path('dashboard/operations/cargo-services/', CargoServicesView.as_view(), name='cargo-services'),
+    path('dashboard/operations/payments/', PaymentsView.as_view(), name='payments'),
+    path('dashboard/people/customers/', CustomersView.as_view(), name='customers'),
+    path('dashboard/people/drivers/', DriversView.as_view(), name='drivers'),
+    path('dashboard/people/car-owners/', CarOwnersView.as_view(), name='car-owners'),
+    path('dashboard/people/staff/', StaffView.as_view(), name='staff'),
+    path('dashboard/fleet/vehicles/', VehiclesView.as_view(), name='vehicles'),
+    path('dashboard/geography/zones/', ZonesView.as_view(), name='zones'),
+    path('dashboard/geography/cities/', CitiesView.as_view(), name='cities'),
+    path('dashboard/geography/routes/', RoutesView.as_view(), name='routes'),
+    path('dashboard/geography/route-map/', RouteMapView.as_view(), name='route-map'),
+    path('dashboard/catalogs/service-statuses/', ServiceStatusesView.as_view(), name='service-statuses'),
+    path('dashboard/catalogs/payment-methods/', PaymentMethodsView.as_view(), name='payment-methods'),
+    path('dashboard/system/audit-log/', AuditLogView.as_view(), name='audit-log'),
 ]

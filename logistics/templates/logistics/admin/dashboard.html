@@ -1,22 +1,418 @@
 {% extends "logistics/admin/base_admin.html" %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
-{% verbatim %}
-<div id="dash-app">
-  <h1 class="h3 mb-4 text-gray-800">Dashboard</h1>
-  <div class="card shadow border-left-primary py-2" style="max-width: 18rem;">
-    <div class="card-body">
-      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Vue check</div>
-      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ message }}</div>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h1 class="h3 mb-1 text-gray-800 font-weight-bold">Panel Principal (Dashboard)</h1>
+    <p class="text-muted small mb-0">Monitoreo general de transporte de carga, mudanzas, flota y recaudación</p>
+  </div>
+  <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+    <i class="fas fa-download fa-sm text-white-50 mr-1"></i> Generar Reporte Mensual
+  </a>
+</div>
+
+<!-- Row 1: KPI Cards -->
+<div class="row">
+
+  <!-- Earnings (Monthly) Card Example -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-primary shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+              Servicios este mes
+            </div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">128 Fletes</div>
+            <div class="text-xs text-success mt-1"><i class="fas fa-arrow-up"></i> 14% más que el mes anterior</div>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-truck-loading fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Earnings (Annual) Card Example -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-success shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+              Recaudación (Mes)
+            </div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">Bs. 54,820</div>
+            <div class="text-xs text-success mt-1"><i class="fas fa-check-circle"></i> 92% cobrado</div>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fleet Availability Card Example -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-info shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Flota Operativa</div>
+            <div class="row no-gutters align-items-center">
+              <div class="col-auto">
+                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">75%</div>
+              </div>
+              <div class="col">
+                <div class="progress progress-sm mr-2">
+                  <div class="progress-bar bg-info" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+            </div>
+            <div class="text-xs text-muted mt-1">15 de 20 camiones en ruta</div>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-truck-moving fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pending Requests Card Example -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-warning shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+              Saldos por Cobrar
+            </div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">Bs. 4,350</div>
+            <div class="text-xs text-danger mt-1"><i class="fas fa-clock"></i> 6 servicios con saldo</div>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-file-invoice-dollar fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
-{% endverbatim %}
+
+<!-- Row 2: Charts -->
+<div class="row">
+
+  <!-- Area Chart: Ingresos de los últimos meses -->
+  <div class="col-xl-8 col-lg-7">
+    <div class="card shadow mb-4">
+      <!-- Card Header - Dropdown -->
+      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">
+          <i class="fas fa-chart-line mr-1"></i> Ingresos por Servicios (Últimos 6 meses)
+        </h6>
+        <div class="dropdown no-arrow">
+          <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+            <div class="dropdown-header">Opciones:</div>
+            <a class="dropdown-item" href="#"><i class="fas fa-sync-alt fa-sm mr-2 text-gray-400"></i>Actualizar</a>
+            <a class="dropdown-item" href="#"><i class="fas fa-file-excel fa-sm mr-2 text-gray-400"></i>Exportar Excel</a>
+          </div>
+        </div>
+      </div>
+      <!-- Card Body -->
+      <div class="card-body">
+        <div class="chart-area" style="position: relative; height: 320px;">
+          <canvas id="myAreaChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pie/Donut Chart: Tipos de Servicios -->
+  <div class="col-xl-4 col-lg-5">
+    <div class="card shadow mb-4">
+      <!-- Card Header -->
+      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">
+          <i class="fas fa-chart-pie mr-1"></i> Tipo de Carga
+        </h6>
+      </div>
+      <!-- Card Body -->
+      <div class="card-body">
+        <div class="chart-pie pt-2 pb-2" style="position: relative; height: 250px;">
+          <canvas id="myPieChart"></canvas>
+        </div>
+        <div class="mt-4 text-center small">
+          <span class="mr-2">
+            <i class="fas fa-circle text-primary"></i> Mudanzas
+          </span>
+          <span class="mr-2">
+            <i class="fas fa-circle text-success"></i> Flete Urbano
+          </span>
+          <span class="mr-2">
+            <i class="fas fa-circle text-info"></i> Interdepartamental
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Row 3: Operational Tables & Live Status -->
+<div class="row">
+
+  <!-- Content Column: Últimos Servicios -->
+  <div class="col-lg-8 mb-4">
+    <div class="card shadow mb-4">
+      <div class="card-header py-3 d-flex align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">
+          <i class="fas fa-clipboard-list mr-1"></i> Últimos Servicios de Carga Registrados
+        </h6>
+        <a href="{% url 'cargo-services' %}" class="btn btn-sm btn-outline-primary">Ver todos</a>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover table-striped mb-0 text-gray-800">
+            <thead class="thead-light">
+              <tr>
+                <th>#</th>
+                <th>Cliente</th>
+                <th>Origen - Destino</th>
+                <th>Conductor / Placa</th>
+                <th>Precio</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="font-weight-bold">#1024</td>
+                <td>Roberto Suárez</td>
+                <td>4to Anillo $\rightarrow$ Equipetrol</td>
+                <td>Carlos Mamani <small class="text-muted d-block">2345-TXZ</small></td>
+                <td class="font-weight-bold text-success">Bs. 350</td>
+                <td><span class="badge badge-success px-2 py-1">Entregado</span></td>
+              </tr>
+              <tr>
+                <td class="font-weight-bold">#1023</td>
+                <td>Distribuidora Oriental</td>
+                <td>Parque Industrial $\rightarrow$ Plan 3000</td>
+                <td>Jorge Mendoza <small class="text-muted d-block">1890-BBD</small></td>
+                <td class="font-weight-bold text-success">Bs. 520</td>
+                <td><span class="badge badge-primary px-2 py-1">En Tránsito</span></td>
+              </tr>
+              <tr>
+                <td class="font-weight-bold">#1022</td>
+                <td>María René Peña</td>
+                <td>Santa Cruz $\rightarrow$ Montero</td>
+                <td>Hugo Banegas <small class="text-muted d-block">3112-PLK</small></td>
+                <td class="font-weight-bold text-success">Bs. 800</td>
+                <td><span class="badge badge-warning px-2 py-1 text-white">Asignado</span></td>
+              </tr>
+              <tr>
+                <td class="font-weight-bold">#1021</td>
+                <td>Constructora del Este</td>
+                <td>Km 9 Doble Vía $\rightarrow$ Warnes</td>
+                <td>Álvaro Rojas <small class="text-muted d-block">4055-MNO</small></td>
+                <td class="font-weight-bold text-success">Bs. 650</td>
+                <td><span class="badge badge-secondary px-2 py-1">Pendiente</span></td>
+              </tr>
+              <tr>
+                <td class="font-weight-bold">#1020</td>
+                <td>Ferretería Central</td>
+                <td>Villa 1ro de Mayo $\rightarrow$ 2do Anillo</td>
+                <td>Carlos Mamani <small class="text-muted d-block">2345-TXZ</small></td>
+                <td class="font-weight-bold text-success">Bs. 280</td>
+                <td><span class="badge badge-success px-2 py-1">Entregado</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Status Cards Column -->
+  <div class="col-lg-4 mb-4">
+
+    <!-- Card: Estado de Rutas y Trancas -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">
+          <i class="fas fa-route mr-1"></i> Estado de Rutas Clave
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="font-weight-bold text-gray-800 small">Santa Cruz $\leftrightarrow$ Cochabamba</span>
+            <span class="badge badge-success">Transitable</span>
+          </div>
+          <p class="text-muted small mb-0">Peaje normal. Tiempo est.: 09h 40m</p>
+        </div>
+        <hr class="my-2">
+        <div class="mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="font-weight-bold text-gray-800 small">Santa Cruz $\leftrightarrow$ Montero</span>
+            <span class="badge badge-success">Fluida</span>
+          </div>
+          <p class="text-muted small mb-0">Carretera doble vía despejada</p>
+        </div>
+        <hr class="my-2">
+        <div class="mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="font-weight-bold text-gray-800 small">Cochabamba $\leftrightarrow$ Villa Tunari</span>
+            <span class="badge badge-warning text-white">Precaución</span>
+          </div>
+          <p class="text-muted small mb-0">Lluvias dispersas en el tramo</p>
+        </div>
+        <hr class="my-2">
+        <div>
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="font-weight-bold text-gray-800 small">La Paz $\leftrightarrow$ Oruro</span>
+            <span class="badge badge-success">Normal</span>
+          </div>
+          <p class="text-muted small mb-0">Sin novedades en trancas</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card: Resumen Don Freddy -->
+    <div class="card shadow mb-4 bg-light">
+      <div class="card-body">
+        <div class="d-flex align-items-center">
+          <div class="mr-3">
+            <div class="icon-circle bg-primary text-white p-3 rounded-circle">
+              <i class="fas fa-user-tie fa-lg"></i>
+            </div>
+          </div>
+          <div>
+            <div class="font-weight-bold text-gray-800">Transportes Don Freddy</div>
+            <div class="small text-muted">Santa Cruz de la Sierra, Bolivia</div>
+            <div class="small text-success mt-1"><i class="fas fa-circle fa-xs"></i> Sistema Operativo en Línea</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
 {% endblock %}
 
 {% block extra_scripts %}
+<script src="{% static 'logistics/admin/vendor/chart.js/Chart.min.js' %}"></script>
 <script>
-  Vue.createApp({ data() { return { message: 'Vue is running inside SB Admin 2' }; } })
-    .mount('#dash-app');
+  // Set default font family and color to mimic Bootstrap's default styling
+  Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+  Chart.defaults.global.defaultFontColor = '#858796';
+
+  // Area Chart (Ingresos)
+  var ctxArea = document.getElementById("myAreaChart");
+  if (ctxArea) {
+    new Chart(ctxArea, {
+      type: 'line',
+      data: {
+        labels: ["Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre"],
+        datasets: [{
+          label: "Ingresos (Bs.)",
+          lineTension: 0.3,
+          backgroundColor: "rgba(78, 115, 223, 0.05)",
+          borderColor: "rgba(78, 115, 223, 1)",
+          pointRadius: 3,
+          pointBackgroundColor: "rgba(78, 115, 223, 1)",
+          pointBorderColor: "rgba(78, 115, 223, 1)",
+          pointHoverRadius: 4,
+          pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+          pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+          pointHitRadius: 10,
+          pointBorderWidth: 2,
+          data: [32000, 38500, 42100, 47800, 51200, 54820],
+        }],
+      },
+      options: {
+        maintainAspectRatio: false,
+        layout: { padding: { left: 10, right: 25, top: 25, bottom: 0 } },
+        scales: {
+          xAxes: [{ gridLines: { display: false, drawBorder: false } }],
+          yAxes: [{
+            ticks: {
+              maxTicksLimit: 5,
+              padding: 10,
+              callback: function(value) { return 'Bs. ' + value.toLocaleString(); }
+            },
+            gridLines: { color: "rgb(234, 236, 244)", zeroLineColor: "rgb(234, 236, 244)", drawBorder: false, borderDash: [2], zeroLineBorderDash: [2] }
+          }],
+        },
+        legend: { display: false },
+        tooltips: {
+          backgroundColor: "rgb(255,255,255)",
+          bodyFontColor: "#858796",
+          titleMarginBottom: 10,
+          titleFontColor: '#6e707e',
+          titleFontSize: 14,
+          borderColor: '#dddfeb',
+          borderWidth: 1,
+          xPadding: 15,
+          yPadding: 15,
+          displayColors: false,
+          intersect: false,
+          mode: 'index',
+          caretPadding: 10,
+          callbacks: {
+            label: function(tooltipItem, chart) {
+              return tooltipItem.yLabel ? 'Bs. ' + tooltipItem.yLabel.toLocaleString() : '';
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // Pie Chart (Tipos de Servicios)
+  var ctxPie = document.getElementById("myPieChart");
+  if (ctxPie) {
+    new Chart(ctxPie, {
+      type: 'doughnut',
+      data: {
+        labels: ["Mudanzas", "Flete Urbano", "Interdepartamental"],
+        datasets: [{
+          data: [35, 50, 15],
+          backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
+          hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
+          hoverBorderColor: "rgba(234, 236, 244, 1)",
+        }],
+      },
+      options: {
+        maintainAspectRatio: false,
+        tooltips: {
+          backgroundColor: "rgb(255,255,255)",
+          bodyFontColor: "#858796",
+          borderColor: '#dddfeb',
+          borderWidth: 1,
+          xPadding: 15,
+          yPadding: 15,
+          displayColors: false,
+          caretPadding: 10,
+          callbacks: {
+            label: function(tooltipItem, data) {
+              var label = data.labels[tooltipItem.index] || '';
+              var val = data.datasets[0].data[tooltipItem.index];
+              return label + ': ' + val + '%';
+            }
+          }
+        },
+        legend: { display: false },
+        cutoutPercentage: 75,
+      },
+    });
+  }
 </script>
 {% endblock %}

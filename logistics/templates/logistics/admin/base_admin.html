@@ -21,7 +21,7 @@
       <div class="sidebar-brand-text mx-3">Logistics</div>
     </a>
     <hr class="sidebar-divider my-0">
-    <li class="nav-item active">
+    <li class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
       <a class="nav-link" href="{% url 'dashboard' %}">
         <i class="fas fa-fw fa-tachometer-alt"></i><span>Dashboard</span>
       </a>
@@ -29,98 +29,98 @@
     <!-- Divider -->
     <hr class="sidebar-divider">
     <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOperations"
-            aria-expanded="true" aria-controls="collapseOperations">
+    <li class="nav-item {% if request.resolver_match.url_name in 'cargo-services payments' %}active{% endif %}">
+        <a class="nav-link {% if request.resolver_match.url_name not in 'cargo-services payments' %}collapsed{% endif %}" href="#" data-toggle="collapse" data-target="#collapseOperations"
+            aria-expanded="{% if request.resolver_match.url_name in 'cargo-services payments' %}true{% else %}false{% endif %}" aria-controls="collapseOperations">
             <i class="fas fa-fw fa-cog"></i>
             <span>Operaciones</span>
         </a>
-        <div id="collapseOperations" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="collapseOperations" class="collapse {% if request.resolver_match.url_name in 'cargo-services payments' %}show{% endif %}" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="#">Servicios de Transporte</a>
-                <a class="collapse-item" href="#">Pagos</a>
+                <a class="collapse-item {% if request.resolver_match.url_name == 'cargo-services' %}active{% endif %}" href="{% url 'cargo-services' %}">Servicios de Transporte</a>
+                <a class="collapse-item {% if request.resolver_match.url_name == 'payments' %}active{% endif %}" href="{% url 'payments' %}">Pagos</a>
             </div>
         </div>
     </li>
     <!-- Divider -->
     <hr class="sidebar-divider">
     <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePeople"
-            aria-expanded="true" aria-controls="collapsePeople">
-            <i class="fas fa-fw fa-cog"></i>
+    <li class="nav-item {% if request.resolver_match.url_name in 'customers drivers car-owners staff' %}active{% endif %}">
+        <a class="nav-link {% if request.resolver_match.url_name not in 'customers drivers car-owners staff' %}collapsed{% endif %}" href="#" data-toggle="collapse" data-target="#collapsePeople"
+            aria-expanded="{% if request.resolver_match.url_name in 'customers drivers car-owners staff' %}true{% else %}false{% endif %}" aria-controls="collapsePeople">
+            <i class="fas fa-fw fa-users"></i>
             <span>Personas</span>
         </a>
-        <div id="collapsePeople" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="collapsePeople" class="collapse {% if request.resolver_match.url_name in 'customers drivers car-owners staff' %}show{% endif %}" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="#">Clientes</a>
-                <a class="collapse-item" href="#">Conductores</a>
-                <a class="collapse-item" href="#">Propietarios de camión</a>
-                <a class="collapse-item" href="#">Staff</a>
+                <a class="collapse-item {% if request.resolver_match.url_name == 'customers' %}active{% endif %}" href="{% url 'customers' %}">Clientes</a>
+                <a class="collapse-item {% if request.resolver_match.url_name == 'drivers' %}active{% endif %}" href="{% url 'drivers' %}">Conductores</a>
+                <a class="collapse-item {% if request.resolver_match.url_name == 'car-owners' %}active{% endif %}" href="{% url 'car-owners' %}">Propietarios de camión</a>
+                <a class="collapse-item {% if request.resolver_match.url_name == 'staff' %}active{% endif %}" href="{% url 'staff' %}">Staff</a>
             </div>
         </div>
     </li>
     <!-- Divider -->
     <hr class="sidebar-divider">
     <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFleet"
-            aria-expanded="true" aria-controls="collapseFleet">
-            <i class="fas fa-fw fa-cog"></i>
+    <li class="nav-item {% if request.resolver_match.url_name == 'vehicles' %}active{% endif %}">
+        <a class="nav-link {% if request.resolver_match.url_name != 'vehicles' %}collapsed{% endif %}" href="#" data-toggle="collapse" data-target="#collapseFleet"
+            aria-expanded="{% if request.resolver_match.url_name == 'vehicles' %}true{% else %}false{% endif %}" aria-controls="collapseFleet">
+            <i class="fas fa-fw fa-truck-moving"></i>
             <span>Flete</span>
         </a>
-        <div id="collapseFleet" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="collapseFleet" class="collapse {% if request.resolver_match.url_name == 'vehicles' %}show{% endif %}" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="#">Vehículos</a>
+                <a class="collapse-item {% if request.resolver_match.url_name == 'vehicles' %}active{% endif %}" href="{% url 'vehicles' %}">Vehículos</a>
             </div>
         </div>
     </li>
     <!-- Divider -->
     <hr class="sidebar-divider">
     <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseGeography"
-            aria-expanded="true" aria-controls="collapseGeography">
-            <i class="fas fa-fw fa-cog"></i>
+    <li class="nav-item {% if request.resolver_match.url_name in 'zones cities routes route-map' %}active{% endif %}">
+        <a class="nav-link {% if request.resolver_match.url_name not in 'zones cities routes route-map' %}collapsed{% endif %}" href="#" data-toggle="collapse" data-target="#collapseGeography"
+            aria-expanded="{% if request.resolver_match.url_name in 'zones cities routes route-map' %}true{% else %}false{% endif %}" aria-controls="collapseGeography">
+            <i class="fas fa-fw fa-map-marked-alt"></i>
             <span>Geografía</span>
         </a>
-        <div id="collapseGeography" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="collapseGeography" class="collapse {% if request.resolver_match.url_name in 'zones cities routes route-map' %}show{% endif %}" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="#">Zonas</a>
-                <a class="collapse-item" href="#">Ciudades</a>
-                <a class="collapse-item" href="#">Rutas</a>
-                <a class="collapse-item" href="#">Mapa de ruta</a>
+                <a class="collapse-item {% if request.resolver_match.url_name == 'zones' %}active{% endif %}" href="{% url 'zones' %}">Zonas</a>
+                <a class="collapse-item {% if request.resolver_match.url_name == 'cities' %}active{% endif %}" href="{% url 'cities' %}">Ciudades</a>
+                <a class="collapse-item {% if request.resolver_match.url_name == 'routes' %}active{% endif %}" href="{% url 'routes' %}">Rutas</a>
+                <a class="collapse-item {% if request.resolver_match.url_name == 'route-map' %}active{% endif %}" href="{% url 'route-map' %}">Mapa de ruta</a>
             </div>
         </div>
     </li>
     <!-- Divider -->
     <hr class="sidebar-divider">
     <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCatalogs"
-            aria-expanded="true" aria-controls="collapseCatalogs">
-            <i class="fas fa-fw fa-cog"></i>
+    <li class="nav-item {% if request.resolver_match.url_name in 'service-statuses payment-methods' %}active{% endif %}">
+        <a class="nav-link {% if request.resolver_match.url_name not in 'service-statuses payment-methods' %}collapsed{% endif %}" href="#" data-toggle="collapse" data-target="#collapseCatalogs"
+            aria-expanded="{% if request.resolver_match.url_name in 'service-statuses payment-methods' %}true{% else %}false{% endif %}" aria-controls="collapseCatalogs">
+            <i class="fas fa-fw fa-list-alt"></i>
             <span>Catálogos</span>
         </a>
-        <div id="collapseCatalogs" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="collapseCatalogs" class="collapse {% if request.resolver_match.url_name in 'service-statuses payment-methods' %}show{% endif %}" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="#">Estado de servicio</a>
-                <a class="collapse-item" href="#">Métodos de pago</a>
+                <a class="collapse-item {% if request.resolver_match.url_name == 'service-statuses' %}active{% endif %}" href="{% url 'service-statuses' %}">Estado de servicio</a>
+                <a class="collapse-item {% if request.resolver_match.url_name == 'payment-methods' %}active{% endif %}" href="{% url 'payment-methods' %}">Métodos de pago</a>
             </div>
         </div>
     </li>
     <!-- Divider -->
     <hr class="sidebar-divider">
     <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSystem"
-            aria-expanded="true" aria-controls="collapseSystem">
-            <i class="fas fa-fw fa-cog"></i>
+    <li class="nav-item {% if request.resolver_match.url_name == 'audit-log' %}active{% endif %}">
+        <a class="nav-link {% if request.resolver_match.url_name != 'audit-log' %}collapsed{% endif %}" href="#" data-toggle="collapse" data-target="#collapseSystem"
+            aria-expanded="{% if request.resolver_match.url_name == 'audit-log' %}true{% else %}false{% endif %}" aria-controls="collapseSystem">
+            <i class="fas fa-fw fa-shield-alt"></i>
             <span>Sistema</span>
         </a>
-        <div id="collapseSystem" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="collapseSystem" class="collapse {% if request.resolver_match.url_name == 'audit-log' %}show{% endif %}" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="#">Log Auditoría</a>
+                <a class="collapse-item {% if request.resolver_match.url_name == 'audit-log' %}active{% endif %}" href="{% url 'audit-log' %}">Log Auditoría</a>
             </div>
         </div>
     </li>
@@ -140,19 +140,187 @@
 
       <!-- Topbar -->
       <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+        <!-- Sidebar Toggle (Topbar) -->
         <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
           <i class="fa fa-bars"></i>
         </button>
-        <ul class="navbar-nav ms-auto align-items-center">
-          <li class="nav-item me-3 text-gray-600 small">{{ request.user.get_username }}</li>
-          <li class="nav-item">
-            <form method="post" action="{% url 'logout' %}" class="m-0">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-sm btn-outline-secondary">Logout</button>
-            </form>
+
+        <!-- Topbar Search -->
+        <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+          <div class="input-group">
+            <input type="text" class="form-control bg-light border-0 small" placeholder="Buscar flete, cliente, placa..."
+              aria-label="Search" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+              <button class="btn btn-primary" type="button">
+                <i class="fas fa-search fa-sm"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Topbar Navbar -->
+        <ul class="navbar-nav ml-auto">
+
+          <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+          <li class="nav-item dropdown no-arrow d-sm-none">
+            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-search fa-fw"></i>
+            </a>
+            <!-- Dropdown - Search -->
+            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
+              aria-labelledby="searchDropdown">
+              <form class="form-inline mr-auto w-100 navbar-search">
+                <div class="input-group">
+                  <input type="text" class="form-control bg-light border-0 small"
+                    placeholder="Buscar flete, cliente..." aria-label="Search"
+                    aria-describedby="basic-addon2">
+                  <div class="input-group-append">
+                    <button class="btn btn-primary" type="button">
+                      <i class="fas fa-search fa-sm"></i>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
           </li>
+
+          <!-- Nav Item - Alerts -->
+          <li class="nav-item dropdown no-arrow mx-1">
+            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-bell fa-fw"></i>
+              <!-- Counter - Alerts -->
+              <span class="badge badge-danger badge-counter">3+</span>
+            </a>
+            <!-- Dropdown - Alerts -->
+            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+              aria-labelledby="alertsDropdown">
+              <h6 class="dropdown-header">
+                Centro de Alertas
+              </h6>
+              <a class="dropdown-item d-flex align-items-center" href="#">
+                <div class="mr-3">
+                  <div class="icon-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; border-radius: 100%;">
+                    <i class="fas fa-truck-loading"></i>
+                  </div>
+                </div>
+                <div>
+                  <div class="small text-gray-500">Hoy, 10:30 AM</div>
+                  <span class="font-weight-bold">Nuevo servicio registrado: Flete Santa Cruz $\rightarrow$ Montero.</span>
+                </div>
+              </a>
+              <a class="dropdown-item d-flex align-items-center" href="#">
+                <div class="mr-3">
+                  <div class="icon-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; border-radius: 100%;">
+                    <i class="fas fa-money-bill-wave"></i>
+                  </div>
+                </div>
+                <div>
+                  <div class="small text-gray-500">Ayer, 4:15 PM</div>
+                  ¡Pago recibido de Bs. 520 por servicio #1023!
+                </div>
+              </a>
+              <a class="dropdown-item d-flex align-items-center" href="#">
+                <div class="mr-3">
+                  <div class="icon-circle bg-warning text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; border-radius: 100%;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                  </div>
+                </div>
+                <div>
+                  <div class="small text-gray-500">Hace 2 días</div>
+                  Alerta vial: Precaución por lluvia en tramo Cochabamba.
+                </div>
+              </a>
+              <a class="dropdown-item text-center small text-gray-500" href="#">Ver todas las alertas</a>
+            </div>
+          </li>
+
+          <!-- Nav Item - Messages -->
+          <li class="nav-item dropdown no-arrow mx-1">
+            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-envelope fa-fw"></i>
+              <!-- Counter - Messages -->
+              <span class="badge badge-danger badge-counter">4</span>
+            </a>
+            <!-- Dropdown - Messages -->
+            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+              aria-labelledby="messagesDropdown">
+              <h6 class="dropdown-header">
+                Mensajes de Operaciones
+              </h6>
+              <a class="dropdown-item d-flex align-items-center" href="#">
+                <div class="dropdown-list-image mr-3">
+                  <img class="rounded-circle" src="{% static 'logistics/admin/img/undraw_profile_1.svg' %}" alt="Carlos" style="width: 40px; height: 40px;">
+                  <div class="status-indicator bg-success"></div>
+                </div>
+                <div class="font-weight-bold">
+                  <div class="text-truncate">Carga descargada con éxito en 4to Anillo.</div>
+                  <div class="small text-gray-500">Carlos Mamani · 25m</div>
+                </div>
+              </a>
+              <a class="dropdown-item d-flex align-items-center" href="#">
+                <div class="dropdown-list-image mr-3">
+                  <img class="rounded-circle" src="{% static 'logistics/admin/img/undraw_profile_2.svg' %}" alt="Jorge" style="width: 40px; height: 40px;">
+                  <div class="status-indicator"></div>
+                </div>
+                <div>
+                  <div class="text-truncate">Camión listo para el viaje de mañana a Sucre.</div>
+                  <div class="small text-gray-500">Jorge Mendoza · 2h</div>
+                </div>
+              </a>
+              <a class="dropdown-item d-flex align-items-center" href="#">
+                <div class="dropdown-list-image mr-3">
+                  <img class="rounded-circle" src="{% static 'logistics/admin/img/undraw_profile_3.svg' %}" alt="Hugo" style="width: 40px; height: 40px;">
+                  <div class="status-indicator bg-warning"></div>
+                </div>
+                <div>
+                  <div class="text-truncate">Reporte de combustible y trancas enviado.</div>
+                  <div class="small text-gray-500">Hugo Banegas · 1d</div>
+                </div>
+              </a>
+              <a class="dropdown-item text-center small text-gray-500" href="#">Ver todos los mensajes</a>
+            </div>
+          </li>
+
+          <div class="topbar-divider d-none d-sm-block"></div>
+
+          <!-- Nav Item - User Information -->
+          <li class="nav-item dropdown no-arrow">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="mr-2 d-none d-lg-inline text-gray-600 small font-weight-bold">{{ request.user.get_username|default:"Don Freddy" }}</span>
+              <img class="img-profile rounded-circle" src="{% static 'logistics/admin/img/undraw_profile.svg' %}" style="width: 32px; height: 32px;">
+            </a>
+            <!-- Dropdown - User Information -->
+            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+              aria-labelledby="userDropdown">
+              <a class="dropdown-item" href="#">
+                <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                Perfil
+              </a>
+              <a class="dropdown-item" href="#">
+                <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                Configuración
+              </a>
+              <a class="dropdown-item" href="{% url 'audit-log' %}">
+                <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                Log de Auditoría
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-danger"></i>
+                Cerrar sesión
+              </a>
+            </div>
+          </li>
+
         </ul>
+
       </nav>
+      <!-- End of Topbar -->
 
       <!-- Page content: Vue mounts inside this block only -->
       <div class="container-fluid">
@@ -168,10 +336,53 @@
   </div>
 </div>
 
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+  <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Logout Modal-->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="logoutModalLabel">¿Cerrar sesión?</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">Selecciona "Cerrar sesión" si deseas finalizar tu sesión actual en el sistema de logística.</div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+        <form method="post" action="{% url 'logout' %}" class="d-inline">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary">Cerrar sesión</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="{% static 'logistics/admin/vendor/jquery/jquery.min.js' %}"></script>
 <script src="{% static 'logistics/admin/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 <script src="{% static 'logistics/admin/vendor/jquery-easing/jquery.easing.min.js' %}"></script>
 <script src="{% static 'logistics/admin/js/sb-admin-2.min.js' %}"></script>
+<script>
+  $(function() {
+    var currentPath = window.location.pathname;
+    $('#accordionSidebar .collapse-item').each(function() {
+      var href = $(this).attr('href');
+      if (href && href !== '#' && (currentPath === href || currentPath.indexOf(href) === 0)) {
+        $(this).addClass('active');
+        var $collapse = $(this).closest('.collapse');
+        $collapse.addClass('show');
+        $collapse.prev('.nav-link').removeClass('collapsed').attr('aria-expanded', 'true');
+        $collapse.closest('.nav-item').addClass('active');
+      }
+    });
+  });
+</script>
 {% block extra_scripts %}{% endblock %}
 </body>
 </html>
