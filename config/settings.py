@@ -98,20 +98,41 @@ if DB_ENGINE_KIND == "mysql":
         }
     }
 elif DB_ENGINE_KIND == "mssql":
+    # DATABASES = {
+    #     "default": {
+    #         "ENGINE": "mssql",
+    #         "NAME": os.environ["MSSQL_NAME"],
+    #         "USER": os.environ["MSSQL_USER"],
+    #         "PASSWORD": os.environ["MSSQL_PASSWORD"],
+    #         "HOST": os.getenv("MSSQL_HOST", "localhost"),
+    #         "PORT": os.getenv("MSSQL_PORT", "1433"),
+    #         "OPTIONS": {
+    #             "driver": "ODBC Driver 18 for SQL Server",
+    #             "extra_params": "TrustServerCertificate=yes;",
+    #         },
+    #     }
+    # }
+    db_profile = os.getenv("DB_PROFILE", "remote").lower()
+    prefix = "MSSQL_LOCAL" if db_profile == "local" else "MSSQL_REMOTE"
+
     DATABASES = {
         "default": {
             "ENGINE": "mssql",
-            "NAME": os.environ["MSSQL_NAME"],
-            "USER": os.environ["MSSQL_USER"],
-            "PASSWORD": os.environ["MSSQL_PASSWORD"],
-            "HOST": os.getenv("MSSQL_HOST", "localhost"),
-            "PORT": os.getenv("MSSQL_PORT", "1433"),
+            "NAME": os.environ[f"{prefix}_NAME"],
+            "HOST": os.getenv(f"{prefix}_HOST", "localhost"),
+            "PORT": os.getenv(f"{prefix}_PORT", ""),
             "OPTIONS": {
                 "driver": "ODBC Driver 18 for SQL Server",
                 "extra_params": "TrustServerCertificate=yes;",
             },
         }
     }
+
+    if os.getenv(f"{prefix}_AUTH", "sql").lower() == "windows":
+        DATABASES["default"]["OPTIONS"]["extra_params"] += "Trusted_Connection=yes;"
+    else:
+        DATABASES["default"]["USER"] = os.environ[f"{prefix}_USER"]
+        DATABASES["default"]["PASSWORD"] = os.environ[f"{prefix}_PASSWORD"]
 else:
     DATABASES = {
         "default": {
@@ -178,3 +199,4 @@ MAILERS = {
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
+AUTH_USER_MODEL = "logistics.User"
