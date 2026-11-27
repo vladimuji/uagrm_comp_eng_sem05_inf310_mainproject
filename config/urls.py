@@ -41,6 +41,36 @@ from logistics.views.dashboard_views import (
     PaymentMethodsView,
     AuditLogView,
 )
+from logistics.views.dashboard_api_views import (
+    DashboardKpisApiView,
+    FleetAvailabilityApiView,
+    PendingBalancesApiView,
+    RevenueByMonthApiView,
+    ServicesByTypeApiView,
+    RecentServicesApiView,
+)
+from logistics.views.cargo_services_api_views import (
+    CargoServiceListCreateApiView,
+    CargoServiceDetailApiView,
+    CargoServiceAssignDriverApiView,
+    CargoServiceChangeStatusApiView,
+    CargoServiceKpisApiView,
+    UnassignedCargoServicesApiView,
+    SimpleCustomersApiView,
+    CargoServiceZonesApiView,
+    CargoServiceStatusesApiView,
+    AvailableDriversApiView,
+    SuggestedCargoServicePriceApiView,
+    CargoServiceCountByStatusApiView,
+)
+from logistics.views.payments_api_views import (
+    PaymentReceiptListCreateApiView,
+    PaymentReceiptDetailApiView,
+    PaymentKpisByMethodApiView,
+    CargoServicesWithBalanceApiView,
+    PaymentRevenueVariationApiView,
+    PaymentMethodsForReceiptApiView,
+)
 from logistics.views.api_views import (
     TreeOperationView, ExpressionTreeView, GraphDataView,
     GameCreateView, GameDetailView, GameMoveView, GraphDemoView,
@@ -71,6 +101,36 @@ urlpatterns = [
     path('api/game/', GameCreateView.as_view(), name='game-create'),
     path('api/game/<int:game_id>/', GameDetailView.as_view(), name='game-detail'),
     path('api/game/<int:game_id>/move/', GameMoveView.as_view(), name='game-move'),
+
+    # Dashboard datasets are served by SQL Server stored procedures/functions.
+    path('api/dashboard/kpis/', DashboardKpisApiView.as_view(), name='dashboard-kpis-api'),
+    path('api/dashboard/fleet-availability/', FleetAvailabilityApiView.as_view(), name='dashboard-fleet-availability-api'),
+    path('api/dashboard/pending-balances/', PendingBalancesApiView.as_view(), name='dashboard-pending-balances-api'),
+    path('api/dashboard/revenue-by-month/', RevenueByMonthApiView.as_view(), name='dashboard-revenue-by-month-api'),
+    path('api/dashboard/services-by-type/', ServicesByTypeApiView.as_view(), name='dashboard-services-by-type-api'),
+    path('api/dashboard/recent-services/', RecentServicesApiView.as_view(), name='dashboard-recent-services-api'),
+
+    # Cargo-service operations are backed by SQL Server procedures/functions.
+    path('api/operations/cargo-services/', CargoServiceListCreateApiView.as_view(), name='cargo-service-list-create-api'),
+    path('api/operations/cargo-services/kpis/', CargoServiceKpisApiView.as_view(), name='cargo-service-kpis-api'),
+    path('api/operations/cargo-services/unassigned/', UnassignedCargoServicesApiView.as_view(), name='cargo-service-unassigned-api'),
+    path('api/operations/cargo-services/customers/', SimpleCustomersApiView.as_view(), name='cargo-service-customers-api'),
+    path('api/operations/cargo-services/zones/', CargoServiceZonesApiView.as_view(), name='cargo-service-zones-api'),
+    path('api/operations/cargo-services/statuses/', CargoServiceStatusesApiView.as_view(), name='cargo-service-statuses-api'),
+    path('api/operations/cargo-services/drivers/available/', AvailableDriversApiView.as_view(), name='cargo-service-drivers-available-api'),
+    path('api/operations/cargo-services/suggest-price/', SuggestedCargoServicePriceApiView.as_view(), name='cargo-service-suggest-price-api'),
+    path('api/operations/cargo-services/count-by-status/', CargoServiceCountByStatusApiView.as_view(), name='cargo-service-count-by-status-api'),
+    path('api/operations/cargo-services/<int:service_id>/', CargoServiceDetailApiView.as_view(), name='cargo-service-detail-api'),
+    path('api/operations/cargo-services/<int:service_id>/assign-driver/', CargoServiceAssignDriverApiView.as_view(), name='cargo-service-assign-driver-api'),
+    path('api/operations/cargo-services/<int:service_id>/status/', CargoServiceChangeStatusApiView.as_view(), name='cargo-service-change-status-api'),
+
+    # Payment receipts and summaries are backed by SQL Server.
+    path('api/operations/payments/', PaymentReceiptListCreateApiView.as_view(), name='payment-receipt-list-create-api'),
+    path('api/operations/payments/kpis-by-method/', PaymentKpisByMethodApiView.as_view(), name='payment-kpis-by-method-api'),
+    path('api/operations/payments/revenue-variation/', PaymentRevenueVariationApiView.as_view(), name='payment-revenue-variation-api'),
+    path('api/operations/payments/services-with-balance/', CargoServicesWithBalanceApiView.as_view(), name='payment-services-with-balance-api'),
+    path('api/operations/payments/methods/', PaymentMethodsForReceiptApiView.as_view(), name='payment-methods-for-receipt-api'),
+    path('api/operations/payments/<int:receipt_number>/', PaymentReceiptDetailApiView.as_view(), name='payment-receipt-detail-api'),
 
     # Authentication URLs
     path('login/', auth_views.LoginView.as_view(
